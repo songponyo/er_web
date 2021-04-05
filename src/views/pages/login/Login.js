@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import {
   Button,
   Card,
@@ -67,11 +68,18 @@ const Login = () => {
                             />
                           </InputGroup>
                           <Row>
-                            <Col xs="6">
-                              <Button color="primary" className="px-4">Login</Button>
+                            <Col align="center">
+                              <Button color="primary" className="px-4">เข้าสู่ระบบ</Button>
+                              <Link key="update" to={`/register`} title="แก้ไขรายการ">
+                              <button type="button" className="btn btn-warning btn-row-sm">
+                               สมัครสมาชิก
+                              </button>
+                            </Link>
                             </Col>
+                           
                           </Row>
                         </Form>
+
                       </CardBody>
                     </Card>
                   </CardGroup>

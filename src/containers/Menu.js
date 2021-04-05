@@ -19,7 +19,7 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
     classrooms.push({
         _tag: "CSidebarNavItem",
         name: "ใบลา",
-        to: "/purchase-order",
+        to: "/leave-form",
         icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
         exact: false,
         // badge: {

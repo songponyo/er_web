@@ -32,17 +32,11 @@ const user_position_model = new UserPositionModel();
 
 const file_service = new FileService();
 
-class Insert extends React.Component {
+class Update extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       showloading: true,
-      code_validate: {
-        value: "",
-        status: "",
-        class: "",
-        text: "",
-      },
       username_validate: {
         value: "",
         status: "",
@@ -62,7 +56,7 @@ class Insert extends React.Component {
       user_address: "",
       user_zipcode: "",
       user_profile_image: {
-        src: "default.png",
+        src: "",
         file: null,
         old: "",
       },
@@ -74,32 +68,100 @@ class Insert extends React.Component {
   }
 
   async componentDidMount() {
-    const date = new Date();
-    const max_code = await user_model.getUserMaxCode({
-      code: "U" + date.getFullYear(),
-      digit: 3,
-    });
+    const { code } = this.props.match.params;
 
-    const license = await license_model.getLicenseBy();
-    const user_positions = await user_position_model.getUserPositionBy();
+    const user = await user_model.getUserByCode({ user_code: code });
 
-    this.setState({
-      showloading: false,
-      code_validate: {
-        value: max_code.data,
-        status: "VALID",
-        class: "",
-        text: "",
-      },
-      user_code: max_code.data,
-      user_positions: user_positions.data,
-      license: license.data,
-    });
+    if (user.require === false) {
+      Swal.fire("ข้อผิดพลาดไม่สามารถโหลดข้อมูล !", "", "error");
+      this.props.history.push("/user");
+    } else if (user.data.length === 0) {
+      Swal.fire("ไม่พบรายการนี้ในระบบ !", "", "warning");
+      this.props.history.push("/user");
+    } else {
+      const {
+        user_code,
+        license_code,
+        user_position_code,
+        user_prefix,
+        user_name,
+        user_lastname,
+        user_tel,
+        user_email,
+        user_address,
+        user_zipcode,
+        user_username,
+        user_password,
+        user_profile_image,
+        user_status,
+      } = user.data[0];
 
+      const user_positions = await user_position_model.getUserPositionBy();
+      const license = await license_model.getLicenseBy();
+      if(user_profile_image==""){
+        this.setState({
+          showloading: false,
+          username_validate: {
+            value: user_username,
+            status: "VALID",
+            class: "",
+            text: "",
+          },
+          user_code: user_code,
+          license_code: license_code,
+          user_position_code: user_position_code,
+          user_prefix: user_prefix,
+          user_name: user_name,
+          user_lastname: user_lastname,
+          user_email: user_email,
+          user_tel: user_tel,
+          user_address: user_address,
+          user_zipcode: user_zipcode,
+          user_username: user_username,
+          user_password: user_password,
+          user_profile_image: {
+            src: GLOBAL.BASE_SERVER.URL_IMG + "user-default.png",
+            file: null,
+            old: "",
+          },
+          user_status: user_status,
+          user_positions: user_positions.data,
+          license: license.data,
+        });
+      }else{
 
+      this.setState({
+        showloading: false,
+        username_validate: {
+          value: user_username,
+          status: "VALID",
+          class: "",
+          text: "",
+        },
+        user_code: user_code,
+        license_code: license_code,
+        user_position_code: user_position_code,
+        user_prefix: user_prefix,
+        user_name: user_name,
+        user_lastname: user_lastname,
+        user_email: user_email,
+        user_tel: user_tel,
+        user_address: user_address,
+        user_zipcode: user_zipcode,
+        user_username: user_username,
+        user_password: user_password,
+        user_profile_image: {
+          src: GLOBAL.BASE_SERVER.URL_IMG + user_profile_image,
+          file: null,
+          old: user_profile_image,
+        },
+        user_status: user_status,
+        user_positions: user_positions.data,
+        license: license.data,
+      });
+    }
+    }
   }
-
-
 
   async _handleSubmit(event) {
     event.preventDefault();
@@ -122,12 +184,12 @@ class Insert extends React.Component {
           await file_service.deleteFile({
             file_path: this.state.user_profile_image.old,
           });
+          user_profile_image = res_upload.data.file_name;
         }
       } else {
         user_profile_image = this.state.user_profile_image.old;
       }
-
-      const res = await user_model.insertUser({
+      const res = await user_model.updateUserBy({
         user_code: this.state.user_code.trim(),
         license_code: this.state.license_code,
         user_position_code: this.state.user_position_code,
@@ -142,7 +204,7 @@ class Insert extends React.Component {
         user_password: this.state.user_password.trim(),
         user_profile_image: user_profile_image,
         user_status: this.state.user_status,
-        addby: this.props.USER.user_code,
+        updateby: this.props.USER.user_code,
       });
 
       if (res.require) {
@@ -157,10 +219,7 @@ class Insert extends React.Component {
   _checkSubmit() {
     const user_password = this.state.user_password.trim();
 
-    if (this.state.code_validate.status !== "VALID") {
-      Swal.fire(this.state.code_validate.text);
-      return false;
-    } else if (this.state.username_validate.status !== "VALID") {
+    if (this.state.username_validate.status !== "VALID") {
       Swal.fire(this.state.username_validate.text);
       return false;
     } else if (this.state.license_code === "") {
@@ -177,41 +236,8 @@ class Insert extends React.Component {
     }
   }
 
-  async _checkCode() {
-    const code = this.state.user_code.trim();
-
-    if (code.length) {
-      if (this.state.code_validate.value !== code) {
-        const user = await user_model.getUserByCode({ user_code: code });
-
-        if (user.data.length) {
-          this.setState({
-            code_validate: {
-              value: code,
-              status: "INVALID",
-              class: "is-invalid",
-              text: "This code already exists.",
-            },
-          });
-        } else {
-          this.setState({
-            code_validate: {
-              value: code,
-              status: "VALID",
-              class: "is-valid",
-              text: "",
-            },
-          });
-        }
-      }
-    } else {
-      this.setState({
-        code_validate: { value: code, status: "", class: "", text: "" },
-      });
-    }
-  }
-
   async _checkUsername() {
+    const user_code = this.state.user_code.trim();
     const username = this.state.user_username.trim();
 
     if (this.state.username_validate.value !== username) {
@@ -236,6 +262,7 @@ class Insert extends React.Component {
       } else {
         const user = await user_model.checkUsernameBy({
           user_username: username,
+          user_code: user_code,
         });
 
         if (user.data.length) {
@@ -289,8 +316,6 @@ class Insert extends React.Component {
   }
 
   render() {
-
-
     const license_options = this.state.license.map((item) => ({
       value: item.license_code,
       label: item.license_name,
@@ -315,7 +340,7 @@ class Insert extends React.Component {
     return (
       <div className="animated fadeIn">
         <Card>
-          <CardHeader className="header-t-red">เพิ่มพนักงาน / Add Employee</CardHeader>
+          <CardHeader>แก้ไขพนักงาน / Update Employee</CardHeader>
           <Form onSubmit={this._handleSubmit.bind(this)}>
             <CardBody>
               <Row>
@@ -333,12 +358,7 @@ class Insert extends React.Component {
                         id="user_code"
                         name="user_code"
                         value={this.state.user_code}
-                        className={this.state.code_validate.class}
-                        onChange={(e) =>
-                          this.setState({ user_code: e.target.value })
-                        }
-                        onBlur={() => this._checkCode()}
-                        required
+                        readOnly
                       />
                       <p className="text-muted">Example : U0001.</p>
                     </Col>
@@ -374,7 +394,6 @@ class Insert extends React.Component {
                           onChange={(e) =>
                             this.setState({ user_name: e.target.value })
                           }
-                          required
                         />
                         <p className="text-muted">Example : วินัย.</p>
                       </FormGroup>
@@ -395,7 +414,6 @@ class Insert extends React.Component {
                           onChange={(e) =>
                             this.setState({ user_lastname: e.target.value })
                           }
-                          required
                         />
                         <p className="text-muted">Example : ชาญชัย.</p>
                       </FormGroup>
@@ -454,7 +472,7 @@ class Insert extends React.Component {
                           onBlur={() => this._checkUsername()}
                           required
                         />
-                        <p className="text-muted">Example : admin.</p>
+                        <p className="text-muted">Example : thana.</p>
                       </FormGroup>
                     </Col>
                     <Col md="3">
@@ -475,7 +493,7 @@ class Insert extends React.Component {
                           }
                           required
                         />
-                        <p className="text-muted">Example : admin654d.</p>
+                        <p className="text-muted">Example : thanaadmin.</p>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -585,13 +603,7 @@ class Insert extends React.Component {
                       <img
                         className="image-upload"
                         style={{ maxWidth: 280 }}
-                        src={
-                          this.state.user_profile_image.src !== null
-                            ? this.state.user_profile_image.src
-                            : this.state.user_profile_image.old !== ""
-                              ? GLOBAL.BASE_SERVER.URL_IMG + this.state.user_profile_image.old
-                              : this.state.user_profile_image.src
-                        }
+                        src={this.state.user_profile_image.src}
                         alt="profile"
                       />
                     </div>
@@ -632,4 +644,4 @@ const mapStatetoProps = (state) => {
   };
 };
 
-export default connect(mapStatetoProps)(Insert);
+export default connect(mapStatetoProps)(Update);
