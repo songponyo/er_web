@@ -13,6 +13,7 @@ class Classgroup extends Component {
           <Switch>
             <Route exact path="/class-group/insert" render={props => <Insert {...props} {...this.props.SESSION}/>}  />
             <Route exact path="/class-group/update/:code" render={props => <Update {...props} {...this.props.SESSION}/>}  />
+            <Route exact path="/class-group/importexcel/:code" render={props => <Update {...props} {...this.props.SESSION}/>}  />
             <Route path="/class-group" render={props => <View {...props} {...this.props.SESSION} />} />
           </Switch>
         </React.Suspense>

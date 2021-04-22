@@ -12,7 +12,7 @@ export default class FileController {
       form_data.append('upload_path', upload_path)
       form_data.append('files', src.file)
 
-      const res_upload = await fetch(GLOBAL.FILE_SERVER.URL_UPLOAD, {
+      const res_upload = await fetch(GLOBAL.BASE_SERVER.URL_UPLOAD, {
         method: 'post',
         headers: {},
         body: form_data
@@ -27,7 +27,7 @@ export default class FileController {
 
 
   async deleteFile(data) {
-    return fetch(GLOBAL.FILE_SERVER.URL_DELETE, {
+    return fetch(GLOBAL.BASE_SERVER.URL_DELETE, {
       method: 'post',
       headers: GLOBAL.AUTH_HEADERS,
       body: JSON.stringify(data)

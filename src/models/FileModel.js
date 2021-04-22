@@ -1,6 +1,6 @@
-import { PurchaseModel } from './MainModel'
+import { BASE_SERVER } from './MainModel'
 
-export default class FileModel extends PurchaseModel {
+export default class FileModel extends BASE_SERVER {
     async uploadFile(data) {
         return this.authFetch({
             url: 'upload-file',
