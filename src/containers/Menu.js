@@ -2,13 +2,13 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
     const navigations = []
     const masters = []
     const classrooms = []
-    const stocks = []
-    //====================================================== Menu Classroom =========================================================//
+    const students = []
+    //====================================================== Teacher Classroom =========================================================//
 
     classrooms.push({
         _tag: "CSidebarNavItem",
         name: "กลุ่มเรียน",
-        to: "/purchase-request",
+        to: "/class-group",
         icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
         exact: false,
         // badge: {
@@ -41,46 +41,42 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
     })
 
 
-    //====================================================== Menu Stocks =========================================================//
+      //====================================================== Student Classroom =========================================================//
 
-    // stocks.push({
-    //     _tag: "CSidebarNavItem",
-    //     name: "คลังสินค้า",
-    //     to: "/stock-group",
-    //     icon: <i className="c-sidebar-nav-icon fa fa-cubes" />,
-    //     exact: false,
-    // })
+      students.push({
+        _tag: "CSidebarNavItem",
+        name: "กลุ่มเรียน",
+        to: "/class_student",
+        icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
+        exact: false,
+        // badge: {
+        //     color: 'danger',
+        //     text: 10,
+        // },
+    })
+    students.push({
+        _tag: "CSidebarNavItem",
+        name: "ใบลา",
+        to: "/leave_student",
+        icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
+        exact: false,
+        // badge: {
+        //     color: 'danger',
+        //     text: 10,
+        // },
+    })
 
-    // stocks.push({
-    //     _tag: "CSidebarNavItem",
-    //     name: "ย้ายคลังสินค้า",
-    //     to: "/stock-move",
-    //     icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
-    //     exact: false,
-    //     // badge: {
-    //     //     color: 'danger',
-    //     //     text: 10,
-    //     // },
-    // })
-
-    // stocks.push({
-    //     _tag: "CSidebarNavItem",
-    //     name: "เบิกสินค้า",
-    //     to: "/stock-issue",
-    //     icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
-    //     exact: false,
-    // })
-
-    // stocks.push({
-    //     _tag: "CSidebarNavItem",
-    //     name: "เปลี่ยนสินค้า",
-    //     to: "/stock-change",
-    //     icon: <i className="c-sidebar-nav-icon fa fa-exchange" />,
-    //     exact: false,
-    // })
-
-
-
+    students.push({
+        _tag: "CSidebarNavItem",
+        name: "เช็คชื่อ",
+        to: "/purchase-order",
+        icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
+        exact: false,
+        // badge: {
+        //     color: 'danger',
+        //     text: 10,
+        // },
+    })
 
 
     //====================================================== Menu MASTER DATA =========================================================//
@@ -121,15 +117,15 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
             ...classrooms,
         )
     }
-    // if (stocks.length) {
-    //     navigations.push(
-    //         {
-    //             _tag: "CSidebarNavTitle",
-    //             _children: ["Stock"],
-    //         },
-    //         ...stocks,
-    //     )
-    // }
+    if (students.length) {
+        navigations.push(
+            {
+                _tag: "CSidebarNavTitle",
+                _children: ["Student"],
+            },
+            ...students,
+        )
+    }
     if (masters.length) {
         navigations.push(
             {

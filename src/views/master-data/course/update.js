@@ -47,7 +47,7 @@ class Update extends React.Component {
       license_code: "",
       user_position_code: "",
       user_prefix: "นาย",
-      user_firstname: "",
+      user_name: "",
       user_lastname: "",
       user_tel: "",
       user_email: "",
@@ -84,7 +84,7 @@ class Update extends React.Component {
         license_code,
         user_position_code,
         user_prefix,
-        user_firstname,
+        user_name,
         user_lastname,
         user_tel,
         user_email,
@@ -111,7 +111,7 @@ class Update extends React.Component {
           license_code: license_code,
           user_position_code: user_position_code,
           user_prefix: user_prefix,
-          user_firstname: user_firstname,
+          user_name: user_name,
           user_lastname: user_lastname,
           user_email: user_email,
           user_tel: user_tel,
@@ -142,7 +142,7 @@ class Update extends React.Component {
         license_code: license_code,
         user_position_code: user_position_code,
         user_prefix: user_prefix,
-        user_firstname: user_firstname,
+        user_name: user_name,
         user_lastname: user_lastname,
         user_email: user_email,
         user_tel: user_tel,
@@ -194,7 +194,7 @@ class Update extends React.Component {
         license_code: this.state.license_code,
         user_position_code: this.state.user_position_code,
         user_prefix: this.state.user_prefix,
-        user_firstname: this.state.user_firstname.trim(),
+        user_name: this.state.user_name.trim(),
         user_lastname: this.state.user_lastname.trim(),
         user_tel: this.state.user_tel.trim(),
         user_email: this.state.user_email.trim(),
@@ -348,7 +348,7 @@ class Update extends React.Component {
                   <Row>
                     <Col md="3">
                       <Label>
-                        ไอดีบัญชีผู้ใช้{" "}
+                        รหัสพนักงาน{" "}
                         <font color="#F00">
                           <b>*</b>
                         </font>
@@ -359,7 +359,8 @@ class Update extends React.Component {
                         name="user_code"
                         value={this.state.user_code}
                         readOnly
-                      /> 
+                      />
+                      <p className="text-muted">Example : U0001.</p>
                     </Col>
                     <Col md="3">
                       <FormGroup>
@@ -387,11 +388,11 @@ class Update extends React.Component {
                         </Label>
                         <Input
                           type="text"
-                          id="user_firstname"
-                          name="user_firstname"
-                          value={this.state.user_firstname}
+                          id="user_name"
+                          name="user_name"
+                          value={this.state.user_name}
                           onChange={(e) =>
-                            this.setState({ user_firstname: e.target.value })
+                            this.setState({ user_name: e.target.value })
                           }
                         />
                         <p className="text-muted">Example : วินัย.</p>
@@ -471,7 +472,7 @@ class Update extends React.Component {
                           onBlur={() => this._checkUsername()}
                           required
                         />
-                        <p className="text-muted">Example : เลขประจำตัว 11 ตัว</p>
+                        <p className="text-muted">Example : thana.</p>
                       </FormGroup>
                     </Col>
                     <Col md="3">
@@ -492,7 +493,7 @@ class Update extends React.Component {
                           }
                           required
                         />
-                        <p className="text-muted">Example : Pa55word</p>
+                        <p className="text-muted">Example : thanaadmin.</p>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -558,7 +559,7 @@ class Update extends React.Component {
                         <p className="text-muted">Example : ผู้ดูแลระบบ.</p>
                       </FormGroup>
                     </Col>
-                    {/* <Col md="4">
+                    <Col md="4">
                       <FormGroup>
                         <Label>
                           สิทธิ์การใช้งาน{" "}
@@ -575,7 +576,7 @@ class Update extends React.Component {
                           Example : สิทธิ์การใช้งานที่ 1.
                         </p>
                       </FormGroup>
-                    </Col> */}
+                    </Col>
                     <Col md="4">
                       <FormGroup>
                         <Label>

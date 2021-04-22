@@ -53,7 +53,7 @@ class Insert extends React.Component {
       license_code: "",
       user_position_code: "",
       user_prefix: "นาย",
-      user_name: "",
+      user_firstname: "",
       user_lastname: "",
       user_tel: "",
       user_email: "",
@@ -111,28 +111,17 @@ class Insert extends React.Component {
         src: this.state.user_profile_image,
         upload_path: this.state.upload_path,
       });
-
+ 
       if (res_upload.require) {
-        if (
-          this.state.user_profile_image.old === undefined &&
-          this.state.user_profile_image.old === ""
-        ) {
-          user_profile_image = res_upload.data.file_name;
-        } else {
-          await file_service.deleteFile({
-            file_path: this.state.user_profile_image.old,
-          });
-        }
-      } else {
-        user_profile_image = this.state.user_profile_image.old;
-      }
+        user_profile_image = res_upload.data.file_name;
+      } 
 
       const res = await user_model.insertUser({
         user_code: this.state.user_code.trim(),
         license_code: this.state.license_code,
         user_position_code: this.state.user_position_code,
         user_prefix: this.state.user_prefix,
-        user_name: this.state.user_name.trim(),
+        user_firstname: this.state.user_firstname.trim(),
         user_lastname: this.state.user_lastname.trim(),
         user_tel: this.state.user_tel.trim(),
         user_email: this.state.user_email.trim(),
@@ -145,12 +134,12 @@ class Insert extends React.Component {
         addby: this.props.USER.user_code,
       });
 
-      if (res.require) {
-        Swal.fire("Save success!!", "", "success");
-        this.props.history.push("/user");
-      } else {
-        Swal.fire("Sorry, Someting worng !", "", "error");
-      }
+        if (res.require) {
+          Swal.fire("Save success!!", "", "success");
+          this.props.history.push("/user");
+        } else {
+          Swal.fire("Sorry, Someting worng !", "", "error");
+        }
     }
   }
 
@@ -315,7 +304,7 @@ class Insert extends React.Component {
     return (
       <div className="animated fadeIn">
         <Card>
-          <CardHeader className="header-t-red">เพิ่มพนักงาน / Add Employee</CardHeader>
+          <CardHeader className="header-t-red">เพิ่มบัญชีผู้ใช้ / Add User</CardHeader>
           <Form onSubmit={this._handleSubmit.bind(this)}>
             <CardBody>
               <Row>
@@ -323,7 +312,7 @@ class Insert extends React.Component {
                   <Row>
                     <Col md="3">
                       <Label>
-                        รหัสพนักงาน{" "}
+                        รหัสบัญชีผู้ใช้{" "}
                         <font color="#F00">
                           <b>*</b>
                         </font>
@@ -339,6 +328,7 @@ class Insert extends React.Component {
                         }
                         onBlur={() => this._checkCode()}
                         required
+                        disabled
                       />
                       <p className="text-muted">Example : U0001.</p>
                     </Col>
@@ -368,11 +358,11 @@ class Insert extends React.Component {
                         </Label>
                         <Input
                           type="text"
-                          id="user_name"
-                          name="user_name"
-                          value={this.state.user_name}
+                          id="user_firstname"
+                          name="user_firstname"
+                          value={this.state.user_firstname}
                           onChange={(e) =>
-                            this.setState({ user_name: e.target.value })
+                            this.setState({ user_firstname: e.target.value })
                           }
                           required
                         />
@@ -454,7 +444,7 @@ class Insert extends React.Component {
                           onBlur={() => this._checkUsername()}
                           required
                         />
-                        <p className="text-muted">Example : admin.</p>
+                        <p className="text-muted">Example : 0000000000-0</p>
                       </FormGroup>
                     </Col>
                     <Col md="3">
@@ -595,6 +585,7 @@ class Insert extends React.Component {
                         alt="profile"
                       />
                     </div>
+                    <br />
                     <Input
                       type="file"
                       accept="image/png, image/jpeg"
