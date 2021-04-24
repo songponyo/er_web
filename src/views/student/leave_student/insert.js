@@ -2,26 +2,19 @@ import React, { useState, useEffect } from "react";
 import GLOBAL from "../../../GLOBAL";
 import { Link } from "react-router-dom";
 import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Col,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-  Row,
-  CardImg,
-  CardImgOverlay,
-  CardTitle,
-  CardText,
-  CardSubtitle,
-  ButtonToggle,
-  Container,
-  FormText
-} from "reactstrap";
+  CCard,
+  CCardHeader,
+  CCardBody,
+  CCardFooter,
+  CCol,
+  CRow,
+  CFormGroup,
+  CLabel,
+  CInput,
+  CButton,
+
+  CImg
+} from "@coreui/react";
 import { connect } from "react-redux";
 
 import Swal from "sweetalert2";
@@ -149,89 +142,173 @@ export default function Insert() {
     setClassroom(new_data);
   };
 
+  
   return (
+    <div>
+      <div className="animated fadeIn">
+        <CCard>
+          <CCardHeader className="header-t-red">
+            กลุ่มเรียน / Class group
+        </CCardHeader>
+          <CCardBody>
+            <CRow>
+              <CCol >
+                <CRow>
+                  <CCol md="5">
+                    <CFormGroup>
+                      <CLabel>
+                        ชื่อ
+                    </CLabel>
+                      <CInput
+                        type="text"
+                        // name="classgroup_id"
+                        // value={classroom.classgroup_id}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="5">
+                    <CFormGroup>
+                      <CLabel>
+                        นามสกุล
+                    </CLabel>
+                      <CInput
+                        type="text"
+                        // name="classgroup_id"
+                        // value={classroom.classgroup_id}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                </CRow>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol>
+                <CRow>
+                  <CCol md="5">
+                    <CFormGroup>
+                      <CLabel>
+                        รหัสนักศึกษา
+                    </CLabel>
+                      <CInput
+                        type="text"
+                        // name="classgroup_id"
+                        // value={classroom.classgroup_id}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
 
-    <Card >
+                </CRow>
+              </CCol>
 
-      <CardBody>
-        <CardTitle tag="h3">ใบลา(ลากิจ/ลาป่วย)</CardTitle>
-        <Container className="themed-container">
-          <Form>
-            <Row>
-              <Col xs="6" sm="5"><FormGroup>
-                <Label for="user_firstname">ชื่อ</Label>
-                <Input type="text" name="user_firstname" id="user_firstname" placeholder="ชื่อ" />
-              </FormGroup></Col>
-              <Col xs="6" sm="5">
-                <FormGroup>
-                  <Label for="user_lastname">นามสกุล</Label>
-                  <Input type="text" name="user_lastname" id="user_lastname" placeholder="นามสกุล" />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs="6" sm="5">
-                <FormGroup>
-                  <Label for="user_username">รหัสนักศึกษา</Label>
-                  <Input type="text" name="user_username" id="user_username" placeholder="รหัสนักศึกษา" />
-                </FormGroup>
-              </Col>
-            </Row>
-            <legend>รายวิชาที่ต้องการลา</legend>
-            <Row>
-              <Col xs="6" sm="5"><FormGroup>
-                <Label for="user_firstname">ชื่อวิชา</Label>
-                <Input type="text" name="user_firstname" id="user_firstname" placeholder="ชื่อวิชา" />
-              </FormGroup></Col>
-              <Col xs="6" sm="5">
-                <FormGroup>
-                  <Label for="user_lastname">กลุ่มเรียน</Label>
-                  <Input type="text" name="user_lastname" id="user_lastname" placeholder="กลุ่มเรียน" />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs="6" sm="5">
-                <FormGroup tag="fieldset">
-                  <legend>ประเภทการลา</legend>
-                  <FormGroup check>
-                    <Label check>
-                      <Input type="radio" name="radio1" />{' '}
-            ลาป่วย
-          </Label>
-                  </FormGroup>
-                  <FormGroup check>
-                    <Label check>
-                      <Input type="radio" name="radio1" />{' '}
-            ลากิจ
-          </Label>
-                  </FormGroup>
-                </FormGroup>
-              </Col>
-              <Col xs="6" sm="5">
-                <FormGroup>
-                  <Label for="exampleText">เหตุผลในการลา</Label>
-                  <Input type="textarea" name="text" id="exampleText" />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col xs="6" sm="5">
-              <FormGroup>
-        <Label for="exampleFile">หลักฐานการลา</Label>
-        <Input type="file" name="file" id="exampleFile" />
-        <FormText color="muted">
-         หมายเหตุ ลาป่วย ให้แนบหลักฐานใบรับรองแพทย์
-                , ลากิจ  ให้แนบหลักฐานกิจกรรมที่ลาไป
-        </FormText>
-      </FormGroup>
-              </Col>
-            </Row>
-            <ButtonToggle color="success">ยืนยัน</ButtonToggle>{' '} <ButtonToggle color="danger">ยกเลิก</ButtonToggle>{' '}
-          </Form></Container>
+            </CRow>
+            <h3>รายวิชาที่ต้องการลา</h3>
+            <CRow>
+              <CCol >
+                <CRow>
+                  <CCol md="5">
+                    <CFormGroup>
+                      <CLabel>
+                        ชื่อวิชา
+                    </CLabel>
+                      <CInput
+                        type="text"
+                        // name="classgroup_id"
+                        // value={classroom.classgroup_id}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="5">
+                    <CFormGroup>
+                      <CLabel>
+                        กลุ่มเรียน
+                    </CLabel>
+                      <CInput
+                        type="text"
+                        // name="classgroup_id"
+                        // value={classroom.classgroup_id}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                </CRow>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol md="5">
+              <CLabel>
+                        ประเภทการลา
+                    </CLabel>
+                <CRow >
+                  <tbody >
+                    <CCol ><input type="radio" name="site_name"
+                    //value={result.SITE_NAME} 
+                    //   checked={this.state.site === result.SITE_NAME} 
 
-      </CardBody>
-    </Card>
+                    //  onChange={this.onSiteChanged}
+                    /> ลากิจ</CCol>
+                    <CCol><input type="radio" name="address"
+                    //   value={result.ADDRESS}
+                    //    checked={this.state.address === result.ADDRESS} 
+
+                    //  onChange={this.onAddressChanged}
+                    /> ลาป่วย</CCol>
+                  </tbody>
+
+                </CRow>
+                
+              </CCol>
+             
+              <CCol md="5">
+                    <CFormGroup>
+                      <CLabel>
+                        เหตุผลการลา
+                    </CLabel>
+                      <CInput
+                        type="text"
+                        // name="classgroup_id"
+                        // value={classroom.classgroup_id}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                
+           
+            </CRow>
+
+            <CCol md="5">
+             
+              <br />
+              <br />
+              <CInput
+                type="file"
+                name="user_image"
+                accept="image/png, image/jpeg"
+                // onChange={(e) => _handleImageChange("user_image", e)}
+              />
+            </CCol>
+
+
+
+          </CCardBody>
+          <CCardFooter>
+            <CButton
+              type="submit"
+              color="success"
+              onClick={() => _handleSubmit()}
+            >
+              บันทึก
+          </CButton>
+            <Link to="/material-type">
+              <CButton color="btn btn-danger">ย้อนกลับ</CButton>
+            </Link>
+          </CCardFooter>
+        </CCard>
+      </div>
+    </div>
   );
 }
 
