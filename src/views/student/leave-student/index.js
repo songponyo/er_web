@@ -11,9 +11,9 @@ class Leavestudent extends Component {
       <HashRouter>
         <React.Suspense>
           <Switch>
-            <Route exact path="/leave_student/insert" render={props => <Insert {...props} {...this.props.SESSION}/>}  />
-            <Route exact path="/leave_student/update/:code" render={props => <Update {...props} {...this.props.SESSION}/>}  />
-            <Route path="/leave_student" render={props => <View {...props} {...this.props.SESSION} />} />
+            <Route exact path="/leave-student/insert" render={props => <Insert {...props} {...this.props.SESSION}/>}  />
+            <Route exact path="/leave-student/update/:code" render={props => <Update {...props} {...this.props.SESSION}/>}  />
+            <Route path="/leave-student" render={props => <View {...props} {...this.props.SESSION} />} />
           </Switch>
         </React.Suspense>
       </HashRouter>

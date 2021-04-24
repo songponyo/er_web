@@ -62,7 +62,7 @@ export default function View() {
       <CCard>
         <CCardHeader className="header-t-red">
           คำขอลา / Leave list
-          <Link to={`/leave_student/insert`} className="btn btn-success float-right">
+          <Link to={`/leave-student/insert`} className="btn btn-success float-right">
             <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มใบลา
           </Link>
         </CCardHeader>
@@ -114,7 +114,7 @@ export default function View() {
                   row_accessible.push(
                     <Link
                       key="update"
-                      to={`/leave-form/update/${cell.leave_code}`}
+                      to={`/leave-student/update/${cell.leave_code}`}
                       title="แก้ไขรายการ"
                     >
                       <button type="button" className="btn btn-primary">

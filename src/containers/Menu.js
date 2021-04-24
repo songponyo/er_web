@@ -43,10 +43,23 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
 
       //====================================================== Student Classroom =========================================================//
 
+     
       students.push({
         _tag: "CSidebarNavItem",
-        name: "กลุ่มเรียน",
-        to: "/class_student",
+        name: "รายวิชาทั้งหมด",
+        to: "/course-student",
+        icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
+        exact: false,
+        // badge: {
+        //     color: 'danger',
+        //     text: 10,
+        // },
+    })
+
+      students.push({
+        _tag: "CSidebarNavItem",
+        name: "รายวิชาของฉัน",
+        to: "/class-student",
         icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
         exact: false,
         // badge: {
@@ -57,7 +70,7 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
     students.push({
         _tag: "CSidebarNavItem",
         name: "ใบลา",
-        to: "/leave_student",
+        to: "/leave-student",
         icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
         exact: false,
         // badge: {

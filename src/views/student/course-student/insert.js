@@ -12,11 +12,7 @@ import {
   CLabel,
   CInput,
   CButton,
-
-  CImg
 } from "@coreui/react";
-import { connect } from "react-redux";
-
 import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
 import { TimeController } from "../../../controller";
@@ -104,7 +100,7 @@ export default function Insert() {
         user_code: classroom.user_code,
         addby: classroom.user_code,
         adddate: time_controller.reformatToDate(new Date()),
-      });
+      }); 
       if (query_result.require) {
         Swal.fire("Save success!!", "", "success");
         history.push("/class-group");
@@ -142,157 +138,93 @@ export default function Insert() {
     setClassroom(new_data);
   };
 
-  
   return (
     <div>
       <div className="animated fadeIn">
         <CCard>
           <CCardHeader className="header-t-red">
             กลุ่มเรียน / Class group
-        </CCardHeader>
+          </CCardHeader>
           <CCardBody>
             <CRow>
               <CCol >
                 <CRow>
-                  <CCol md="5">
+                  <CCol md="3">
+                    <CLabel>รหัสวิชา <font color="#F00">
+                      <b>*</b>
+                    </font></CLabel>
+                    <Select
+                      options={subject}
+                      value={classroom.subject_code}
+                      onChange={(e) =>
+                        setClassroom({
+                          ...classroom,
+                          [`subject_code`]: e,
+                        })
+                      }
+                    />
+                  </CCol>
+                  <CCol md="3">
                     <CFormGroup>
                       <CLabel>
-                        ชื่อ
-                    </CLabel>
+                        รหัสกลุ่มเรียน
+                        {" "}
+                        <font color="#F00">
+                          <b>*</b>
+                        </font>
+                      </CLabel>
                       <CInput
                         type="text"
-                        // name="classgroup_id"
-                        // value={classroom.classgroup_id}
+                        name="classgroup_id"
+                        value={classroom.classgroup_id}
                         onChange={(e) => _changeFrom(e)}
                       />
-                    </CFormGroup>
-                  </CCol>
-                  <CCol md="5">
-                    <CFormGroup>
-                      <CLabel>
-                        นามสกุล
-                    </CLabel>
-                      <CInput
-                        type="text"
-                        // name="classgroup_id"
-                        // value={classroom.classgroup_id}
-                        onChange={(e) => _changeFrom(e)}
-                      />
-                    </CFormGroup>
-                  </CCol>
-                </CRow>
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol>
-                <CRow>
-                  <CCol md="5">
-                    <CFormGroup>
-                      <CLabel>
-                        รหัสนักศึกษา
-                    </CLabel>
-                      <CInput
-                        type="text"
-                        // name="classgroup_id"
-                        // value={classroom.classgroup_id}
-                        onChange={(e) => _changeFrom(e)}
-                      />
-                    </CFormGroup>
-                  </CCol>
 
-                </CRow>
-              </CCol>
-
-            </CRow>
-            <h3>รายวิชาที่ต้องการลา</h3>
-            <CRow>
-              <CCol >
-                <CRow>
-                  <CCol md="5">
-                    <CFormGroup>
-                      <CLabel>
-                        ชื่อวิชา
-                    </CLabel>
-                      <CInput
-                        type="text"
-                        // name="classgroup_id"
-                        // value={classroom.classgroup_id}
-                        onChange={(e) => _changeFrom(e)}
-                      />
                     </CFormGroup>
                   </CCol>
-                  <CCol md="5">
+                  <CCol md="3">
                     <CFormGroup>
                       <CLabel>
-                        กลุ่มเรียน
-                    </CLabel>
+                        ผู้รับผิดชอบ
+                        {" "}
+                        <font color="#F00">
+                          <b>*</b>
+                        </font>
+                      </CLabel>
+                      <Select
+                        options={user}
+                        value={classroom.user_code}
+                        onChange={(e) =>
+                          setClassroom({
+                            ...classroom,
+                            [`user_code`]: e,
+                          })
+                        }
+                      />
+
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>
+                        ห้องเรียน
+                        {" "}
+                        <font color="#F00">
+                          <b>*</b>
+                        </font>
+                      </CLabel>
                       <CInput
                         type="text"
-                        // name="classgroup_id"
-                        // value={classroom.classgroup_id}
+                        name="classgroup_number"
+                        value={classroom.classgroup_number}
                         onChange={(e) => _changeFrom(e)}
                       />
+                      <p className="text-muted">Example :ห้อง 18311</p>
                     </CFormGroup>
                   </CCol>
                 </CRow>
               </CCol>
             </CRow>
-            <CRow>
-              <CCol md="5">
-              <CLabel>
-                        ประเภทการลา
-                    </CLabel>
-                <CRow >
-                  <tbody >
-                    <CCol ><input type="radio" name="site_name"
-                    //value={result.SITE_NAME} 
-                    //   checked={this.state.site === result.SITE_NAME} 
-
-                    //  onChange={this.onSiteChanged}
-                    /> ลากิจ</CCol>
-                    <CCol><input type="radio" name="address"
-                    //   value={result.ADDRESS}
-                    //    checked={this.state.address === result.ADDRESS} 
-
-                    //  onChange={this.onAddressChanged}
-                    /> ลาป่วย</CCol>
-                  </tbody>
-
-                </CRow>
-                
-              </CCol>
-             
-              <CCol md="5">
-                    <CFormGroup>
-                      <CLabel>
-                        เหตุผลการลา
-                    </CLabel>
-                      <CInput
-                        type="text"
-                        // name="classgroup_id"
-                        // value={classroom.classgroup_id}
-                        onChange={(e) => _changeFrom(e)}
-                      />
-                    </CFormGroup>
-                  </CCol>
-                
-           
-            </CRow>
-
-            <CCol md="5">
-             
-              <br />
-              <br />
-              <CInput
-                type="file"
-                name="user_image"
-                accept="image/png, image/jpeg"
-                // onChange={(e) => _handleImageChange("user_image", e)}
-              />
-            </CCol>
-
-
-
           </CCardBody>
           <CCardFooter>
             <CButton
@@ -301,8 +233,8 @@ export default function Insert() {
               onClick={() => _handleSubmit()}
             >
               บันทึก
-          </CButton>
-            <Link to="/material-type">
+            </CButton>
+            <Link to="/course_student">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
             </Link>
           </CCardFooter>
@@ -311,4 +243,3 @@ export default function Insert() {
     </div>
   );
 }
-

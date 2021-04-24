@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import GLOBAL from "../../../GLOBAL";
-import { Link } from "react-router-dom";
 import {
   CCard,
   CCardHeader,
@@ -14,10 +13,17 @@ import {
   CButton,
 } from "@coreui/react";
 import Swal from "sweetalert2";
-import { useHistory } from "react-router-dom";
-import { TimeController } from "../../../controller";
+import { Modal } from "react-bootstrap";
 import { Select } from "../../../component/revel-strap";
-
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faEdit,
+  faCheck,
+  faWindowClose,
+} from "@fortawesome/free-solid-svg-icons";
+import { Table, Loading } from "../../../component/revel-strap";
+import { TimeController } from "../../../controller";
 import SubjectModel from "../../../models/SubjectModel"
 import ClassgroupModel from "../../../models/ClassgroupModel"
 import UserModel from "../../../models/UserModel"
@@ -28,8 +34,10 @@ const subject_model = new SubjectModel();
 const time_controller = new TimeController();
 
 
-export default function Insert() {
+export default function Update() {
   let history = useHistory();
+  const [showloading, setShowLoading] = useState(true);
+  let code = useRouteMatch("/class-group/update/:code"); 
   const [user, setUser] = useState([]);
   const [subject, setSubject] = useState([]);
   const [classgroup, setClassgroup] = useState([])
@@ -41,7 +49,7 @@ export default function Insert() {
     user_code: "",
     addby: ""
   })
-
+ 
   useEffect(() => {
     fetchData();
   }, []);
@@ -49,21 +57,19 @@ export default function Insert() {
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
 
-    const date = new Date();
-    var code = "";
-    code =
-      "CG" +
-      date.getFullYear() +
-      (date.getMonth() + 1).toString().padStart(2, "0");
-   
-    const class_data = await classgroup_model.getClassgroupMaxCode({
-      code: code,
-      digit: 4,
-    });
-    let classform = {} 
-    classform.classgroup_code = class_data.data
-    classform.addby = user_session.user_code
-    setClassroom(classform);
+    const class_group = await classgroup_model.getClassgroupByCode({
+      classgroup_code: code.params.code,
+    })
+
+    if (class_group.require === false) {
+      Swal.fire("ข้อผิดพลาดไม่สามารถโหลดข้อมูล !", "", "error");
+      this.props.history.push("/class-group");
+    } else if (class_group.data.length === 0) {
+      Swal.fire("ไม่พบรายการนี้ในระบบ !", "", "warning");
+      this.props.history.push("/classgroup-group");
+    } else { 
+      await setClassroom(class_group.data[0]);
+    }
 
     const user_data = await user_model.getUserBy({
       user_position_code: "UP001"
@@ -78,6 +84,8 @@ export default function Insert() {
     }
     setUser(select_user)
 
+
+    
     const subject_data = await subject_model.getSubjectBy({});
     let subject_form = subject_data.data;
     let select_subject = [];
@@ -91,7 +99,8 @@ export default function Insert() {
   }
 
   async function _handleSubmit() {
-    if (_checkSubmit()) {  
+    if (_checkSubmit()) {
+
       let query_result = await classgroup_model.insertClassgroup({
         classgroup_code: classroom.classgroup_code,
         classgroup_id: classroom.classgroup_id,
@@ -138,6 +147,33 @@ export default function Insert() {
     setClassroom(new_data);
   };
 
+
+  function _onDelete(data) { 
+    Swal.fire({
+      title: "Are you sure ?",
+      text: "Confirm to delete " + data.classgroup_code,
+      icon: "warning",
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setShowLoading(true);
+        classgroup_model
+          .deleteClassgroupByCode({ classgroup_code: data.classgroup_code })
+          .then((res) => {
+            if (res.require) {
+              setShowLoading(false);
+              Swal.fire("Success Deleted!", "", "success");
+              window.location.reload();
+            } else {
+              setShowLoading(false);
+              Swal.fire("Sorry, Someting worng !", "", "error");
+            }
+          });
+      }
+    });
+  }
+
+  
   return (
     <div>
       <div className="animated fadeIn">
@@ -162,6 +198,7 @@ export default function Insert() {
                           [`subject_code`]: e,
                         })
                       }
+                      disabled
                     />
                   </CCol>
                   <CCol md="3">
@@ -178,6 +215,7 @@ export default function Insert() {
                         name="classgroup_id"
                         value={classroom.classgroup_id}
                         onChange={(e) => _changeFrom(e)}
+                        disabled
                       />
 
                     </CFormGroup>
@@ -200,6 +238,7 @@ export default function Insert() {
                             [`user_code`]: e,
                           })
                         }
+                        disabled
                       />
 
                     </CFormGroup>
@@ -217,7 +256,8 @@ export default function Insert() {
                         type="text"
                         name="classgroup_number"
                         value={classroom.classgroup_number}
-                        onChange={(e) => _changeFrom(e)}
+                        onChange={(e) => _changeFrom(e)} 
+                        disabled
                       />
                       <p className="text-muted">Example :ห้อง 18311</p>
                     </CFormGroup>
@@ -234,11 +274,87 @@ export default function Insert() {
             >
               บันทึก
             </CButton>
-            <Link to="/material-type">
+            <Link to="/class-group">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
             </Link>
           </CCardFooter>
         </CCard>
+        <CCard>
+        <CCardHeader className="header-t-red">
+        รายชื่อ / Name list
+          <Link to={`/class-group/insert`} className="btn btn-success float-right">
+            <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มรายชื่อด้วยไฟล์ Excel
+          </Link>
+          <Link to={`/class-group/insert`} className="btn btn-primary float-right">
+            <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มรายชื่อด้วยตัวเอง
+          </Link>
+        </CCardHeader>
+        <CCardBody>
+          <Table
+            showRowNo={true}
+            dataSource={classgroup}
+            dataTotal={classgroup}
+            rowKey=""
+            columns={[
+              {
+                title: "รหัสกลุ่มเรียน",
+                dataIndex: "classgroup_code",
+                filterAble: true,
+                ellipsis: true,
+                width: 120,
+                align: "center",
+              },
+              {
+                title: "รหัสวิชา",
+                dataIndex: "subject_code",
+                filterAble: true,
+                ellipsis: true,
+                width: 150,
+                align: "center",
+              }, 
+              {
+                title: "#",
+                dataIndex: "",
+                align: "center",
+                render: (cell) => {
+                  const row_accessible = [];
+                  row_accessible.push(
+                    <Link
+                      key="update"
+                      to={`/class-group/update/${cell.classgroup_code}`}
+                      title="แก้ไขรายการ"
+                    >
+                      <button type="button" className="btn btn-primary">
+                        <FontAwesomeIcon
+                          icon={faEdit}
+                          size="5s"
+                          color="white"
+                        />
+                      </button>
+                    </Link>
+                  );
+                  row_accessible.push(
+                    <button
+                      type="button"
+                      className={"btn btn-danger"}
+                      onClick={() => _onDelete(cell)}
+                    >
+                      <FontAwesomeIcon
+                        icon={faWindowClose}
+                        size="5s"
+                        color="white"
+                      />
+                    </button>
+                  );
+
+                  return row_accessible;
+                },
+                width: 120,
+              },
+            ]}
+          />
+        </CCardBody>
+      </CCard>
       </div>
     </div>
   );

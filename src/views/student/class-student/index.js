@@ -11,9 +11,9 @@ class Classstudent extends Component {
       <HashRouter>
         <React.Suspense>
           <Switch>
-            <Route exact path="/class_student/insert" render={props => <Insert {...props} {...this.props.SESSION}/>}  />
-            <Route exact path="/class_student/update/:code" render={props => <Update {...props} {...this.props.SESSION}/>}  />
-            <Route path="/class_student" render={props => <View {...props} {...this.props.SESSION} />} />
+            <Route exact path="/class-student/insert" render={props => <Insert {...props} {...this.props.SESSION}/>}  />
+            <Route exact path="/class-student/update/:code" render={props => <Update {...props} {...this.props.SESSION}/>}  />
+            <Route path="/class-student" render={props => <View {...props} {...this.props.SESSION} />} />
           </Switch>
         </React.Suspense>
       </HashRouter>
