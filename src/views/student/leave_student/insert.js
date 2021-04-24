@@ -2,17 +2,28 @@ import React, { useState, useEffect } from "react";
 import GLOBAL from "../../../GLOBAL";
 import { Link } from "react-router-dom";
 import {
-  CCard,
-  CCardHeader,
-  CCardBody,
-  CCardFooter,
-  CCol,
-  CRow,
-  CFormGroup,
-  CLabel,
-  CInput,
-  CButton,
-} from "@coreui/react";
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Col,
+  Form,
+  FormGroup,
+  Input,
+  Label,
+  Row,
+  CardImg,
+  CardImgOverlay,
+  CardTitle,
+  CardText,
+  CardSubtitle,
+  ButtonToggle,
+  Container,
+  FormText
+} from "reactstrap";
+import { connect } from "react-redux";
+
 import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
 import { TimeController } from "../../../controller";
@@ -100,7 +111,7 @@ export default function Insert() {
         user_code: classroom.user_code,
         addby: classroom.user_code,
         adddate: time_controller.reformatToDate(new Date()),
-      }); 
+      });
       if (query_result.require) {
         Swal.fire("Save success!!", "", "success");
         history.push("/class-group");
@@ -139,107 +150,88 @@ export default function Insert() {
   };
 
   return (
-    <div>
-      <div className="animated fadeIn">
-        <CCard>
-          <CCardHeader className="header-t-red">
-            กลุ่มเรียน / Class group
-          </CCardHeader>
-          <CCardBody>
-            <CRow>
-              <CCol >
-                <CRow>
-                  <CCol md="3">
-                    <CLabel>รหัสวิชา <font color="#F00">
-                      <b>*</b>
-                    </font></CLabel>
-                    <Select
-                      options={subject}
-                      value={classroom.subject_code}
-                      onChange={(e) =>
-                        setClassroom({
-                          ...classroom,
-                          [`subject_code`]: e,
-                        })
-                      }
-                    />
-                  </CCol>
-                  <CCol md="3">
-                    <CFormGroup>
-                      <CLabel>
-                        รหัสกลุ่มเรียน
-                        {" "}
-                        <font color="#F00">
-                          <b>*</b>
-                        </font>
-                      </CLabel>
-                      <CInput
-                        type="text"
-                        name="classgroup_id"
-                        value={classroom.classgroup_id}
-                        onChange={(e) => _changeFrom(e)}
-                      />
 
-                    </CFormGroup>
-                  </CCol>
-                  <CCol md="3">
-                    <CFormGroup>
-                      <CLabel>
-                        ผู้รับผิดชอบ
-                        {" "}
-                        <font color="#F00">
-                          <b>*</b>
-                        </font>
-                      </CLabel>
-                      <Select
-                        options={user}
-                        value={classroom.user_code}
-                        onChange={(e) =>
-                          setClassroom({
-                            ...classroom,
-                            [`user_code`]: e,
-                          })
-                        }
-                      />
+    <Card >
 
-                    </CFormGroup>
-                  </CCol>
-                  <CCol md="3">
-                    <CFormGroup>
-                      <CLabel>
-                        ห้องเรียน
-                        {" "}
-                        <font color="#F00">
-                          <b>*</b>
-                        </font>
-                      </CLabel>
-                      <CInput
-                        type="text"
-                        name="classgroup_number"
-                        value={classroom.classgroup_number}
-                        onChange={(e) => _changeFrom(e)}
-                      />
-                      <p className="text-muted">Example :ห้อง 18311</p>
-                    </CFormGroup>
-                  </CCol>
-                </CRow>
-              </CCol>
-            </CRow>
-          </CCardBody>
-          <CCardFooter>
-            <CButton
-              type="submit"
-              color="success"
-              onClick={() => _handleSubmit()}
-            >
-              บันทึก
-            </CButton>
-            <Link to="/material-type">
-              <CButton color="btn btn-danger">ย้อนกลับ</CButton>
-            </Link>
-          </CCardFooter>
-        </CCard>
-      </div>
-    </div>
+      <CardBody>
+        <CardTitle tag="h3">ใบลา(ลากิจ/ลาป่วย)</CardTitle>
+        <Container className="themed-container">
+          <Form>
+            <Row>
+              <Col xs="6" sm="5"><FormGroup>
+                <Label for="user_firstname">ชื่อ</Label>
+                <Input type="text" name="user_firstname" id="user_firstname" placeholder="ชื่อ" />
+              </FormGroup></Col>
+              <Col xs="6" sm="5">
+                <FormGroup>
+                  <Label for="user_lastname">นามสกุล</Label>
+                  <Input type="text" name="user_lastname" id="user_lastname" placeholder="นามสกุล" />
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs="6" sm="5">
+                <FormGroup>
+                  <Label for="user_username">รหัสนักศึกษา</Label>
+                  <Input type="text" name="user_username" id="user_username" placeholder="รหัสนักศึกษา" />
+                </FormGroup>
+              </Col>
+            </Row>
+            <legend>รายวิชาที่ต้องการลา</legend>
+            <Row>
+              <Col xs="6" sm="5"><FormGroup>
+                <Label for="user_firstname">ชื่อวิชา</Label>
+                <Input type="text" name="user_firstname" id="user_firstname" placeholder="ชื่อวิชา" />
+              </FormGroup></Col>
+              <Col xs="6" sm="5">
+                <FormGroup>
+                  <Label for="user_lastname">กลุ่มเรียน</Label>
+                  <Input type="text" name="user_lastname" id="user_lastname" placeholder="กลุ่มเรียน" />
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs="6" sm="5">
+                <FormGroup tag="fieldset">
+                  <legend>ประเภทการลา</legend>
+                  <FormGroup check>
+                    <Label check>
+                      <Input type="radio" name="radio1" />{' '}
+            ลาป่วย
+          </Label>
+                  </FormGroup>
+                  <FormGroup check>
+                    <Label check>
+                      <Input type="radio" name="radio1" />{' '}
+            ลากิจ
+          </Label>
+                  </FormGroup>
+                </FormGroup>
+              </Col>
+              <Col xs="6" sm="5">
+                <FormGroup>
+                  <Label for="exampleText">เหตุผลในการลา</Label>
+                  <Input type="textarea" name="text" id="exampleText" />
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col xs="6" sm="5">
+              <FormGroup>
+        <Label for="exampleFile">หลักฐานการลา</Label>
+        <Input type="file" name="file" id="exampleFile" />
+        <FormText color="muted">
+         หมายเหตุ ลาป่วย ให้แนบหลักฐานใบรับรองแพทย์
+                , ลากิจ  ให้แนบหลักฐานกิจกรรมที่ลาไป
+        </FormText>
+      </FormGroup>
+              </Col>
+            </Row>
+            <ButtonToggle color="success">ยืนยัน</ButtonToggle>{' '} <ButtonToggle color="danger">ยกเลิก</ButtonToggle>{' '}
+          </Form></Container>
+
+      </CardBody>
+    </Card>
   );
 }
+
