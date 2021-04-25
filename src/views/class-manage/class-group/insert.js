@@ -32,13 +32,15 @@ export default function Insert() {
   let history = useHistory();
   const [user, setUser] = useState([]);
   const [subject, setSubject] = useState([]);
-  const [classgroup, setClassgroup] = useState([])
   const [classroom, setClassroom] = useState({
     classgroup_code: "",
     classgroup_id: "",
     classgroup_number: "",
     subject_code: "",
     user_code: "",
+    user_fullname: "",
+    leave_maxcount: "",
+    max_score: "",
     addby: ""
   })
 
@@ -55,18 +57,18 @@ export default function Insert() {
       "CG" +
       date.getFullYear() +
       (date.getMonth() + 1).toString().padStart(2, "0");
-   
+
     const class_data = await classgroup_model.getClassgroupMaxCode({
       code: code,
       digit: 4,
     });
-    let classform = {} 
+    let classform = {}
     classform.classgroup_code = class_data.data
     classform.addby = user_session.user_code
     setClassroom(classform);
 
     const user_data = await user_model.getUserBy({
-      user_position_code: "UP001"
+      user_position_code: "UP002"
     })
     let user_form = user_data.data;
     let select_user = [];
@@ -91,16 +93,18 @@ export default function Insert() {
   }
 
   async function _handleSubmit() {
-    if (_checkSubmit()) {  
+    if (_checkSubmit()) {
       let query_result = await classgroup_model.insertClassgroup({
         classgroup_code: classroom.classgroup_code,
         classgroup_id: classroom.classgroup_id,
         classgroup_number: classroom.classgroup_number,
         subject_code: classroom.subject_code,
         user_code: classroom.user_code,
+        max_score: classroom.max_score,
+        leave_maxcount: classroom.leave_maxcount,
         addby: classroom.user_code,
         adddate: time_controller.reformatToDate(new Date()),
-      }); 
+      });
       if (query_result.require) {
         Swal.fire("Save success!!", "", "success");
         history.push("/class-group");
@@ -138,6 +142,35 @@ export default function Insert() {
     setClassroom(new_data);
   };
 
+  const findArray = (data, key, keyword) => {
+    if (Array.isArray(data)) {
+      let res = data.find((item, idx) => {
+        return item[key] == keyword;
+      });
+      return res;
+    } else {
+      for (let i in data) {
+        if (data[i][key] == keyword) {
+          let resArr = data[i][key];
+          return resArr;
+        }
+      }
+    }
+  };
+
+
+  const _changeInSelect = (e, value) => {
+    switch (value) {
+      case "user_name":
+        let user_names = findArray(user, "value", e);
+        setClassroom({
+          ...classroom,
+          user_fullname: user_names.user_full_name
+        });
+        break;
+    }
+  };
+ 
   return (
     <div>
       <div className="animated fadeIn">
@@ -194,12 +227,7 @@ export default function Insert() {
                       <Select
                         options={user}
                         value={classroom.user_code}
-                        onChange={(e) =>
-                          setClassroom({
-                            ...classroom,
-                            [`user_code`]: e,
-                          })
-                        }
+                        onChange={(e) => _changeInSelect(e, `user_name`)} 
                       />
 
                     </CFormGroup>

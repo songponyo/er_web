@@ -76,7 +76,7 @@ export default function View() {
             columns={[
               {
                 title: "รหัสกลุ่มเรียน",
-                dataIndex: "classgroup_code",
+                dataIndex: "classgroup_id",
                 filterAble: true,
                 ellipsis: true,
                 width: 120,
@@ -84,7 +84,15 @@ export default function View() {
               },
               {
                 title: "รหัสวิชา",
-                dataIndex: "subject_code",
+                dataIndex: "subject_fullname", 
+                filterAble: true,
+                ellipsis: true,
+                width: 150,
+                align: "center",
+              },
+              {
+                title: "ผู้รับผิดชอบ",
+                dataIndex: "user_fullname",
                 filterAble: true,
                 ellipsis: true,
                 width: 150,
@@ -132,7 +140,7 @@ export default function View() {
             ]}
           />
         </CCardBody>
-      </CCard> 
+      </CCard>
     </div>
   );
 }

@@ -28,11 +28,14 @@ export default function View() {
   }, []);
 
   async function _fetchData() {
-    const classgroup_data = await classgroup_model.getClassgroupBy({});
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    const classgroup_data = await classgroup_model.getClassgroupBy({
+      keyword : user_session.user_code
+    });
     setClassgroup(classgroup_data.data);
   }
 
-  function _onDelete(data) { 
+  function _onDelete(data) {
     Swal.fire({
       title: "Are you sure ?",
       text: "Confirm to delete " + data.classgroup_code,
@@ -75,7 +78,7 @@ export default function View() {
             columns={[
               {
                 title: "รหัสกลุ่มเรียน",
-                dataIndex: "classgroup_code",
+                dataIndex: "classgroup_id",
                 filterAble: true,
                 ellipsis: true,
                 width: 120,
@@ -83,12 +86,20 @@ export default function View() {
               },
               {
                 title: "รหัสวิชา",
-                dataIndex: "subject_code",
+                dataIndex: "subject_fullname", 
                 filterAble: true,
                 ellipsis: true,
                 width: 150,
                 align: "center",
-              }, 
+              },
+              {
+                title: "ผู้รับผิดชอบ",
+                dataIndex: "user_fullname",
+                filterAble: true,
+                ellipsis: true,
+                width: 150,
+                align: "center",
+              },
               {
                 title: "#",
                 dataIndex: "",

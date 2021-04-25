@@ -234,7 +234,7 @@ export default function Insert() {
             >
               บันทึก
             </CButton>
-            <Link to="/course_student">
+            <Link to="/material-type">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
             </Link>
           </CCardFooter>

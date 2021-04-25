@@ -82,7 +82,7 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
     students.push({
         _tag: "CSidebarNavItem",
         name: "เช็คชื่อ",
-        to: "/purchase-order",
+        to: "/check-login",
         icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
         exact: false,
         // badge: {
