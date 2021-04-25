@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import {
-  CButton,
   CCard,
+  CCardHeader,
   CCardBody,
   CCardFooter,
   CCol,
-  CContainer,
-  CForm,
+  CRow,
+  CFormGroup,
+  CLabel,
   CInput,
-  CInputGroup,
-  CInputGroupPrepend,
-  CInputGroupText,
-  CRow
-} from '@coreui/react'
+  CButton,
+  CContainer,
+  CImg
+} from "@coreui/react";
 import CIcon from '@coreui/icons-react'
 
 const Register = () => {
@@ -33,132 +33,268 @@ const Register = () => {
   console.log(user);
   const checkpassword = (e) => {
     const { value, name } = e.target;
-    let users = { ...user};
-    users [name] = value;
-   console.log(value);
-   console.log(name);
-    }
-    // async _handleSubmit = () => {
+    let users = { ...user };
+    users[name] = value;
+    console.log(value);
+    console.log(name);
+  }
+  // async _handleSubmit = () => {
 
-    //     const res = await user_model.insertUser({
-    //       user_code: this.state.user_code.trim(),
-    //       license_code: this.state.license_code,
-    //       user_position_code: this.state.user_position_code,
-    //       user_prefix: this.state.user_prefix,
-    //       user_name: this.state.user_name.trim(),
-    //       user_lastname: this.state.user_lastname.trim(),
-    //       user_tel: this.state.user_tel.trim(),
-    //       user_email: this.state.user_email.trim(),
-    //       user_address: this.state.user_address.trim(),
-    //       user_zipcode: this.state.user_zipcode.trim(),
-    //       user_username: this.state.user_username.trim(),
-    //       user_password: this.state.user_password.trim(),
-    //       user_profile_image: user_profile_image,
-    //       user_status: this.state.user_status,
-    //       addby: this.props.USER.user_code,
-    //     });
-  
-    //     if (res.require) {
-    //       Swal.fire("Save success!!", "", "success");
-    //       this.props.history.push("/user");
-    //     } else {
-    //       Swal.fire("Sorry, Someting worng !", "", "error");
-    //     }
-    //   }
-    // }
+  //     const res = await user_model.insertUser({
+  //       user_code: this.state.user_code.trim(),
+  //       license_code: this.state.license_code,
+  //       user_position_code: this.state.user_position_code,
+  //       user_prefix: this.state.user_prefix,
+  //       user_name: this.state.user_name.trim(),
+  //       user_lastname: this.state.user_lastname.trim(),
+  //       user_tel: this.state.user_tel.trim(),
+  //       user_email: this.state.user_email.trim(),
+  //       user_address: this.state.user_address.trim(),
+  //       user_zipcode: this.state.user_zipcode.trim(),
+  //       user_username: this.state.user_username.trim(),
+  //       user_password: this.state.user_password.trim(),
+  //       user_profile_image: user_profile_image,
+  //       user_status: this.state.user_status,
+  //       addby: this.props.USER.user_code,
+  //     });
+
+  //     if (res.require) {
+  //       Swal.fire("Save success!!", "", "success");
+  //       this.props.history.push("/user");
+  //     } else {
+  //       Swal.fire("Sorry, Someting worng !", "", "error");
+  //     }
+  //   }
+  // }
   return (
-    <div className="c-app c-default-layout flex-row align-items-center">
-      <CContainer>
-        <CRow className="justify-content-center">
-          <CCol md="9" lg="7" xl="6">
-            <CCard className="mx-4">
-              <CCardBody className="p-4">
-                <CForm>
-                  <h1>สมัครสมาชิก</h1>
-                  <p className="text-muted">สร้างบัญชีของคุณ</p>
-                  <CInputGroup className="mb-3">
-                    <CInput type="text"
-                      value={user.user_username}
-                      onChange={(e) => setUser({ ...user, user_username: e.target.value })}
-                      placeholder="Username" autoComplete="username" />
-                  </CInputGroup>
-                  
-                  
-                  <CInputGroup className="mb-3">
-                    <CInput type="password" 
-                    value={user.user_password}
-                    onChange={(e) => setUser({ ...user, user_password: e.target.value })}
-                    placeholder="Password" autoComplete="new-password" />
-                  </CInputGroup>
-                  {/* <CInputGroup className="mb-4">
-                    <CInput type="password" name="user_passwordre"
-                    value={user.user_passwordre}
-                    onChange={(e) => checkpassword(e)}
-                    placeholder="Repeat password" autoComplete="user_passwordre" />
-                  </CInputGroup> */}
-                    <CInputGroup className="mb-3">
+    <div>
+      <div className="animated fadeIn" className="px-5">
+        <CCard >
+          <CCardHeader className="header-t-red">
+            สมัครสมาชิก / register
+        </CCardHeader>
+          <CCardBody >
+          <CRow>
+              <CCol>
+                <CRow>
+                  <CCol md="4">
+                    <CFormGroup>
+                      <CLabel>
+                        ชื่อผู้ใช้
+                    </CLabel>
+                      <CInput
+                        type="text"
+                      // name="classgroup_id"
+                      // value={classroom.classgroup_id}
+                      // onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>
+                        รหัสผ่าน
+                    </CLabel>
+                      <CInput
+                        type="text"
+                      // name="classgroup_id"
+                      // value={classroom.classgroup_id}
+                      // onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>
+                        ยืนยันรหัสผ่าน
+                    </CLabel>
+                      <CInput
+                        type="text"
+                      // name="classgroup_id"
+                      // value={classroom.classgroup_id}
+                      // onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                </CRow>
+              </CCol>
 
-                    <CInput type="text" 
-                    value={user.user_prefix}
-                    onChange={(e) => setUser({ ...user, user_prefix: e.target.value })}
-                    placeholder="คำนำหน้า" autoComplete="user_prefix" />
-                  </CInputGroup>
-                   <CInputGroup className="mb-3">
+            </CRow>
+            <CRow >
+              <CCol >
+                <CRow>
+                  <CCol md="1">
+                    <CFormGroup>
+                      <CLabel>
+                        คำนำหน้า
+                    </CLabel>
+                      <CInput
+                        type="text"
+                      // name="classgroup_id"
+                      // value={classroom.classgroup_id}
+                      // onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>
+                        ชื่อ
+                    </CLabel>
+                      <CInput
+                        type="text"
+                      // name="classgroup_id"
+                      // value={classroom.classgroup_id}
+                      // onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>
+                        นามสกุล
+                    </CLabel>
+                      <CInput
+                        type="text"
+                      // name="classgroup_id"
+                      // value={classroom.classgroup_id}
+                      // onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                </CRow>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol>
+                <CRow>
+                  <CCol md="4">
+                    <CFormGroup>
+                      <CLabel>
+                        รหัสนักศึกษา
+                    </CLabel>
+                      <CInput
+                        type="text"
+                      // name="classgroup_id"
+                      // value={classroom.classgroup_id}
+                      // onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
 
-                    <CInput type="text" 
-                    value={user.fname}
-                    onChange={(e) => setUser({ ...user, fname: e.target.value })}
-                    placeholder="ชื่อ" autoComplete="fname" />
-                  </CInputGroup>
-                   <CInputGroup className="mb-3">
+                </CRow>
+              </CCol>
 
-                    <CInput type="text" 
-                    value={user.lname}
-                    onChange={(e) => setUser({ ...user, lname: e.target.value })}
-                    placeholder="นามสกุล" autoComplete="lname" />
-                  </CInputGroup>
-                  <CInputGroup className="mb-3">
+            </CRow>
+            <CRow>
+              <CCol>
+                <CRow>
+                  <CCol md="4">
+                    <CFormGroup>
+                      <CLabel>
+                        คณะ
+                    </CLabel>
+                      <CInput
+                        type="text"
+                      // name="classgroup_id"
+                      // value={classroom.classgroup_id}
+                      // onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>
+                        สาขา
+                    </CLabel>
+                      <CInput
+                        type="text"
+                      // name="classgroup_id"
+                      // value={classroom.classgroup_id}
+                      // onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                </CRow>
+              </CCol>
 
-                    <CInput type="text" 
-                    value={user.id_student}
-                    onChange={(e) => setUser({ ...user, id_student: e.target.value })}
-                    placeholder="รหัสนักศึกษา" autoComplete="id_student" />
-                  </CInputGroup>
-                  <CInputGroup className="mb-3">
+            </CRow>
+            <CRow>
+              <CCol>
+                <CRow>
+                  <CCol md="4">
+                    <CFormGroup>
+                      <CLabel>
+                        Email
+                    </CLabel>
+                      <CInput
+                        type="text"
+                      // name="classgroup_id"
+                      // value={classroom.classgroup_id}
+                      // onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>
+                        เบอร์โทรศัพท์
+                    </CLabel>
+                      <CInput
+                        type="text"
+                      // name="classgroup_id"
+                      // value={classroom.classgroup_id}
+                      // onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                </CRow>
+              </CCol>
 
-                    <CInput type="text" 
-                    value={user.faculty}
-                    onChange={(e) => setUser({ ...user, faculty: e.target.value })}
-                    placeholder="คณะ" autoComplete="faculty" />
-                  </CInputGroup>
-                  <CInputGroup className="mb-3">
+            </CRow>
+            <CRow>
+              <CCol>
+                <CRow>
+                  <CCol md="4">
+                    <CLabel>
+                     รูปโปรไฟล์
+                    </CLabel>
+                    {/* <CImg
+                src={user.user_image.src}
+                alt="Logo"
+                width="60"
+                className="img-circle-profile"
+              />
+              <br />
+              <br /> */}
+                    <CInput
+                      type="file"
+                      name="user_image"
+                      accept="image/png, image/jpeg"
+                    // onChange={(e) => _handleImageChange("user_image", e)}
+                    />
+                  </CCol>
 
-                    <CInput type="text" 
-                    value={user.program}
-                    onChange={(e) => setUser({ ...user, program: e.target.value })}
-                    placeholder="สาขาวิชา" autoComplete="program" />
-                  </CInputGroup>
-                  <CInputGroup className="mb-3">
+                </CRow>
+              </CCol>
 
-                    <CInput type="text" 
-                    value={user.phone}
-                    onChange={(e) => setUser({ ...user, phone: e.target.value })}
-                    placeholder="เบอร์โทรศัพท์" autoComplete="phone" />
-                  </CInputGroup>
-                  <CInputGroup className="mb-3">
+            </CRow>
+          </CCardBody>
+          <CCardFooter>
+            <CButton
+              type="submit"
+              color="success"
+              // onClick={() => _handleSubmit()}
+            >
+              สมัครสมาชิก
+          </CButton>
+            {/* <Link to="/material-type"> */}
+              <CButton color="btn btn-danger">ย้อนกลับ</CButton>
+            {/* </Link> */}
+          </CCardFooter>
+        </CCard>
 
-                    <CInput type="text" 
-                    value={user.id_line}
-                    onChange={(e) => setUser({ ...user, id_line: e.target.value })}
-                    placeholder="ไอดีไลน์" autoComplete="id_line" />
-                  </CInputGroup>
-                  <CButton color="success" block>Create Account</CButton>
-                </CForm>
-              </CCardBody>
-            </CCard>
-          </CCol>
-        </CRow>
-      </CContainer>
+      </div>
     </div>
   )
 }

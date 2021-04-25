@@ -117,7 +117,13 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
         icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
         exact: false,
     })
-
+    masters.push({
+        _tag: "CSidebarNavItem",
+        name: "ข้อมูลส่วนตัว",
+        to: "/profile",
+        icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
+        exact: false,
+    })
 
     //===========================================================================================================================//
 
