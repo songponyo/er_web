@@ -9,7 +9,7 @@ const class_group = React.lazy(() => import("./views/class-manage/class-group"))
 const course_student =  React.lazy(() => import("./views/student/course-student"))
 const class_student = React.lazy(() => import("./views/student/class-student"))
 const leave_student = React.lazy(() => import("./views/student/leave-student"))
-
+const profile = React.lazy(() => import("./views/master-data/profile"))
 
 
 const routes = [
@@ -21,8 +21,14 @@ const routes = [
   { path: "/course", name: "Course", permission_name: 'course', component: course }, 
   { path: "/class-student", name: "Class-student", permission_name: 'class-student', component: class_student }, 
   { path: "/leave-student", name: "Leave-student", permission_name: 'leave-student', component: leave_student }, 
+<<<<<<< Updated upstream
   { path: "/course-student", name: "Course-student", permission_name: 'course-student', component: course_student }, 
+=======
+  { path: "/course_student", name: "Course_student", permission_name: 'course_student', component: course_student }, 
+  { path: "/profile", name: "Profile", permission_name: 'profile', component: profile },
+>>>>>>> Stashed changes
   { path: "/", exact: true, name: "Home" }
+  
 ]
 
 export default routes
