@@ -148,34 +148,7 @@ export default function Update() {
     new_data[name] = value;
     setClassroom(new_data);
   };
-
-
-  function _onDelete(data) {
-    Swal.fire({
-      title: "Are you sure ?",
-      text: "Confirm to delete " + data.classgroup_code,
-      icon: "warning",
-      showCancelButton: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setShowLoading(true);
-        classgroup_model
-          .deleteClassgroupByCode({ classgroup_code: data.classgroup_code })
-          .then((res) => {
-            if (res.require) {
-              setShowLoading(false);
-              Swal.fire("Success Deleted!", "", "success");
-              window.location.reload();
-            } else {
-              setShowLoading(false);
-              Swal.fire("Sorry, Someting worng !", "", "error");
-            }
-          });
-      }
-    });
-  }
-
-
+ 
   return (
     <div>
       <div className="animated fadeIn">
@@ -200,7 +173,7 @@ export default function Update() {
                           [`subject_code`]: e,
                         })
                       }
-                      disabled
+                      
                     />
                   </CCol>
                   <CCol md="3">
@@ -217,7 +190,7 @@ export default function Update() {
                         name="classgroup_id"
                         value={classroom.classgroup_id}
                         onChange={(e) => _changeFrom(e)}
-                        disabled
+                        
                       />
 
                     </CFormGroup>
@@ -233,7 +206,7 @@ export default function Update() {
                       </CLabel>
                       <Select
                         options={user}
-                        value={classroom.user_code}
+                        value={classroom.user_fullname}
                         onChange={(e) =>
                           setClassroom({
                             ...classroom,
@@ -259,7 +232,7 @@ export default function Update() {
                         name="classgroup_number"
                         value={classroom.classgroup_number}
                         onChange={(e) => _changeFrom(e)}
-                        disabled
+                        
                       />
                       <p className="text-muted">Example :ห้อง 18311</p>
                     </CFormGroup>

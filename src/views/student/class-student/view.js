@@ -29,7 +29,10 @@ export default function View() {
   }, []);
 
   async function _fetchData() {
-    const classgroup_data = await classgroup_model.getClassgroupBy({});
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    const classgroup_data = await classgroup_model.getClassgroupByMycourse({
+      user_code: user_session.user_code
+    });
     setClassgroup(classgroup_data.data);
   }
 

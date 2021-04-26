@@ -29,23 +29,21 @@ export default function View() {
 
   async function _fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    const classgroup_data = await classgroup_model.getClassgroupBy({
-      keyword : user_session.user_code
-    });
+    const classgroup_data = await classgroup_model.getClassgroupBy({});
     setClassgroup(classgroup_data.data);
   }
 
   function _onDelete(data) {
     Swal.fire({
       title: "Are you sure ?",
-      text: "Confirm to delete " + data.classgroup_code,
+      text: "Confirm to delete "   + data.classgroup_id +"   "+ data.subject_fullname ,
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
         setShowLoading(true);
         classgroup_model
-          .deleteClassgroupByCode({ classgroup_code: data.classgroup_code })
+          .deleteClassgroupByCode({ classgroup_code: data.classgroup_code, table_name : data.classgroup_table_score })
           .then((res) => {
             if (res.require) {
               setShowLoading(false);
@@ -95,6 +93,14 @@ export default function View() {
               {
                 title: "ผู้รับผิดชอบ",
                 dataIndex: "user_fullname",
+                filterAble: true,
+                ellipsis: true,
+                width: 150,
+                align: "center",
+              },
+              {
+                title: "ห้อง",
+                dataIndex: "classgroup_number",
                 filterAble: true,
                 ellipsis: true,
                 width: 150,

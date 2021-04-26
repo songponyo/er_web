@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "antd/dist/antd.css";
 import { Table, Button, Popconfirm, Row, Col, Upload } from "antd";
-import Icon from '@ant-design/icons';
+import Icon, { WindowsOutlined } from '@ant-design/icons';
 import { ExcelRenderer } from "react-excel-renderer";
 import { EditableFormRow, EditableCell } from "../utility/editable";
 import Swal from "sweetalert2";
@@ -12,7 +12,7 @@ import { Link, useHistory, useRouteMatch } from "react-router-dom";
 const score_model = new ScoreModel();
 export default class ExcelPage extends Component {
 
-  constructor(props) { 
+  constructor(props) {
     super(props);
     this.state = {
       cols: [],
@@ -34,46 +34,46 @@ export default class ExcelPage extends Component {
           dataIndex: "user_lastname",
           editable: true
         },
-        {
-          title: "คะแนนชื่อที่ 1",
-          dataIndex: "score_one",
-          editable: true
-        },
-        {
-          title: "คะแนนชื่อที่ 2",
-          dataIndex: "score_two",
-          editable: true
-        },
-        {
-          title: "คะแนนชื่อที่ 3",
-          dataIndex: "score_three",
-          editable: true
-        },
-        {
-          title: "คะแนนชื่อที่ 4",
-          dataIndex: "score_four",
-          editable: true
-        },
-        {
-          title: "คะแนนชื่อที่ 5",
-          dataIndex: "score_five",
-          editable: true
-        },
-        {
-          title: "คะแนนชื่อที่ 6",
-          dataIndex: "score_sixt",
-          editable: true
-        },
-        {
-          title: "จำนวนครั้งทั้ลากิจ",
-          dataIndex: "leave_count",
-          editable: true
-        },
-        {
-          title: "คะแนนทั้งหมด",
-          dataIndex: "score_total",
-          editable: true
-        },
+        // {
+        //   title: "คะแนนชื่อที่ 1",
+        //   dataIndex: "score_one",
+        //   editable: true
+        // },
+        // {
+        //   title: "คะแนนชื่อที่ 2",
+        //   dataIndex: "score_two",
+        //   editable: true
+        // },
+        // {
+        //   title: "คะแนนชื่อที่ 3",
+        //   dataIndex: "score_three",
+        //   editable: true
+        // },
+        // {
+        //   title: "คะแนนชื่อที่ 4",
+        //   dataIndex: "score_four",
+        //   editable: true
+        // },
+        // {
+        //   title: "คะแนนชื่อที่ 5",
+        //   dataIndex: "score_five",
+        //   editable: true
+        // },
+        // {
+        //   title: "คะแนนชื่อที่ 6",
+        //   dataIndex: "score_sixt",
+        //   editable: true
+        // },
+        // {
+        //   title: "จำนวนครั้งทั้ลากิจ",
+        //   dataIndex: "leave_count",
+        //   editable: true
+        // },
+        // {
+        //   title: "คะแนนทั้งหมด",
+        //   dataIndex: "score_total",
+        //   editable: true
+        // },
         {
           title: "การจัดการ",
           dataIndex: "action",
@@ -168,15 +168,15 @@ export default class ExcelPage extends Component {
               key: index,
               user_username: row[0],
               user_firstname: row[1],
-              user_lastname: row[2],
-              score_one: row[3],
-              score_two: row[4],
-              score_three: row[5],
-              score_four: row[6],
-              score_five: row[7],
-              score_sixt: row[8],
-              leave_count: row[9],
-              score_total: row[10]
+              user_lastname: row[2]
+              // score_one: row[3],
+              // score_two: row[4],
+              // score_three: row[5],
+              // score_four: row[6],
+              // score_five: row[7],
+              // score_sixt: row[8],
+              // leave_count: row[9],
+              // score_total: row[10]
             });
           }
         });
@@ -198,14 +198,15 @@ export default class ExcelPage extends Component {
   };
 
   handleSubmit = async () => {
-    console.log("submitting: ", this.state.rows);
+    // console.log("submitting: ", this.state.rows);
     //submit to API
     //if successful, banigate and clear the data
     //this.setState({ rows: [] })
 
     const query_result = await score_model.insertScore({
       table_name: this.props.data.classgroup_table_score,
-      row: this.state.rows
+      row: this.state.rows,
+      user_status: "Not active"
     });
 
     this.setState(
@@ -219,6 +220,7 @@ export default class ExcelPage extends Component {
           this.props.history.push("/class-group/");
         } else {
           Swal.fire({ title: "เกิดข้อผิดพลาด !", icon: "error" });
+          window.location.reload();
         }
       }
     );
@@ -229,20 +231,7 @@ export default class ExcelPage extends Component {
     const rows = [...this.state.rows];
     this.setState({ rows: rows.filter(item => item.key !== key) });
   };
-  handleAdd = () => {
-    const { count, rows } = this.state;
-    const newData = {
-      key: count,
-      name: "User's name",
-      age: "22",
-      gender: "Female"
-    };
-    this.setState({
-      rows: [newData, ...rows],
-      count: count + 1
-    });
-  };
-
+ 
   render() {
     const components = {
       body: {

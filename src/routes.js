@@ -20,13 +20,10 @@ const routes = [
   { path: "/class-group", name: "Class-group", permission_name: 'class-group', component: class_group },
   { path: "/course", name: "Course", permission_name: 'course', component: course }, 
   { path: "/class-student", name: "Class-student", permission_name: 'class-student', component: class_student }, 
-  { path: "/leave-student", name: "Leave-student", permission_name: 'leave-student', component: leave_student }, 
-<<<<<<< Updated upstream
+  { path: "/leave-student", name: "Leave-student", permission_name: 'leave-student', component: leave_student },  
   { path: "/course-student", name: "Course-student", permission_name: 'course-student', component: course_student }, 
-=======
-  { path: "/course_student", name: "Course_student", permission_name: 'course_student', component: course_student }, 
   { path: "/profile", name: "Profile", permission_name: 'profile', component: profile },
->>>>>>> Stashed changes
+ 
   { path: "/", exact: true, name: "Home" }
   
 ]

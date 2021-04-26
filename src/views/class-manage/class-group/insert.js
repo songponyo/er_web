@@ -31,6 +31,7 @@ const time_controller = new TimeController();
 export default function Insert() {
   let history = useHistory();
   const [user, setUser] = useState([]);
+  const [userselect, setUserselect] = useState([])
   const [subject, setSubject] = useState([]);
   const [classroom, setClassroom] = useState({
     classgroup_code: "",
@@ -69,7 +70,9 @@ export default function Insert() {
 
     const user_data = await user_model.getUserBy({
       user_position_code: "UP002"
-    })
+    }) 
+    setUser(user_data.data)
+
     let user_form = user_data.data;
     let select_user = [];
     for (let i = 0; i < user_form.length; i++) {
@@ -78,7 +81,7 @@ export default function Insert() {
         label: user_form[i].user_full_name,
       });
     }
-    setUser(select_user)
+    setUserselect(select_user)
 
     const subject_data = await subject_model.getSubjectBy({});
     let subject_form = subject_data.data;
@@ -102,7 +105,7 @@ export default function Insert() {
         user_code: classroom.user_code,
         max_score: classroom.max_score,
         leave_maxcount: classroom.leave_maxcount,
-        addby: classroom.user_code,
+        addby: classroom.addby,
         adddate: time_controller.reformatToDate(new Date()),
       });
       if (query_result.require) {
@@ -142,35 +145,36 @@ export default function Insert() {
     setClassroom(new_data);
   };
 
-  const findArray = (data, key, keyword) => {
-    if (Array.isArray(data)) {
-      let res = data.find((item, idx) => {
-        return item[key] == keyword;
-      });
-      return res;
-    } else {
-      for (let i in data) {
-        if (data[i][key] == keyword) {
-          let resArr = data[i][key];
-          return resArr;
-        }
-      }
-    }
-  };
+  // const findArray = (data, key, keyword) => {
+  //   if (Array.isArray(data)) {
+  //     let res = data.find((item, idx) => {
+  //       return item[key] == keyword;
+  //     });
+  //     return res;
+  //   } else {
+  //     for (let i in data) {
+  //       if (data[i][key] == keyword) {
+  //         let resArr = data[i][key];
+  //         return resArr;
+  //       }
+  //     }
+  //   }
+  // };
 
 
-  const _changeInSelect = (e, value) => {
-    switch (value) {
-      case "user_name":
-        let user_names = findArray(user, "value", e);
-        setClassroom({
-          ...classroom,
-          user_fullname: user_names.user_full_name
-        });
-        break;
-    }
-  };
- 
+  // const _changeInSelect = (e, value) => { 
+  //   switch (value) {
+  //     case "user_code":
+  //       let user_names = findArray(userselect, "value", e);
+  //       console.log("user_names",user_names);
+  //       setClassroom({
+  //         ...classroom,
+  //         user_code: user_names.value,
+  //         user_fullname: user_names.label
+  //       });
+  //       break;
+  //   }
+  // }; 
   return (
     <div>
       <div className="animated fadeIn">
@@ -225,9 +229,14 @@ export default function Insert() {
                         </font>
                       </CLabel>
                       <Select
-                        options={user}
+                        options={userselect}
                         value={classroom.user_code}
-                        onChange={(e) => _changeInSelect(e, `user_name`)} 
+                        onChange={(e) =>
+                          setClassroom({
+                            ...classroom,
+                            [`user_code`]: e,
+                          })
+                        }
                       />
 
                     </CFormGroup>
@@ -262,7 +271,7 @@ export default function Insert() {
             >
               บันทึก
             </CButton>
-            <Link to="/material-type">
+            <Link to="/class-group">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
             </Link>
           </CCardFooter>

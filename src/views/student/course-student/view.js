@@ -6,7 +6,7 @@ import {
   CCol,
   CCard,
   CCardHeader,
-  CCardBody, 
+  CCardBody,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,6 +14,8 @@ import {
   faEdit,
   faCheck,
   faWindowClose,
+  faCoffee,
+  faAddressCard
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { Table, Loading } from "../../../component/revel-strap";
@@ -84,7 +86,7 @@ export default function View() {
               },
               {
                 title: "รหัสวิชา",
-                dataIndex: "subject_fullname", 
+                dataIndex: "subject_fullname",
                 filterAble: true,
                 ellipsis: true,
                 width: 150,
@@ -106,32 +108,21 @@ export default function View() {
                   const row_accessible = [];
                   row_accessible.push(
                     <Link
-                      key="update"
-                      to={`/class-group/update/${cell.classgroup_code}`}
-                      title="แก้ไขรายการ"
+                      key="register"
+                      to={`/course-student/register/${cell.classgroup_code}`}
+                      title="สมัครสมาชิก"
                     >
                       <button type="button" className="btn btn-primary">
+
                         <FontAwesomeIcon
-                          icon={faEdit}
+                          icon={faAddressCard}
                           size="5s"
                           color="white"
                         />
                       </button>
                     </Link>
                   );
-                  row_accessible.push(
-                    <button
-                      type="button"
-                      className={"btn btn-danger"}
-                      onClick={() => _onDelete(cell)}
-                    >
-                      <FontAwesomeIcon
-                        icon={faWindowClose}
-                        size="5s"
-                        color="white"
-                      />
-                    </button>
-                  );
+
 
                   return row_accessible;
                 },
