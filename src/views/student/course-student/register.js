@@ -81,7 +81,7 @@ export default function Register() {
         user_username: user.user_username,
         user_firstname: user.user_firstname,
         user_lastname: user.user_lastname,
-        user_code: user.user_code,
+        user_code: user.user_code,  
         user_status: "Active",
         table_name: classroom.classgroup_table_score,
         adddate: time_controller.reformatToDate(new Date()),

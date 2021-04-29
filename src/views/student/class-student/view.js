@@ -86,7 +86,7 @@ export default function View() {
                 align: "center",
               },
               {
-                title: "รหัสวิชา",
+                title: "ชื่อวิชา",
                 dataIndex: "subject_fullname", 
                 filterAble: true,
                 ellipsis: true,

@@ -12,6 +12,7 @@ import {
   CLabel,
   CInput,
   CButton,
+  CContainer,
 } from "@coreui/react";
 import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
@@ -36,6 +37,7 @@ export default function Insert() {
   const [classroom, setClassroom] = useState({
     classgroup_code: "",
     classgroup_id: "",
+    classgroup_password: "",
     classgroup_number: "",
     subject_code: "",
     user_code: "",
@@ -70,7 +72,7 @@ export default function Insert() {
 
     const user_data = await user_model.getUserBy({
       user_position_code: "UP002"
-    }) 
+    })
     setUser(user_data.data)
 
     let user_form = user_data.data;
@@ -100,6 +102,7 @@ export default function Insert() {
       let query_result = await classgroup_model.insertClassgroup({
         classgroup_code: classroom.classgroup_code,
         classgroup_id: classroom.classgroup_id,
+        classgroup_password : classroom.classgroup_password,
         classgroup_number: classroom.classgroup_number,
         subject_code: classroom.subject_code,
         user_code: classroom.user_code,
@@ -176,107 +179,122 @@ export default function Insert() {
   //   }
   // }; 
   return (
-    <div>
-      <div className="animated fadeIn">
-        <CCard>
-          <CCardHeader className="header-t-red">
-            กลุ่มเรียน / Class group
+    <>
+
+      <CCard >
+        <CCardHeader className="header-t-red">
+          กลุ่มเรียน / Class group
           </CCardHeader>
-          <CCardBody>
-            <CRow>
-              <CCol >
-                <CRow>
-                  <CCol md="3">
-                    <CLabel>รหัสวิชา <font color="#F00">
-                      <b>*</b>
-                    </font></CLabel>
-                    <Select
-                      options={subject}
-                      value={classroom.subject_code}
-                      onChange={(e) =>
-                        setClassroom({
-                          ...classroom,
-                          [`subject_code`]: e,
-                        })
-                      }
-                    />
-                  </CCol>
-                  <CCol md="3">
-                    <CFormGroup>
-                      <CLabel>
-                        รหัสกลุ่มเรียน
+        <CCardBody>
+          <CRow>
+            <CCol md="3">
+              <CLabel>รหัสวิชา <font color="#F00">
+                <b>*</b>
+              </font></CLabel>
+              <Select
+                options={subject}
+                value={classroom.subject_code}
+                onChange={(e) =>
+                  setClassroom({
+                    ...classroom,
+                    [`subject_code`]: e,
+                  })
+                }
+              />
+            </CCol>
+            <CCol md="3">
+              <CFormGroup>
+                <CLabel>
+                   กลุ่มเรียน
                         {" "}
-                        <font color="#F00">
-                          <b>*</b>
-                        </font>
-                      </CLabel>
-                      <CInput
-                        type="text"
-                        name="classgroup_id"
-                        value={classroom.classgroup_id}
-                        onChange={(e) => _changeFrom(e)}
-                      />
+                  <font color="#F00">
+                    <b>*</b>
+                  </font>
+                </CLabel>
+                <CInput
+                  type="text"
+                  name="classgroup_id"
+                  value={classroom.classgroup_id}
+                  onChange={(e) => _changeFrom(e)}
+                />
 
-                    </CFormGroup>
-                  </CCol>
-                  <CCol md="3">
-                    <CFormGroup>
-                      <CLabel>
-                        ผู้รับผิดชอบ
+              </CFormGroup>
+            </CCol>
+            <CCol md="3">
+              <CFormGroup>
+                <CLabel>
+                  รหัสผ่านเข้ากลุ่มเรียน
                         {" "}
-                        <font color="#F00">
-                          <b>*</b>
-                        </font>
-                      </CLabel>
-                      <Select
-                        options={userselect}
-                        value={classroom.user_code}
-                        onChange={(e) =>
-                          setClassroom({
-                            ...classroom,
-                            [`user_code`]: e,
-                          })
-                        }
-                      />
+                  <font color="#F00">
+                    <b>*</b>
+                  </font>
+                </CLabel>
+                <CInput
+                  type="text"
+                  name="classgroup_password"
+                  value={classroom.classgroup_password}
+                  onChange={(e) => _changeFrom(e)}
+                />
 
-                    </CFormGroup>
-                  </CCol>
-                  <CCol md="3">
-                    <CFormGroup>
-                      <CLabel>
-                        ห้องเรียน
+              </CFormGroup>
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol md="3">
+              <CFormGroup>
+                <CLabel>
+                  ผู้รับผิดชอบ
                         {" "}
-                        <font color="#F00">
-                          <b>*</b>
-                        </font>
-                      </CLabel>
-                      <CInput
-                        type="text"
-                        name="classgroup_number"
-                        value={classroom.classgroup_number}
-                        onChange={(e) => _changeFrom(e)}
-                      />
-                      <p className="text-muted">Example :ห้อง 18311</p>
-                    </CFormGroup>
-                  </CCol>
-                </CRow>
-              </CCol>
-            </CRow>
-          </CCardBody>
-          <CCardFooter>
-            <CButton
-              type="submit"
-              color="success"
-              onClick={() => _handleSubmit()}
-            >
-              บันทึก
+                  <font color="#F00">
+                    <b>*</b>
+                  </font>
+                </CLabel>
+                <Select
+                  options={userselect}
+                  value={classroom.user_code}
+                  onChange={(e) =>
+                    setClassroom({
+                      ...classroom,
+                      [`user_code`]: e,
+                    })
+                  }
+                />
+
+              </CFormGroup>
+            </CCol>
+            <CCol md="3">
+              <CFormGroup>
+                <CLabel>
+                  ห้องเรียน
+                        {" "}
+                  <font color="#F00">
+                    <b>*</b>
+                  </font>
+                </CLabel>
+                <CInput
+                  type="text"
+                  name="classgroup_number"
+                  value={classroom.classgroup_number}
+                  onChange={(e) => _changeFrom(e)}
+                />
+                <p className="text-muted">Example :ห้อง 18311</p>
+              </CFormGroup>
+            </CCol>
+          </CRow>
+        </CCardBody>
+        <CCardFooter>
+          <CButton
+            type="submit"
+            color="success"
+            onClick={() => _handleSubmit()}
+          >
+            บันทึก
             </CButton>
-            <Link to="/class-group">
-              <CButton color="btn btn-danger">ย้อนกลับ</CButton>
-            </Link>
-          </CCardFooter>
-        </CCard>
-      </div>
-    </div>
+          <Link to="/class-group">
+            <CButton color="btn btn-danger">ย้อนกลับ</CButton>
+          </Link>
+        </CCardFooter>
+      </CCard>
+    </>
   );
 }

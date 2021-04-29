@@ -64,10 +64,7 @@ export default function View() {
     <div>
       <CCard>
         <CCardHeader className="header-t-red">
-          กลุ่มเรียน / Class group
-          <Link to={`/class-group/insert`} className="btn btn-success float-right">
-            <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มกลุ่มเรียน
-          </Link>
+          กลุ่มเรียน / Class group 
         </CCardHeader>
         <CCardBody>
           <Table
@@ -77,7 +74,7 @@ export default function View() {
             rowKey=""
             columns={[
               {
-                title: "รหัสกลุ่มเรียน",
+                title: "กลุ่มเรียน",
                 dataIndex: "classgroup_id",
                 filterAble: true,
                 ellipsis: true,
