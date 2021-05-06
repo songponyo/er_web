@@ -63,7 +63,7 @@ export default function View() {
         <CCardHeader className="header-t-red">
           คำขอลา / Leave list
           <Link to={`/leave-student/insert`} className="btn btn-success float-right">
-            <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มใบลา
+            <i className="fa fa-plus" aria-hidden="true"></i> ยื่นขออนุญาติ
           </Link>
         </CCardHeader>
         <CCardBody>
@@ -83,7 +83,7 @@ export default function View() {
               // },
               {
                 title: "ชื่อวิชา",
-                dataIndex: "subject_code",
+                dataIndex: "subject_name",
                 filterAble: true,
                 ellipsis: true,
                 width: 150,
@@ -91,7 +91,7 @@ export default function View() {
               }, 
               {
                 title: "ชื่อ",
-                dataIndex: "subject_code",
+                dataIndex: "user_fullname",
                 filterAble: true,
                 ellipsis: true,
                 width: 150,
@@ -99,7 +99,7 @@ export default function View() {
               }, 
               {
                 title: "สถานะคำขอ",
-                dataIndex: "subject_code",
+                dataIndex: "leave_approve",
                 filterAble: true,
                 ellipsis: true,
                 width: 150,

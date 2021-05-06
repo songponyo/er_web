@@ -13,6 +13,7 @@ import {
   faEdit,
   faCheck,
   faWindowClose,
+  faSearch
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { Table, Loading } from "../../../component/revel-strap";
@@ -36,14 +37,14 @@ export default function View() {
   function _onDelete(data) {
     Swal.fire({
       title: "Are you sure ?",
-      text: "Confirm to delete "   + data.classgroup_id +"   "+ data.subject_fullname ,
+      text: "Confirm to delete " + data.classgroup_id + "   " + data.subject_fullname,
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
         setShowLoading(true);
         classgroup_model
-          .deleteClassgroupByCode({ classgroup_code: data.classgroup_code, table_name : data.classgroup_table_score })
+          .deleteClassgroupByCode({ classgroup_code: data.classgroup_code, table_name: data.classgroup_table_score })
           .then((res) => {
             if (res.require) {
               setShowLoading(false);
@@ -84,7 +85,7 @@ export default function View() {
               },
               {
                 title: "รหัสวิชา",
-                dataIndex: "subject_fullname", 
+                dataIndex: "subject_fullname",
                 filterAble: true,
                 ellipsis: true,
                 width: 150,
@@ -112,6 +113,24 @@ export default function View() {
                 align: "center",
                 render: (cell) => {
                   const row_accessible = [];
+
+                  row_accessible.push(
+                    <Link
+                      key="update"
+                      to={`/class-group/detail/${cell.classgroup_code}`}
+                      title="แก้ไขรายการ"
+                    >
+                      <button type="button" className="btn btn-success">
+                        <FontAwesomeIcon
+                          icon={faSearch}
+                          size="5s"
+                          color="white"
+                        />
+                      </button>
+                    </Link>
+                  );
+
+
                   row_accessible.push(
                     <Link
                       key="update"

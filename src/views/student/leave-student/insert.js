@@ -19,114 +19,138 @@ import { connect } from "react-redux";
 
 import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
-import { TimeController } from "../../../controller";
-import { Select } from "../../../component/revel-strap";
+import { FileController, TimeController } from "../../../controller";
+import { Select, DatePicker } from "../../../component/revel-strap";
 
-import SubjectModel from "../../../models/SubjectModel"
 import ClassgroupModel from "../../../models/ClassgroupModel"
 import UserModel from "../../../models/UserModel"
+import LeaveModel from "../../../models/LeaveModel"
 
+const leave_model = new LeaveModel();
 const user_model = new UserModel();
 const classgroup_model = new ClassgroupModel();
-const subject_model = new SubjectModel();
 const time_controller = new TimeController();
+const file_controller = new FileController();
 
 
 export default function Insert() {
   let history = useHistory();
   const [user, setUser] = useState([]);
-  const [subject, setSubject] = useState([]);
+  const [classselect, setClassselect] = useState([])
   const [classgroup, setClassgroup] = useState([])
-  const [classroom, setClassroom] = useState({
+  const [leave, setLeave] = useState({
+    leave_image: {
+      src: "default.png",
+      file: null,
+      old: "",
+    },
+    leave_code: "",
+    leave_name: "",
     classgroup_code: "",
-    classgroup_id: "",
-    classgroup_number: "",
+    owner_class: "",
     subject_code: "",
-    user_code: "",
-    addby: ""
+    leave_start: "",
+    leave_end: "",
+    leave_type: "",
+    leave_reason: "",
+    leave_approve: "Waiting",
+    addby: "",
+    adddate: "",
+    mindate: time_controller.reformatToDate(new Date()),
   })
 
   useEffect(() => {
     fetchData();
   }, []);
-  //  console.log("classroom",classroom);
+
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    setUser(user_session)
 
     const date = new Date();
     var code = "";
     code =
-      "CG" +
+      "LC" +
       date.getFullYear() +
       (date.getMonth() + 1).toString().padStart(2, "0");
-    const class_data = await classgroup_model.getClassgroupMaxCode({
+
+
+    const leave_data = await leave_model.getLeaveMaxCode({
       code: code,
       digit: 4,
     });
-    let classform = {}
-    classform.classgroup_code = class_data.data
-    classform.addby = user_session.user_code
-    setClassroom(classform);
 
-    const user_data = await user_model.getUserBy({
-      user_position_code: "UP001"
-    })
-    let user_form = user_data.data;
-    let select_user = [];
-    for (let i = 0; i < user_form.length; i++) {
-      select_user.push({
-        value: user_form[i].user_code,
-        label: user_form[i].user_full_name,
+    setLeave({ ...leave, [`leave_code`]: leave_data.data });
+
+    const classgroup_data = await classgroup_model.getClassgroupByMycourse({
+      user_code: user_session.user_code
+    });
+    setClassgroup(classgroup_data.data);
+
+    let class_form = classgroup_data.data;
+    let select_class = [];
+    for (let i = 0; i < class_form.length; i++) {
+      select_class.push({
+        value: class_form[i].classgroup_code,
+        label: class_form[i].subject_fullname,
       });
     }
-    setUser(select_user)
-
-    const subject_data = await subject_model.getSubjectBy({});
-    let subject_form = subject_data.data;
-    let select_subject = [];
-    for (let i = 0; i < subject_form.length; i++) {
-      select_subject.push({
-        value: subject_form[i].subject_code,
-        label: "[ " + subject_form[i].subject_code + " ] " + subject_form[i].subject_name_th,
-      });
-    }
-    setSubject(select_subject);
+    setClassselect(select_class);
   }
 
   async function _handleSubmit() {
     if (_checkSubmit()) {
-
-      let query_result = await classgroup_model.insertClassgroup({
-        classgroup_code: classroom.classgroup_code,
-        classgroup_id: classroom.classgroup_id,
-        classgroup_number: classroom.classgroup_number,
-        subject_code: classroom.subject_code,
-        user_code: classroom.user_code,
-        addby: classroom.user_code,
-        adddate: time_controller.reformatToDate(new Date()),
+      let leave_image = "";
+      const res_upload = await file_controller.uploadFile({
+        src: leave.leave_image,
+        upload_path: "leave/",
       });
+
+      if (res_upload.require) {
+        leave_image = res_upload.data.file_name;
+      }
+
+      let query_result = await leave_model.insertLeaveBy({
+        leave_image: leave_image,
+        leave_code: leave.leave_code,
+        classgroup_code: leave.classgroup_code,
+        owner_class: leave.owner_class,
+        leave_start: time_controller.reformatToDate(leave.leave_start),
+        leave_end: time_controller.reformatToDate(leave.leave_end),
+        leave_type: leave.leave_type,
+        leave_reason: leave.leave_reason,
+        leave_approve: "Waiting",
+        addby: user.user_code,
+        adddate: time_controller.reformatToDate(new Date()),
+        updateby: user.user_code,
+        lastupdate: time_controller.reformatToDate(new Date()),
+      });
+
       if (query_result.require) {
         Swal.fire("Save success!!", "", "success");
-        history.push("/class-group");
+        history.push("/leave-student");
       } else {
         Swal.fire("Sorry, Someting worng !", "", "error");
       }
+
+
+
     }
   }
 
   const _checkSubmit = () => {
-    if (classroom.subject_code === "") {
+    if (leave.leave_type === "") {
       Swal.fire({
         title: "Warning!",
-        text: "Please Check Your subject_code ",
+        text: "Please Check Your leave type ",
         icon: "warning",
       });
       return false;
     } else
-      if (classroom.user_code === "") {
+      if (leave.leave_reason === "") {
         Swal.fire({
           title: "Warning!",
-          text: "Please Check Your user_code",
+          text: "Please Check Your reason",
           icon: "warning",
         });
         return false;
@@ -137,148 +161,165 @@ export default function Insert() {
 
   const _changeFrom = (e) => {
     const { value, name } = e.target;
-    let new_data = { ...classroom };
+    let new_data = { ...leave };
     new_data[name] = value;
-    setClassroom(new_data);
+    setLeave(new_data);
   };
 
-  
+  const _handleImageChange = (img_name, e) => {
+    if (e.target.files.length) {
+      let file = new File([e.target.files[0]], e.target.files[0].name, {
+        type: e.target.files[0].type,
+      });
+      if (file !== undefined) {
+        let reader = new FileReader();
+        reader.onloadend = () => {
+          let new_material = { ...leave };
+          new_material[img_name] = {
+            src: reader.result,
+            file: file,
+            old: new_material[img_name].old,
+          };
+          setLeave(new_material);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
   return (
     <div>
       <div className="animated fadeIn">
         <CCard>
           <CCardHeader className="header-t-red">
-            กลุ่มเรียน / Class group
+            รายวิชาที่ต้องการลา
         </CCardHeader>
           <CCardBody>
             <CRow>
-              <CCol >
+              <CCol md="6" >
                 <CRow>
-                  <CCol md="5">
-                    <CFormGroup>
-                      <CLabel>
-                        ชื่อ
-                    </CLabel>
-                      <CInput
-                        type="text"
-                        // name="classgroup_id"
-                        // value={classroom.classgroup_id}
-                        onChange={(e) => _changeFrom(e)}
-                      />
-                    </CFormGroup>
-                  </CCol>
-                  <CCol md="5">
-                    <CFormGroup>
-                      <CLabel>
-                        นามสกุล
-                    </CLabel>
-                      <CInput
-                        type="text"
-                        // name="classgroup_id"
-                        // value={classroom.classgroup_id}
-                        onChange={(e) => _changeFrom(e)}
-                      />
-                    </CFormGroup>
-                  </CCol>
-                </CRow>
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol>
-                <CRow>
-                  <CCol md="5">
-                    <CFormGroup>
-                      <CLabel>
-                        รหัสนักศึกษา
-                    </CLabel>
-                      <CInput
-                        type="text"
-                        // name="classgroup_id"
-                        // value={classroom.classgroup_id}
-                        onChange={(e) => _changeFrom(e)}
-                      />
-                    </CFormGroup>
-                  </CCol>
-
-                </CRow>
-              </CCol>
-
-            </CRow>
-            <h3>รายวิชาที่ต้องการลา</h3>
-            <CRow>
-              <CCol >
-                <CRow>
-                  <CCol md="5">
-                    <CFormGroup>
-                      <CLabel>
-                        ชื่อวิชา
-                    </CLabel>
-                      <CInput
-                        type="text"
-                        // name="classgroup_id"
-                        // value={classroom.classgroup_id}
-                        onChange={(e) => _changeFrom(e)}
-                      />
-                    </CFormGroup>
-                  </CCol>
-                  <CCol md="5">
+                  <CCol md="12">
                     <CFormGroup>
                       <CLabel>
                         กลุ่มเรียน
                     </CLabel>
-                      <CInput
-                        type="text"
-                        // name="classgroup_id"
-                        // value={classroom.classgroup_id}
-                        onChange={(e) => _changeFrom(e)}
+                      <Select
+                        options={classselect}
+                        value={leave.classgroup_code}
+                        onChange={(e) =>
+                          setLeave({
+                            ...leave,
+                            [`classgroup_code`]: e,
+                          })
+                        }
                       />
                     </CFormGroup>
                   </CCol>
-                </CRow>
-              </CCol>
-            </CRow>
-            <CRow>
-              <CCol md="5">
-              <CLabel>
-                        ประเภทการลา
+
+                  {/* ประเภทการลา */}
+                  <CCol md="12">
+                    <br />
+                    <CLabel>
+                      ประเภทการลา
                     </CLabel>
-                <CRow >
-                  <tbody >
-                    <CCol ><input type="radio" name="site_name"
-                    //value={result.SITE_NAME} 
-                    //   checked={this.state.site === result.SITE_NAME} 
+                    <tbody >
+                      <CCol ><input type="radio" name="leave_type"
+                        value="on_leave"
+                        checked={leave.leave_type === "on_leave"}
+                        onChange={(e) => _changeFrom(e)}
+                      /> ลากิจ</CCol>
+                      <CCol><input type="radio" name="leave_type"
+                        value="sick_leave"
+                        checked={leave.leave_type === "sick_leave"}
+                        onChange={(e) => _changeFrom(e)}
+                      /> ลาป่วย</CCol>
+                    </tbody>
+                  </CCol>
 
-                    //  onChange={this.onSiteChanged}
-                    /> ลากิจ</CCol>
-                    <CCol><input type="radio" name="address"
-                    //   value={result.ADDRESS}
-                    //    checked={this.state.address === result.ADDRESS} 
+                  {/* กำหนดการ */}
+                  <CCol md="6">
+                    <br />
+                    <CFormGroup>
+                      <CLabel>วันที่ลา</CLabel>
+                      <DatePicker
+                        format={"DD/MM/YYYY"}
+                        value={leave.leave_start}
+                        onChange={(e) =>
+                          setLeave({
+                            ...leave,
+                            [`leave_start`]: e,
+                          })
+                        }
+                        minDate={new Date(leave.leave_start)}
+                      />
+                      <p className="text-muted">Example : 01/01/2020.</p>
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="6">
+                    <br />
+                    <CFormGroup>
+                      <CLabel>วันที่สิ้นสุดลา</CLabel>
+                      <DatePicker
+                        format={"DD/MM/YYYY"}
+                        value={leave.leave_end}
+                        onChange={(e) =>
+                          setLeave({
+                            ...leave,
+                            [`leave_end`]: e,
+                          })
+                        }
+                        minDate={new Date(leave.leave_start)}
+                      />
+                      <p className="text-muted">Example : 01/01/2020.</p>
+                    </CFormGroup>
+                  </CCol>
 
-                    //  onChange={this.onAddressChanged}
-                    /> ลาป่วย</CCol>
-                  </tbody>
-
-                </CRow>
-                
-              </CCol>
-             
-              <CCol md="5">
+                  {/* เหตุผลการลา */}
+                  <CCol md="12">
+                    <br />
                     <CFormGroup>
                       <CLabel>
                         เหตุผลการลา
                     </CLabel>
-                      <CInput
-                        type="text"
-                        // name="classgroup_id"
-                        // value={classroom.classgroup_id}
+                      <br />
+                      <textarea
+                        // type="textarea"
+                        name="leave_reason"
+                        // value={classgroup.classgroup_id}
+                        rows="5"
+                        cols="70"
                         onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
-                
-           
-            </CRow> 
+                </CRow>
+              </CCol>
+              <CCol md="6" >
+                <CLabel>อัพโหลดภาพ </CLabel>
+                <br />
+                <CImg
+                  name="logo"
+                  style={{ width: "350px", alignSelf: 'center', }}
+                  src={leave.leave_image.src}
+                  alt="Logo"
+                />
+                <br />
+                <br />
+                <CInput
+                  type="file"
+                  name="leave_image"
+                  style={{ border: "none" }}
+                  accept="image/png, image/jpeg"
+                  onChange={(e) => _handleImageChange("leave_image", e)}
+                />
+              </CCol>
+            </CRow>
+
           </CCardBody>
+
+
+
+
           <CCardFooter>
             <CButton
               type="submit"
@@ -287,7 +328,7 @@ export default function Insert() {
             >
               บันทึก
           </CButton>
-            <Link to="/material-type">
+            <Link to="/leave-student">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
             </Link>
           </CCardFooter>

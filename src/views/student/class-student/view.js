@@ -66,9 +66,9 @@ export default function View() {
       <CCard>
         <CCardHeader className="header-t-red">
           กลุ่มเรียน / Class group
-          <Link to={`/class-group/insert`} className="btn btn-success float-right">
+          {/* <Link to={`/class-group/insert`} className="btn btn-success float-right">
             <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มกลุ่มเรียน
-          </Link>
+          </Link> */}
         </CCardHeader>
         <CCardBody>
           <Table

@@ -74,23 +74,23 @@ export default class ExcelPage extends Component {
         //   dataIndex: "score_total",
         //   editable: true
         // },
-        {
-          title: "การจัดการ",
-          dataIndex: "action",
-          render: (text, record) =>
-            this.state.rows.length >= 1 ? (
-              <Popconfirm
-                title="Sure to delete?"
-                onConfirm={() => this.handleDelete(record.key)}
-              >
-                <Icon
-                  type="delete"
-                  theme="filled"
-                  style={{ color: "red", fontSize: "20px" }}
-                />
-              </Popconfirm>
-            ) : null
-        }
+        // {
+        //   title: "การจัดการ",
+        //   dataIndex: "action",
+        //   render: (text, record) =>
+        //     this.state.rows.length >= 1 ? (
+        //       <Popconfirm
+        //         title="Sure to delete?"
+        //         onConfirm={() => this.handleDelete(record.key)}
+        //       >
+        //         <Icon
+        //           type="delete"
+        //           theme="filled"
+        //           style={{ color: "red", fontSize: "20px" }}
+        //         />
+        //       </Popconfirm>
+        //     ) : null
+        // }
       ]
 
     };

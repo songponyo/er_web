@@ -41,9 +41,9 @@ export default class LeaveModel extends BaseModel {
     })
   }
 
-  async insertLeave(data) {
+  async insertLeaveBy(data) {
     return this.authFetch({
-      url: 'leave/insertLeave',
+      url: 'leave/insertLeaveBy',
       method: 'POST',
       body: JSON.stringify(data),
     })
