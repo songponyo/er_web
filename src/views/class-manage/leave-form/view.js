@@ -13,6 +13,7 @@ import {
   faEdit,
   faCheck,
   faWindowClose,
+  faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { Table, Loading } from "../../../component/revel-strap";
@@ -28,43 +29,43 @@ export default function View() {
   }, []);
 
   async function _fetchData() {
-    const leave_data = await leave_model.getLeaveBy({});
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    const leave_data = await leave_model.getLeaveBy({
+      owner_code : user_session.user_code
+    });
     setLeave(leave_data.data);
   }
 
-  function _onDelete(data) { 
-    Swal.fire({
-      title: "Are you sure ?",
-      text: "Confirm to delete " + data.leave_code,
-      icon: "warning",
-      showCancelButton: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setShowLoading(true);
-        leave_model
-          .deleteLeaveByCode({ leave_code: data.leave_code })
-          .then((res) => {
-            if (res.require) {
-              setShowLoading(false);
-              Swal.fire("Success Deleted!", "", "success");
-              window.location.reload();
-            } else {
-              setShowLoading(false);
-              Swal.fire("Sorry, Someting worng !", "", "error");
-            }
-          });
-      }
-    });
-  }
+  // function _onDelete(data) {
+  //   Swal.fire({
+  //     title: "Are you sure ?",
+  //     text: "Confirm to delete " + data.leave_code,
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       setShowLoading(true);
+  //       leave_model
+  //         .deleteLeaveByCode({ leave_code: data.leave_code })
+  //         .then((res) => {
+  //           if (res.require) {
+  //             setShowLoading(false);
+  //             Swal.fire("Success Deleted!", "", "success");
+  //             window.location.reload();
+  //           } else {
+  //             setShowLoading(false);
+  //             Swal.fire("Sorry, Someting worng !", "", "error");
+  //           }
+  //         });
+  //     }
+  //   });
+  // }
 
   return (
     <div>
       <CCard>
         <CCardHeader className="header-t-red">
-          คำขอลา / Leave list
-          {/* <Link to={`/class-group/insert`} className="btn btn-success float-right">
-            <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มกลุ่มเรียน
-          </Link> */}
+          คำขอลา / Leave list 
         </CCardHeader>
         <CCardBody>
           <Table
@@ -74,37 +75,40 @@ export default function View() {
             rowKey=""
             columns={[
               {
-                title: "รหัสกลุ่มเรียน",
-                dataIndex: "classgroup_code",
+                title: "ชื่อวิชา",
+                dataIndex: "subject_name",
                 filterAble: true,
                 ellipsis: true,
-                width: 120,
+                width: 150,
                 align: "center",
               },
               {
-                title: "ชื่อวิชา",
-                dataIndex: "subject_code",
-                filterAble: true,
-                ellipsis: true,
-                width: 150,
-                align: "center",
-              }, 
-              {
                 title: "ชื่อ",
-                dataIndex: "subject_code",
+                dataIndex: "user_fullname",
                 filterAble: true,
                 ellipsis: true,
                 width: 150,
                 align: "center",
-              }, 
+              },
               {
-                title: "สถานะคำขอ",
-                dataIndex: "subject_code",
-                filterAble: true,
-                ellipsis: true,
-                width: 150,
+                title: "สถานะ",
+                dataIndex: "leave_approve",
+                render: (cell) => {
+                  if (cell === "Waiting") {
+                    return <span className="text-danger">รออนุมัติ</span>;
+                  } else {
+                    return (
+                      <span className="text-success">เสร็จสิ้น</span>
+                    );
+                  }
+                },
+                filters: [
+                  { text: "เสร็จสิ้น", value: "complete" },
+                  { text: "รออนุมัติ", value: "Waiting" },
+                ],
                 align: "center",
-              }, 
+                width: 120,
+              },
               {
                 title: "การจัดการ",
                 dataIndex: "",
@@ -113,32 +117,20 @@ export default function View() {
                   const row_accessible = [];
                   row_accessible.push(
                     <Link
-                      key="update"
-                      to={`/leave-form/update/${cell.leave_code}`}
-                      title="แก้ไขรายการ"
+                      key="detail"
+                      to={`/leave-form/detail/${cell.leave_code}`}
+                      title="ดูรายละเอียด"
                     >
-                      <button type="button" className="btn btn-primary">
+                      <button type="button" className="btn btn-info">
                         <FontAwesomeIcon
-                          icon={faEdit}
+                          icon={faInfoCircle}
                           size="5s"
                           color="white"
                         />
                       </button>
                     </Link>
                   );
-                  row_accessible.push(
-                    <button
-                      type="button"
-                      className={"btn btn-danger"}
-                      onClick={() => _onDelete(cell)}
-                    >
-                      <FontAwesomeIcon
-                        icon={faWindowClose}
-                        size="5s"
-                        color="white"
-                      />
-                    </button>
-                  );
+                   
 
                   return row_accessible;
                 },

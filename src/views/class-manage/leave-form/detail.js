@@ -1,0 +1,311 @@
+import React, { useState, useEffect } from "react";
+import GLOBAL from "../../../GLOBAL";
+import { Link } from "react-router-dom";
+import {
+  CCard,
+  CCardHeader,
+  CCardBody,
+  CCardFooter,
+  CCol,
+  CRow,
+  CContainer,
+  CLabel,
+  CInput,
+  CButton,
+
+  CImg
+} from "@coreui/react";
+import { connect } from "react-redux";
+
+import Swal from "sweetalert2";
+import { useHistory, useRouteMatch } from "react-router-dom";
+import {  TimeController } from "../../../controller";
+ 
+import LeaveModel from "../../../models/LeaveModel"
+
+const leave_model = new LeaveModel(); 
+const time_controller = new TimeController(); 
+
+
+export default function Detail() {
+  let history = useHistory();
+
+  let code = useRouteMatch("/leave-form/detail/:code");
+  const [user, setUser] = useState([]);
+  const [leave, setLeave] = useState({
+    leave_image: {
+      src: "default.png",
+      file: null,
+      old: "",
+    },
+    leave_code: "",
+    leave_name: "",
+    classgroup_code: "",
+    owner_class: "",
+    subject_code: "",
+    leave_start: "",
+    leave_end: "",
+    leave_type: "",
+    leave_reason: "",
+    leave_approve: "Waiting",
+    addby: "",
+    adddate: "",
+    mindate: time_controller.reformatToDate(new Date()),
+  })
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  async function fetchData() {
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    setUser(user_session)
+
+    const leave_data = await leave_model.getLeaveByCode({
+      leave_code: code.params.code,
+    })
+    let leave_form = {}
+    leave_form = leave_data.data[0]
+    leave_form.leave_image = {
+      src: "default.png",
+      file: null,
+      old: leave_data.data[0].leave_image,
+    }
+
+    setLeave(leave_form);
+  }
+
+  async function _handleSubmit() {
+    if (_checkSubmit()) {
+      let query_result = await leave_model.updateLeaveBy({  
+        leave_image: leave.leave_image.old,
+        leave_code: leave.leave_code,
+        classgroup_code: leave.classgroup_code,
+        owner_class: leave.owner_class,
+        leave_start: time_controller.reformatToDate(leave.leave_start),
+        leave_end: time_controller.reformatToDate(leave.leave_end),
+        leave_type: leave.leave_type,
+        leave_approve_reason: leave.leave_approve_reason,
+        leave_reason: leave.leave_reason,
+        leave_approve: leave.leave_approve,
+        addby: user.user_code,
+        adddate: time_controller.reformatToDate(new Date()),
+        updateby: user.user_code,
+        lastupdate: time_controller.reformatToDate(new Date()),
+        
+      });
+
+      if (query_result.require) {
+        Swal.fire("Save success!!", "", "success");
+        history.push("/leave-form");
+      } else {
+        Swal.fire("Sorry, Someting worng !", "", "error");
+      }
+
+
+
+    }
+  }
+
+  const _checkSubmit = () => {
+    if (leave.leave_type === "") {
+      Swal.fire({
+        title: "Warning!",
+        text: "Please Check Your leave type ",
+        icon: "warning",
+      });
+      return false;
+    } else
+      if (leave.leave_reason === "") {
+        Swal.fire({
+          title: "Warning!",
+          text: "Please Check Your reason",
+          icon: "warning",
+        });
+        return false;
+      } else {
+        return true;
+      }
+  };
+  const _changeFrom = (e) => {
+    const { value, name } = e.target;
+    let new_data = { ...leave };
+    new_data[name] = value;
+    setLeave(new_data);
+  };
+  console.log("leave", leave);
+  return (
+    <div>
+      <div className="animated fadeIn">
+        <CCard>
+          <CCardHeader className="header-t-red">
+            รายละเอียดใบคำร้อง
+        </CCardHeader>
+          <CCardBody>
+            <CRow>
+              <CCol md="6" >
+                <CContainer >
+                  {/* Content */}
+                  <br />
+                  <CRow>
+                    <CCol md="6">
+                      <CLabel>กลุ่มเรียน</CLabel>
+                      <CInput
+                        name="classgroup_id"
+                        value={leave.classgroup_id}
+                      />
+                    </CCol>
+                    <CCol md="6">
+                      <CLabel>รายวิชา</CLabel>
+                      <CInput
+                        name="subject_name"
+                        value={leave.subject_name}
+                      // disabled="disabled"
+                      />
+                    </CCol>
+
+                    <CCol lg="6">
+                      <br />
+                      <CLabel>อาจารย์ประจำวิชา</CLabel>
+                      <CInput
+                        value={leave.owner_fullname}
+                        name=""
+                      // disabled="disabled"
+                      />
+                    </CCol>
+
+                  </CRow>
+                  <br />
+                  <CRow>
+                    <CCol lg="6">
+                      <br />
+                      <CLabel>ชื่อผู้ยื่น</CLabel>
+                      <CInput
+                        value={leave.user_fullname}
+                        name=""
+                      // disabled="disabled"
+                      />
+                    </CCol>
+                    <CCol lg="6">
+                      <br />
+                      <CLabel>ประเภทการลา</CLabel>
+                      <CInput
+                        value={leave.leave_type == "on_leave"
+                          ? "ลากิจ"
+                          : "ลาป่วย"
+                        }
+                        name=""
+                      // disabled="disabled"
+                      />
+                    </CCol>
+
+                    <CCol md="12">
+                      <br />
+                      <CLabel>เหตุผลการลา</CLabel>
+                      <textarea
+                        class="form-control"
+                        rows="4"
+                        value={leave.leave_reason}
+                      // disabled="disable"
+                      ></textarea>
+                    </CCol>
+                  </CRow>
+                  <br />
+
+
+                </CContainer>
+              </CCol>
+
+
+              <CCol md="6" >
+                <CRow>
+                  <CCol md="12">
+                    <CLabel>หลักฐานการยื่น</CLabel>
+                    <div className="text-center">
+                      <br />
+                      <CImg
+                        name="logo"
+                        style={{ width: "350px" }}
+                        src={
+                          leave.leave_image.file !== null
+                            ? leave.leave_image.src
+                            : leave.leave_image.old !== ""
+                              ? GLOBAL.BASE_SERVER.URL_IMG + leave.leave_image.old
+                              : leave.leave_image.src
+                        }
+                      />
+                      <br />
+                    </div>
+                  </CCol>
+                  <CCol md="12">
+                  </CCol>
+                </CRow>
+              </CCol>
+
+            </CRow>
+            <CRow>
+              <CContainer>
+                <CCol md="12">
+                  <br />
+                  <CLabel>
+                    ยืนยันสถานะ
+                    </CLabel>
+                  <tbody >
+                    <CCol ><input type="radio" name="leave_approve"
+                      value="Accept"
+                      checked={leave.leave_approve === "Accept"}
+                      onChange={(e) => _changeFrom(e)}
+                    /> อนุมัติ</CCol>
+
+                    <CCol><input type="radio" name="leave_approve"
+                      value="NotAccept"
+                      checked={leave.leave_approve === "NotAccept"}
+                      onChange={(e) => _changeFrom(e)}
+                    /> ไม่อนุมัติ</CCol>
+                  </tbody>
+                </CCol>
+
+                {leave.leave_approve == "NotAccept" ? (
+                  <CCol md="12">
+                    <br />
+                    <CLabel>เหตุผลที่ไม่อนุญาติ</CLabel>
+                    <textarea
+                      class="form-control"
+                      rows="4"
+                      value={leave.leave_approve_reason}
+                    // disabled="disable"
+                    ></textarea>
+                  </CCol>
+                ) : (
+                  ""
+                )}
+
+
+
+              </CContainer>
+
+
+            </CRow>
+          </CCardBody>
+
+
+
+
+          <CCardFooter>
+            <CButton
+              type="submit"
+              color="success"
+              onClick={() => _handleSubmit()}
+            >
+              บันทึก
+          </CButton>
+            <Link to="/leave-form">
+              <CButton color="btn btn-danger">ย้อนกลับ</CButton>
+            </Link>
+          </CCardFooter>
+        </CCard>
+      </div>
+    </div>
+  );
+}
+

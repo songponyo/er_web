@@ -1,647 +1,365 @@
-import React from "react";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Col,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-  Row,
-} from "reactstrap";
-import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
-
-import { Select } from "../../../component/revel-strap";
-
+import React, { useState, useEffect } from "react";
 import GLOBAL from "../../../GLOBAL";
+import { Link } from "react-router-dom";
+import {
+  CCard,
+  CCardHeader,
+  CCardBody,
+  CCardFooter,
+  CCol,
+  CRow,
+  CFormGroup,
+  CLabel,
+  CInput,
+  CButton,
 
-import LicenseModel from "../../../models/LicenseModel";
-import UserModel from "../../../models/UserModel";
-import UserPositionModel from "../../../models/UserPositionModel";
+  CImg
+} from "@coreui/react";
+import { connect } from "react-redux";
 
-import { FileService } from "../../../utility";
+import Swal from "sweetalert2";
+import { useHistory, useRouteMatch } from "react-router-dom";
+import { FileController, TimeController } from "../../../controller";
+import { Select, DatePicker } from "../../../component/revel-strap";
 
-const license_model = new LicenseModel();
+import ClassgroupModel from "../../../models/ClassgroupModel"
+import UserModel from "../../../models/UserModel"
+import LeaveModel from "../../../models/LeaveModel"
+
+const leave_model = new LeaveModel();
 const user_model = new UserModel();
-const user_position_model = new UserPositionModel();
+const classgroup_model = new ClassgroupModel();
+const time_controller = new TimeController();
+const file_controller = new FileController();
 
-const file_service = new FileService();
 
-class Update extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showloading: true,
-      username_validate: {
-        value: "",
-        status: "",
-        class: "",
-        text: "",
-      },
-      user_code: "",
-      license_code: "",
-      user_position_code: "",
-      user_prefix: "นาย",
-      user_name: "",
-      user_lastname: "",
-      user_tel: "",
-      user_email: "",
-      user_username: "",
-      user_password: "",
-      user_address: "",
-      user_zipcode: "",
-      user_profile_image: {
-        src: "",
-        file: null,
-        old: "",
-      },
-      user_status: "Active",
-      license: [],
-      user_positions: [],
-      upload_path: "user/",
-    };
-  }
+export default function Update() {
+  let history = useHistory();
 
-  async componentDidMount() {
-    const { code } = this.props.match.params;
+  let code = useRouteMatch("/leave-student/update/:code");
+  const [user, setUser] = useState([]);
+  const [classselect, setClassselect] = useState([])
+  const [classgroup, setClassgroup] = useState([])
+  const [leave, setLeave] = useState({
+    leave_image: {
+      src: "default.png",
+      file: null,
+      old: "",
+    },
+    leave_code: "",
+    leave_name: "",
+    classgroup_code: "",
+    owner_class: "",
+    subject_code: "",
+    leave_start: "",
+    leave_end: "",
+    leave_type: "",
+    leave_reason: "",
+    leave_approve: "Waiting",
+    addby: "",
+    adddate: "",
+    mindate: time_controller.reformatToDate(new Date()),
+  })
 
-    const user = await user_model.getUserByCode({ user_code: code });
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-    if (user.require === false) {
-      Swal.fire("ข้อผิดพลาดไม่สามารถโหลดข้อมูล !", "", "error");
-      this.props.history.push("/user");
-    } else if (user.data.length === 0) {
-      Swal.fire("ไม่พบรายการนี้ในระบบ !", "", "warning");
-      this.props.history.push("/user");
-    } else {
-      const {
-        user_code,
-        license_code,
-        user_position_code,
-        user_prefix,
-        user_name,
-        user_lastname,
-        user_tel,
-        user_email,
-        user_address,
-        user_zipcode,
-        user_username,
-        user_password,
-        user_profile_image,
-        user_status,
-      } = user.data[0];
+  async function fetchData() {
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    setUser(user_session)
 
-      const user_positions = await user_position_model.getUserPositionBy();
-      const license = await license_model.getLicenseBy();
-      if(user_profile_image==""){
-        this.setState({
-          showloading: false,
-          username_validate: {
-            value: user_username,
-            status: "VALID",
-            class: "",
-            text: "",
-          },
-          user_code: user_code,
-          license_code: license_code,
-          user_position_code: user_position_code,
-          user_prefix: user_prefix,
-          user_name: user_name,
-          user_lastname: user_lastname,
-          user_email: user_email,
-          user_tel: user_tel,
-          user_address: user_address,
-          user_zipcode: user_zipcode,
-          user_username: user_username,
-          user_password: user_password,
-          user_profile_image: {
-            src: GLOBAL.BASE_SERVER.URL_IMG + "user-default.png",
-            file: null,
-            old: "",
-          },
-          user_status: user_status,
-          user_positions: user_positions.data,
-          license: license.data,
-        });
-      }else{
 
-      this.setState({
-        showloading: false,
-        username_validate: {
-          value: user_username,
-          status: "VALID",
-          class: "",
-          text: "",
-        },
-        user_code: user_code,
-        license_code: license_code,
-        user_position_code: user_position_code,
-        user_prefix: user_prefix,
-        user_name: user_name,
-        user_lastname: user_lastname,
-        user_email: user_email,
-        user_tel: user_tel,
-        user_address: user_address,
-        user_zipcode: user_zipcode,
-        user_username: user_username,
-        user_password: user_password,
-        user_profile_image: {
-          src: GLOBAL.BASE_SERVER.URL_IMG + user_profile_image,
-          file: null,
-          old: user_profile_image,
-        },
-        user_status: user_status,
-        user_positions: user_positions.data,
-        license: license.data,
+
+    const leave_data = await leave_model.getLeaveByCode({
+      leave_code: code.params.code,
+    })
+    let leave_form = {}
+    leave_form = leave_data.data[0]
+    leave_form.leave_image = {
+      src: "default.png",
+      file: null,
+      old: leave_data.data[0].leave_image,
+    }
+
+    setLeave(leave_form);
+
+    const classgroup_data = await classgroup_model.getClassgroupByMycourse({
+      user_code: user_session.user_code
+    });
+    setClassgroup(classgroup_data.data);
+
+    let class_form = classgroup_data.data;
+    let select_class = [];
+    for (let i = 0; i < class_form.length; i++) {
+      select_class.push({
+        value: class_form[i].classgroup_code,
+        label: class_form[i].subject_fullname,
       });
     }
-    }
+    setClassselect(select_class);
   }
 
-  async _handleSubmit(event) {
-    event.preventDefault();
-
-    if (this._checkSubmit()) {
-      let user_profile_image = "";
-
-      const res_upload = await file_service.uploadFile({
-        src: this.state.user_profile_image,
-        upload_path: this.state.upload_path,
+  async function _handleSubmit() {
+    if (_checkSubmit()) {
+      let leave_image = "";
+      const res_upload = await file_controller.uploadFile({
+        src: leave.leave_image,
+        upload_path: "leave/",
       });
 
       if (res_upload.require) {
-        if (
-          this.state.user_profile_image.old === undefined &&
-          this.state.user_profile_image.old === ""
-        ) {
-          user_profile_image = res_upload.data.file_name;
-        } else {
-          await file_service.deleteFile({
-            file_path: this.state.user_profile_image.old,
-          });
-          user_profile_image = res_upload.data.file_name;
-        }
-      } else {
-        user_profile_image = this.state.user_profile_image.old;
+        leave_image = res_upload.data.file_name;
       }
-      const res = await user_model.updateUserBy({
-        user_code: this.state.user_code.trim(),
-        license_code: this.state.license_code,
-        user_position_code: this.state.user_position_code,
-        user_prefix: this.state.user_prefix,
-        user_name: this.state.user_name.trim(),
-        user_lastname: this.state.user_lastname.trim(),
-        user_tel: this.state.user_tel.trim(),
-        user_email: this.state.user_email.trim(),
-        user_address: this.state.user_address.trim(),
-        user_zipcode: this.state.user_zipcode.trim(),
-        user_username: this.state.user_username.trim(),
-        user_password: this.state.user_password.trim(),
-        user_profile_image: user_profile_image,
-        user_status: this.state.user_status,
-        updateby: this.props.USER.user_code,
+
+      let query_result = await leave_model.insertLeaveBy({
+        leave_image: leave_image,
+        leave_code: leave.leave_code,
+        classgroup_code: leave.classgroup_code,
+        owner_class: leave.owner_class,
+        leave_start: time_controller.reformatToDate(leave.leave_start),
+        leave_end: time_controller.reformatToDate(leave.leave_end),
+        leave_type: leave.leave_type,
+        leave_reason: leave.leave_reason,
+        leave_approve: "Waiting",
+        addby: user.user_code,
+        adddate: time_controller.reformatToDate(new Date()),
+        updateby: user.user_code,
+        lastupdate: time_controller.reformatToDate(new Date()),
       });
 
-      if (res.require) {
+      if (query_result.require) {
         Swal.fire("Save success!!", "", "success");
-        this.props.history.push("/user");
+        history.push("/leave-student");
       } else {
         Swal.fire("Sorry, Someting worng !", "", "error");
       }
+
+
+
     }
   }
 
-  _checkSubmit() {
-    const user_password = this.state.user_password.trim();
-
-    if (this.state.username_validate.status !== "VALID") {
-      Swal.fire(this.state.username_validate.text);
+  const _checkSubmit = () => {
+    if (leave.leave_type === "") {
+      Swal.fire({
+        title: "Warning!",
+        text: "Please Check Your leave type ",
+        icon: "warning",
+      });
       return false;
-    } else if (this.state.license_code === "") {
-      Swal.fire("กรุณาระบุสิทธิ์การใช้ / Please input License");
-      return false;
-    } else if (this.state.user_position_code === "") {
-      Swal.fire("กรุณาระบุตำแหน่ง / Please input Position");
-      return false;
-    } else if (user_password.length < 6 || user_password.length > 20) {
-      Swal.fire("Password should be 6-20 characters");
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  async _checkUsername() {
-    const user_code = this.state.user_code.trim();
-    const username = this.state.user_username.trim();
-
-    if (this.state.username_validate.value !== username) {
-      if (username.length === 0) {
-        this.setState({
-          username_validate: {
-            value: username,
-            status: "INVALID",
-            class: "",
-            text: "Please input Username",
-          },
+    } else
+      if (leave.leave_reason === "") {
+        Swal.fire({
+          title: "Warning!",
+          text: "Please Check Your reason",
+          icon: "warning",
         });
-      } else if (username.length < 5 || username.length > 20) {
-        this.setState({
-          username_validate: {
-            value: username,
-            status: "INVALID",
-            class: "is-invalid",
-            text: "Username should be 5-20 characters",
-          },
-        });
+        return false;
       } else {
-        const user = await user_model.checkUsernameBy({
-          user_username: username,
-          user_code: user_code,
-        });
-
-        if (user.data.length) {
-          this.setState({
-            username_validate: {
-              value: username,
-              status: "INVALID",
-              class: "is-invalid",
-              text: "This code already exists.",
-            },
-          });
-        } else {
-          this.setState({
-            username_validate: {
-              value: username,
-              status: "VALID",
-              class: "is-valid",
-              text: "",
-            },
-          });
-        }
+        return true;
       }
-    }
-  }
+  };
 
-  _handleImageChange(img_name, e) {
+  const _changeFrom = (e) => {
+    const { value, name } = e.target;
+    let new_data = { ...leave };
+    new_data[name] = value;
+    setLeave(new_data);
+  };
+
+  const _handleImageChange = (img_name, e) => {
     if (e.target.files.length) {
       let file = new File([e.target.files[0]], e.target.files[0].name, {
         type: e.target.files[0].type,
       });
-
       if (file !== undefined) {
         let reader = new FileReader();
-
         reader.onloadend = () => {
-          this.setState((state) => {
-            if (img_name === "user_profile_image") {
-              return {
-                user_profile_image: {
-                  src: reader.result,
-                  file: file,
-                  old: state.user_profile_image.old,
-                },
-              };
-            }
-          });
+          let new_leave = { ...leave };
+          new_leave[img_name] = {
+            src: reader.result,
+            file: file,
+            old: new_leave[img_name].old,
+          };
+          setLeave(new_leave);
         };
         reader.readAsDataURL(file);
       }
     }
-  }
+  };
 
-  render() {
-    const license_options = this.state.license.map((item) => ({
-      value: item.license_code,
-      label: item.license_name,
-    }));
-
-    const user_prefix_options = [
-      { value: "นาย", label: "นาย" },
-      { value: "นาง", label: "นาง" },
-      { value: "นางสาว", label: "นางสาว" },
-    ];
-
-    const user_status_options = [
-      { value: "Active", label: "ทำงาน" },
-      { value: "Inactive", label: "เลิกทำงาน" },
-    ];
-
-    const user_position_options = this.state.user_positions.map((item) => ({
-      value: item.user_position_code,
-      label: item.user_position_name,
-    }));
-
-    return (
+  return (
+    <div>
       <div className="animated fadeIn">
-        <Card>
-          <CardHeader>แก้ไขพนักงาน / Update Employee</CardHeader>
-          <Form onSubmit={this._handleSubmit.bind(this)}>
-            <CardBody>
-              <Row>
-                <Col md="8">
-                  <Row>
-                    <Col md="3">
-                      <Label>
-                        รหัสพนักงาน{" "}
-                        <font color="#F00">
-                          <b>*</b>
-                        </font>
-                      </Label>
-                      <Input
-                        type="text"
-                        id="user_code"
-                        name="user_code"
-                        value={this.state.user_code}
-                        readOnly
+        <CCard>
+          <CCardHeader className="header-t-red">
+            รายวิชาที่ต้องการลา
+        </CCardHeader>
+          <CCardBody>
+            <CRow>
+              <CCol md="6" >
+                <CRow>
+                  <CCol md="12">
+                    <CFormGroup>
+                      <CLabel>
+                        กลุ่มเรียน
+                    </CLabel>
+                      <Select
+                        options={classselect}
+                        value={leave.classgroup_code}
+                        onChange={(e) =>
+                          setLeave({
+                            ...leave,
+                            [`classgroup_code`]: e,
+                          })
+                        }
                       />
-                      <p className="text-muted">Example : U0001.</p>
-                    </Col>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>
-                          คำนำหน้า{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>
-                        </Label>
-                        <Select
-                          options={user_prefix_options}
-                          value={this.state.user_prefix}
-                          onChange={(e) => this.setState({ user_prefix: e })}
-                        />
-                        <p className="text-muted">Example : นาย.</p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>
-                          ชื่อ{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>
-                        </Label>
-                        <Input
-                          type="text"
-                          id="user_name"
-                          name="user_name"
-                          value={this.state.user_name}
-                          onChange={(e) =>
-                            this.setState({ user_name: e.target.value })
-                          }
-                        />
-                        <p className="text-muted">Example : วินัย.</p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>
-                          นามสกุล{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>
-                        </Label>
-                        <Input
-                          type="text"
-                          id="user_lastname"
-                          name="user_lastname"
-                          value={this.state.user_lastname}
-                          onChange={(e) =>
-                            this.setState({ user_lastname: e.target.value })
-                          }
-                        />
-                        <p className="text-muted">Example : ชาญชัย.</p>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>อีเมล์ </Label>
-                        <Input
-                          type="email"
-                          id="user_email"
-                          name="user_email"
-                          value={this.state.user_email}
-                          onChange={(e) =>
-                            this.setState({ user_email: e.target.value })
-                          }
-                        />
-                        <p className="text-muted">
-                          Example : admin@arno.co.th.
-                        </p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>โทรศัพท์ </Label>
-                        <Input
-                          type="text"
-                          id="user_tel"
-                          name="user_tel"
-                          value={this.state.user_tel}
-                          onChange={(e) =>
-                            this.setState({ user_tel: e.target.value })
-                          }
-                        />
-                        <p className="text-muted">Example : 0610243003.</p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>
-                          Username{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>
-                        </Label>
-                        <Input
-                          type="text"
-                          id="user_username"
-                          name="user_username"
-                          value={this.state.user_username}
-                          className={this.state.username_validate.class}
-                          onChange={(e) =>
-                            this.setState({ user_username: e.target.value })
-                          }
-                          onBlur={() => this._checkUsername()}
-                          required
-                        />
-                        <p className="text-muted">Example : thana.</p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>
-                          Password{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>
-                        </Label>
-                        <Input
-                          type="password"
-                          id="user_password"
-                          name="user_password"
-                          value={this.state.user_password}
-                          onChange={(e) =>
-                            this.setState({ user_password: e.target.value })
-                          }
-                          required
-                        />
-                        <p className="text-muted">Example : thanaadmin.</p>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="8">
-                      <FormGroup>
-                        <Label>
-                          ที่อยู่{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>{" "}
-                        </Label>
-                        <Input
-                          type="textarea"
-                          id="user_address"
-                          name="user_address"
-                          row={3}
-                          value={this.state.user_address}
-                          onChange={(e) =>
-                            this.setState({ user_address: e.target.value })
-                          }
-                        />
-                        <p className="text-muted">Example : 271/55.</p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="4">
-                      <FormGroup>
-                        <Label>
-                          เลขไปรษณีย์{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>{" "}
-                        </Label>
-                        <Input
-                          type="text"
-                          id="user_zipcode"
-                          name="user_zipcode"
-                          onChange={(e) =>
-                            this.setState({ user_zipcode: e.target.value })
-                          }
-                          value={this.state.user_zipcode}
-                        />
-                        <p className="text-muted">Example : 30000.</p>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="4">
-                      <FormGroup>
-                        <Label>
-                          ตำแหน่ง{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>{" "}
-                        </Label>
-                        <Select
-                          options={user_position_options}
-                          value={this.state.user_position_code}
-                          onChange={(e) =>
-                            this.setState({ user_position_code: e })
-                          }
-                        />
-                        <p className="text-muted">Example : ผู้ดูแลระบบ.</p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="4">
-                      <FormGroup>
-                        <Label>
-                          สิทธิ์การใช้งาน{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>{" "}
-                        </Label>
-                        <Select
-                          options={license_options}
-                          value={this.state.license_code}
-                          onChange={(e) => this.setState({ license_code: e })}
-                        />
-                        <p className="text-muted">
-                          Example : สิทธิ์การใช้งานที่ 1.
-                        </p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="4">
-                      <FormGroup>
-                        <Label>
-                          สถานะ{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>{" "}
-                        </Label>
-                        <Select
-                          options={user_status_options}
-                          value={this.state.user_status}
-                          onChange={(e) => this.setState({ user_status: e })}
-                        />
-                        <p className="text-muted">Example : ทำงาน.</p>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                </Col>
-                <Col md="4">
-                  <FormGroup>
-                    <Label>โปรไฟล์ </Label>
-                    <br></br>
-                    <div className="text-center">
-                      <img
-                        className="image-upload"
-                        style={{ maxWidth: 280 }}
-                        src={this.state.user_profile_image.src}
-                        alt="profile"
+                    </CFormGroup>
+                  </CCol>
+
+                  {/* ประเภทการลา */}
+                  <CCol md="12">
+                    <br />
+                    <CLabel>
+                      ประเภทการลา
+                    </CLabel>
+                    <tbody >
+                      <CCol ><input type="radio" name="leave_type"
+                        value="on_leave"
+                        checked={leave.leave_type === "on_leave"}
+                        onChange={(e) => _changeFrom(e)}
+                      /> ลากิจ</CCol>
+                      <CCol><input type="radio" name="leave_type"
+                        value="sick_leave"
+                        checked={leave.leave_type === "sick_leave"}
+                        onChange={(e) => _changeFrom(e)}
+                      /> ลาป่วย</CCol>
+                    </tbody>
+                  </CCol>
+
+                  {/* กำหนดการ */}
+                  <CCol md="6">
+                    <br />
+                    <CFormGroup>
+                      <CLabel>วันที่ลา</CLabel>
+                      <DatePicker
+                        format={"DD/MM/YYYY"}
+                        value={leave.leave_start}
+                        onChange={(e) =>
+                          setLeave({
+                            ...leave,
+                            [`leave_start`]: e,
+                          })
+                        }
+                        minDate={new Date(leave.leave_start)}
                       />
-                    </div>
-                    <Input
-                      type="file"
-                      accept="image/png, image/jpeg"
-                      className="form-control"
-                      onChange={(e) =>
-                        this._handleImageChange("user_profile_image", e)
-                      }
-                    />
-                  </FormGroup>
-                </Col>
-              </Row>
-            </CardBody>
-            <CardFooter>
-              <Button type="submit" color="success">
-                Save
-              </Button>
-              <Button type="reset" color="danger">
-                {" "}
-                Reset
-              </Button>
-              <Link to="/user">
-                <Button type="button"> Back </Button>
-              </Link>
-            </CardFooter>
-          </Form>
-        </Card>
+                      <p className="text-muted">Example : 01/01/2020.</p>
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="6">
+                    <br />
+                    <CFormGroup>
+                      <CLabel>วันที่สิ้นสุดลา</CLabel>
+                      <DatePicker
+                        format={"DD/MM/YYYY"}
+                        value={leave.leave_end}
+                        onChange={(e) =>
+                          setLeave({
+                            ...leave,
+                            [`leave_end`]: e,
+                          })
+                        }
+                        minDate={new Date(leave.leave_start)}
+                      />
+                      <p className="text-muted">Example : 01/01/2020.</p>
+                    </CFormGroup>
+                  </CCol>
+
+                  {/* เหตุผลการลา */}
+                  <CCol md="12">
+                    <br />
+                    <CFormGroup>
+                      <CLabel>
+                        เหตุผลการลา
+                    </CLabel>
+                      <br />
+                      <textarea
+                        style={{ padding: "1%" }}
+                        name="leave_reason"
+                        value={leave.leave_reason}
+                        rows="5"
+                        cols="70"
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                </CRow>
+              </CCol>
+              <CCol md="6" >
+                <CLabel>อัพโหลดภาพ </CLabel>
+                <br />
+                <CImg
+                  name="logo"
+                  style={{ width: "350px" }}
+                  src={
+                    leave.leave_image.file !== null
+                      ? leave.leave_image.src
+                      : leave.leave_image.old !== ""
+                        ? GLOBAL.BASE_SERVER.URL_IMG + leave.leave_image.old
+                        : leave.leave_image.src
+                  }
+                />
+                <br />
+                <br />
+                <CInput
+                  type="file"
+                  name="leave_image"
+                  style={{ border: "none" }}
+                  accept="image/png, image/jpeg"
+                  onChange={(e) => _handleImageChange("leave_image", e)}
+                />
+              </CCol>
+            </CRow>
+            <CRow>
+
+              {leave.leave_approve == "NotAccept" ? (
+                <CCol md="12">
+                  <br />
+                  <CLabel>เหตุผลที่ไม่อนุญาติ</CLabel>
+                  <textarea
+                    class="form-control"
+                    rows="4"
+                    value={leave.leave_approve_reason}
+                  // disabled="disable"
+                  ></textarea>
+                </CCol>
+              ) : (
+                ""
+              )}
+
+            </CRow>
+
+          </CCardBody>
+
+
+
+
+          <CCardFooter>
+            <CButton
+              type="submit"
+              color="success"
+              onClick={() => _handleSubmit()}
+            >
+              บันทึก
+          </CButton>
+            <Link to="/leave-student">
+              <CButton color="btn btn-danger">ย้อนกลับ</CButton>
+            </Link>
+          </CCardFooter>
+        </CCard>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
-const mapStatetoProps = (state) => {
-  return {
-    _USER: state._USER,
-  };
-};
-
-export default connect(mapStatetoProps)(Update);

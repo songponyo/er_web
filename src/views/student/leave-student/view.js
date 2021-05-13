@@ -28,11 +28,14 @@ export default function View() {
   }, []);
 
   async function _fetchData() {
-    const leave_data = await leave_model.getLeaveBy({});
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`)); 
+    const leave_data = await leave_model.getLeaveBy({
+    addby : user_session.user_code
+    });
     setLeave(leave_data.data);
   }
 
-  function _onDelete(data) { 
+  function _onDelete(data) {
     Swal.fire({
       title: "Are you sure ?",
       text: "Confirm to delete " + data.leave_code,
@@ -56,7 +59,7 @@ export default function View() {
       }
     });
   }
-
+ 
   return (
     <div>
       <CCard>
@@ -73,14 +76,6 @@ export default function View() {
             dataTotal={leave}
             rowKey=""
             columns={[
-              // {
-              //   title: "รหัสกลุ่มเรียน",
-              //   dataIndex: "classgroup_code",
-              //   filterAble: true,
-              //   ellipsis: true,
-              //   width: 120,
-              //   align: "center",
-              // },
               {
                 title: "ชื่อวิชา",
                 dataIndex: "subject_name",
@@ -88,7 +83,7 @@ export default function View() {
                 ellipsis: true,
                 width: 150,
                 align: "center",
-              }, 
+              },
               {
                 title: "ชื่อ",
                 dataIndex: "user_fullname",
@@ -96,15 +91,30 @@ export default function View() {
                 ellipsis: true,
                 width: 150,
                 align: "center",
-              }, 
+              },
               {
-                title: "สถานะคำขอ",
+                title: "สถานะ",
                 dataIndex: "leave_approve",
-                filterAble: true,
-                ellipsis: true,
-                width: 150,
+                render: (cell) => { 
+                  if (cell === "Waiting") {
+                    return <span className="text-danger">รออนุมัติ</span>;
+                  } else {
+                    return (
+                      cell != "NotAccept" 
+                    ? <span className="text-success">อนุมัติ</span>
+                    : <span className="text-success">ไม่อนุมัติ</span>
+                      
+                      
+                    );
+                  }
+                },
+                filters: [
+                  { text: "เสร็จสิ้น", value: "complete" },
+                  { text: "รออนุมัติ", value: "Waiting" },
+                ],
                 align: "center",
-              }, 
+                width: 120,
+              },
               {
                 title: "การจัดการ",
                 dataIndex: "",

@@ -95,7 +95,7 @@ export default function View() {
               },
               {
                 title: "ผู้รับผิดชอบ",
-                dataIndex: "user_fullname",
+                dataIndex: "owner_fullname",
                 filterAble: true,
                 ellipsis: true,
                 width: 150,
@@ -110,7 +110,7 @@ export default function View() {
                   row_accessible.push(
                     <Link
                       key="update"
-                      to={`/class-group/update/${cell.classgroup_code}`}
+                      to={`/class-student/update/${cell.classgroup_code}`}
                       title="แก้ไขรายการ"
                     >
                       <button type="button" className="btn btn-primary">
@@ -122,19 +122,19 @@ export default function View() {
                       </button>
                     </Link>
                   );
-                  row_accessible.push(
-                    <button
-                      type="button"
-                      className={"btn btn-danger"}
-                      onClick={() => _onDelete(cell)}
-                    >
-                      <FontAwesomeIcon
-                        icon={faWindowClose}
-                        size="5s"
-                        color="white"
-                      />
-                    </button>
-                  );
+                  // row_accessible.push(
+                  //   <button
+                  //     type="button"
+                  //     className={"btn btn-danger"}
+                  //     onClick={() => _onDelete(cell)}
+                  //   >
+                  //     <FontAwesomeIcon
+                  //       icon={faWindowClose}
+                  //       size="5s"
+                  //       color="white"
+                  //     />
+                  //   </button>
+                  // );
 
                   return row_accessible;
                 },

@@ -283,9 +283,9 @@ export default function Insert() {
                     </CLabel>
                       <br />
                       <textarea
-                        // type="textarea"
+                        style={{ padding: "1%" }}
                         name="leave_reason"
-                        // value={classgroup.classgroup_id}
+                        value={leave.leave_reason}
                         rows="5"
                         cols="70"
                         onChange={(e) => _changeFrom(e)}
