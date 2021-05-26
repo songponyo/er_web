@@ -1,4 +1,10 @@
-const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
+import UserPositionModel from "../models/UserPositionModel";
+
+
+// const userposition_model = new UserPositionModel();
+
+
+const accessMenu = ({ PERMISSIONS, notifications = [] }) => { 
     const navigations = []
     const masters = []
     const classrooms = []
@@ -31,7 +37,7 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
     classrooms.push({
         _tag: "CSidebarNavItem",
         name: "เช็คชื่อ",
-        to: "/purchase-order",
+        to: "/checkin-teacher",
         icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
         exact: false,
         // badge: {

@@ -5,6 +5,7 @@ const course = React.lazy(() => import("./views/master-data/course"))
 
 const leave_form = React.lazy(() => import("./views/class-manage/leave-form"))
 const class_group = React.lazy(() => import("./views/class-manage/class-group"))
+const checkin_teacher  = React.lazy(() => import("./views/class-manage/checkin-teacher"))
 
 const course_student =  React.lazy(() => import("./views/student/course-student"))
 const class_student = React.lazy(() => import("./views/student/class-student"))
@@ -23,7 +24,7 @@ const routes = [
   { path: "/leave-student", name: "Leave-student", permission_name: 'leave-student', component: leave_student },  
   { path: "/course-student", name: "Course-student", permission_name: 'course-student', component: course_student }, 
   { path: "/profile", name: "Profile", permission_name: 'profile', component: profile },
- 
+  { path: "/checkin-teacher", name: "Checkin-teacher", permission_name: 'checkin-teacher', component: checkin_teacher },
   { path: "/", exact: true, name: "Home" }
   
 ]
