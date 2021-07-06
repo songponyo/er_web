@@ -11,6 +11,7 @@ const course_student =  React.lazy(() => import("./views/student/course-student"
 const class_student = React.lazy(() => import("./views/student/class-student"))
 const leave_student = React.lazy(() => import("./views/student/leave-student"))
 const profile = React.lazy(() => import("./views/master-data/profile"))
+const checkin_student  = React.lazy(() => import("./views/student/checkin-student"))
 
 
 const routes = [
@@ -25,6 +26,7 @@ const routes = [
   { path: "/course-student", name: "Course-student", permission_name: 'course-student', component: course_student }, 
   { path: "/profile", name: "Profile", permission_name: 'profile', component: profile },
   { path: "/checkin-teacher", name: "Checkin-teacher", permission_name: 'checkin-teacher', component: checkin_teacher },
+  { path: "/checkin-student", name: "Checkin-student", permission_name: 'checkin-student', component: checkin_student },
   { path: "/", exact: true, name: "Home" }
   
 ]

@@ -1,16 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Button, 
+  Button,
   Form,
- 
+
 } from 'reactstrap'
-import { 
+import {
   CCol,
   CRow,
-  CFormGroup, 
-  CInput, 
-  CContainer, 
+  CFormGroup,
+  CInput,
+  CContainer,
 } from "@coreui/react";
 import { AuthConsumer, } from '../../../role-accress/authContext'
 
@@ -44,8 +44,8 @@ const Login = () => {
                           <h3>เข้าสู่ระบบ / Login</h3>
                           <br />
 
-      ชื่อผู้ใช้
-        <br />
+                          ชื่อผู้ใช้
+                          <br />
                           <CFormGroup>
                             <CInput
                               type="text"
@@ -57,8 +57,8 @@ const Login = () => {
                             />
                           </CFormGroup>
                           <br />
-        รหัสผ่าน
-        <br />
+                          รหัสผ่าน
+                          <br />
                           <CFormGroup>
                             <CInput
                               type="password"
@@ -74,7 +74,7 @@ const Login = () => {
                           <Link key="update" to={`/register`} title="แก้ไขรายการ">
                             <button type="button" className="btn btn-warning btn-row-sm">
                               สมัครสมาชิก
-                          </button>
+                            </button>
                           </Link>
                         </CCol>
                       </CRow>

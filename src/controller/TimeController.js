@@ -57,7 +57,7 @@ export default class TimeController {
 
   reformatToTime(time) {
     return moment(time).isValid() && time !== undefined
-      ? moment.utc(time).tz("Asia/Bangkok").format("HHmm")
+      ? moment.utc(time).tz("Asia/Bangkok").format("HH:mm")
       : "";
   }
 

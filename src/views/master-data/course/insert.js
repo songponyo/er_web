@@ -36,41 +36,21 @@ export default function Insert() {
   }, []);
 
   async function fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    const date = new Date();
-    // var code = "";
-    // code =
-    //   "PTC" +
-    //   date.getFullYear() +
-    //   (date.getMonth() + 1).toString().padStart(2, "0");
-
-    // const material_data = await subject_model.getSubjectBy({
-    //   code: code,
-    //   digit: 4,
-    // });
-
-
-
-    // setSubject({
-    //   ...subject,
-    //   ["subject_code"]: material_data.data,
-    // });
-
-    // await setUser(material_data.data);
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`)); 
+    await setUser(user_session);
   }
 
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let query_result = await subject_model.insertSubject({
         subject_code: subject.subject_code,
-        subject_name: subject.subject_name,
-        addby: user.user_code,
-        addate: time_controller.reformatToDate(new Date()),
+        subject_name_th: subject.subject_name_th,
+        subject_name_en: subject.subject_name_en 
       });
 
       if (query_result.require) {
         Swal.fire("Save success!!", "", "success");
-        history.push("/material-type");
+        history.push("/course");
       } else {
         Swal.fire("Sorry, Someting worng !", "", "error");
       }
@@ -78,7 +58,7 @@ export default function Insert() {
   }
 
   const _checkSubmit = () => {
-    if (subject.subject_name === "") {
+    if (subject.subject_code === "") {
       Swal.fire({
         title: "Warning!",
         text: "Please Check Your subject name ",
@@ -92,9 +72,7 @@ export default function Insert() {
 
   const _changeFrom = (e) => {
     const { value, name } = e.target;
-    let new_material = { ...subject };
-    new_material[name] = value;
-    setSubject(new_material);
+    setSubject({ ...subject, [name]: value });
   };
 
   return (
@@ -102,7 +80,7 @@ export default function Insert() {
       <div className="animated fadeIn">
         <CCard>
           <CCardHeader className="header-t-red">
-            เพิ่มรายวิชา / Add subject
+            แก้ไขรายวิชา / Edit subject
           </CCardHeader>
           <CCardBody>
             <CRow>
@@ -119,7 +97,8 @@ export default function Insert() {
                       type="text"
                       name="subject_code"
                       value={subject.subject_code}
-                      // disabled
+                      onChange={(e) => _changeFrom(e)}
+                    // disabled
                     />
 
                   </CCol>
@@ -134,8 +113,8 @@ export default function Insert() {
                       </CLabel>
                       <CInput
                         type="text"
-                        name="subject_name"
-                        value={subject.subject_name}
+                        name="subject_name_th"
+                        value={subject.subject_name_th}
                         onChange={(e) => _changeFrom(e)}
                       />
 
@@ -152,8 +131,8 @@ export default function Insert() {
                       </CLabel>
                       <CInput
                         type="text"
-                        name="subject_name"
-                        value={subject.subject_name}
+                        name="subject_name_en"
+                        value={subject.subject_name_en}
                         onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
@@ -170,7 +149,7 @@ export default function Insert() {
             >
               บันทึก
             </CButton>
-            <Link to="/material-type">
+            <Link to="/course">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
             </Link>
           </CCardFooter>

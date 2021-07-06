@@ -193,7 +193,7 @@ export default function Insert() {
         <CCard>
           <CCardHeader className="header-t-red">
             รายวิชาที่ต้องการลา
-        </CCardHeader>
+          </CCardHeader>
           <CCardBody>
             <CRow>
               <CCol md="6" >
@@ -202,7 +202,7 @@ export default function Insert() {
                     <CFormGroup>
                       <CLabel>
                         กลุ่มเรียน
-                    </CLabel>
+                      </CLabel>
                       <Select
                         options={classselect}
                         value={leave.classgroup_code}
@@ -280,7 +280,7 @@ export default function Insert() {
                     <CFormGroup>
                       <CLabel>
                         เหตุผลการลา
-                    </CLabel>
+                      </CLabel>
                       <br />
                       <textarea
                         style={{ padding: "1%" }}
@@ -327,7 +327,7 @@ export default function Insert() {
               onClick={() => _handleSubmit()}
             >
               บันทึก
-          </CButton>
+            </CButton>
             <Link to="/leave-student">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
             </Link>

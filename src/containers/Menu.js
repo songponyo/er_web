@@ -1,10 +1,4 @@
-import UserPositionModel from "../models/UserPositionModel";
-
-
-// const userposition_model = new UserPositionModel();
-
-
-const accessMenu = ({ PERMISSIONS, notifications = [] }) => { 
+const accessMenu = ({ PERMISSIONS, notifications = [] }) => {  
     const navigations = []
     const masters = []
     const classrooms = []
@@ -88,7 +82,7 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
     students.push({
         _tag: "CSidebarNavItem",
         name: "เช็คชื่อ",
-        to: "/check-login",
+        to: "/checkin-student",
         icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
         exact: false,
         // badge: {
@@ -106,16 +100,7 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
         to: "/user",
         icon: <i className="c-sidebar-nav-icon fa fa-user" />,
         exact: false,
-    })
-    masters.push({
-        _tag: "CSidebarNavItem",
-        name: "สิทธิการใช้งาน",
-        to: "/license",
-        icon: <i className="c-sidebar-nav-icon fa fa-user" />,
-        exact: false,
-    })
-
-
+    }) 
     masters.push({
         _tag: "CSidebarNavItem",
         name: "รายวิชา",
@@ -155,7 +140,7 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
         navigations.push(
             {
                 _tag: "CSidebarNavTitle",
-                _children: ["Master data"],
+                _children: ["General"],
             },
             ...masters,
         )

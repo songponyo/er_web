@@ -85,7 +85,7 @@ export default function Detail() {
             rowKey=""
             columns={[
               {
-                title: "รหัสนักสึกษา",
+                title: "รหัสนักศึกษา",
                 dataIndex: "user_username",
                 filterAble: true,
                 ellipsis: true,

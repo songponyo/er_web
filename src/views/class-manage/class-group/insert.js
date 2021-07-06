@@ -12,7 +12,6 @@ import {
   CLabel,
   CInput,
   CButton,
-  CContainer,
 } from "@coreui/react";
 import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
@@ -31,7 +30,6 @@ const time_controller = new TimeController();
 
 export default function Insert() {
   let history = useHistory();
-  const [user, setUser] = useState([]);
   const [userselect, setUserselect] = useState([])
   const [subject, setSubject] = useState([]);
   const [classroom, setClassroom] = useState({
@@ -50,7 +48,6 @@ export default function Insert() {
   useEffect(() => {
     fetchData();
   }, []);
-  //  console.log("classroom",classroom);
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
 
@@ -66,6 +63,7 @@ export default function Insert() {
       digit: 4,
     });
     let classform = {}
+    classform = { ...classroom }
     classform.classgroup_code = class_data.data
     classform.addby = user_session.user_code
     setClassroom(classform);
@@ -73,7 +71,6 @@ export default function Insert() {
     const user_data = await user_model.getUserBy({
       user_position_code: "UP002"
     })
-    setUser(user_data.data)
 
     let user_form = user_data.data;
     let select_user = [];
@@ -102,18 +99,20 @@ export default function Insert() {
       let query_result = await classgroup_model.insertClassgroup({
         classgroup_code: classroom.classgroup_code,
         classgroup_id: classroom.classgroup_id,
-        classgroup_password : classroom.classgroup_password,
+        classgroup_password: classroom.classgroup_password,
         classgroup_number: classroom.classgroup_number,
         subject_code: classroom.subject_code,
         user_code: classroom.user_code,
         max_score: classroom.max_score,
         leave_maxcount: classroom.leave_maxcount,
+        classgroup_time_start: classroom.classgroup_time_start,
+        classgroup_time_end: classroom.classgroup_time_end,
         addby: classroom.addby,
         adddate: time_controller.reformatToDate(new Date()),
       });
       if (query_result.require) {
         Swal.fire("Save success!!", "", "success");
-        history.push("/class-group");
+        // history.push("/class-group");
       } else {
         Swal.fire("Sorry, Someting worng !", "", "error");
       }
@@ -124,21 +123,37 @@ export default function Insert() {
     if (classroom.subject_code === "") {
       Swal.fire({
         title: "Warning!",
-        text: "Please Check Your subject_code ",
+        text: "โปรดตรวจสอบ รายวิชา",
         icon: "warning",
       });
       return false;
     } else
-      if (classroom.user_code === "") {
+      if (classroom.classgroup_id === "") {
         Swal.fire({
           title: "Warning!",
-          text: "Please Check Your user_code",
+          text: "โปรดตรวจสอบ กลุ่มเรียน",
           icon: "warning",
         });
         return false;
-      } else {
-        return true;
-      }
+      } else
+        if (classroom.classgroup_password === "") {
+          Swal.fire({
+            title: "Warning!",
+            text: "โปรดตรวจสอบ รหัสผ่าน",
+            icon: "warning",
+          });
+          return false;
+        } else
+          if (classroom.user_code === "") {
+            Swal.fire({
+              title: "Warning!",
+              text: "โปรดตรวจสอบ ผู้รับผิดชอบ",
+              icon: "warning",
+            });
+            return false;
+          } else {
+            return true;
+          }
   };
 
   const _changeFrom = (e) => {
@@ -147,44 +162,13 @@ export default function Insert() {
     new_data[name] = value;
     setClassroom(new_data);
   };
-
-  // const findArray = (data, key, keyword) => {
-  //   if (Array.isArray(data)) {
-  //     let res = data.find((item, idx) => {
-  //       return item[key] == keyword;
-  //     });
-  //     return res;
-  //   } else {
-  //     for (let i in data) {
-  //       if (data[i][key] == keyword) {
-  //         let resArr = data[i][key];
-  //         return resArr;
-  //       }
-  //     }
-  //   }
-  // };
-
-
-  // const _changeInSelect = (e, value) => { 
-  //   switch (value) {
-  //     case "user_code":
-  //       let user_names = findArray(userselect, "value", e);
-  //       console.log("user_names",user_names);
-  //       setClassroom({
-  //         ...classroom,
-  //         user_code: user_names.value,
-  //         user_fullname: user_names.label
-  //       });
-  //       break;
-  //   }
-  // }; 
   return (
-    <>
+    <form autoComplete="off">
 
       <CCard >
         <CCardHeader className="header-t-red">
           กลุ่มเรียน / Class group
-          </CCardHeader>
+        </CCardHeader>
         <CCardBody>
           <CRow>
             <CCol md="3">
@@ -205,8 +189,8 @@ export default function Insert() {
             <CCol md="3">
               <CFormGroup>
                 <CLabel>
-                   กลุ่มเรียน
-                        {" "}
+                  กลุ่มเรียน
+                  {" "}
                   <font color="#F00">
                     <b>*</b>
                   </font>
@@ -224,7 +208,7 @@ export default function Insert() {
               <CFormGroup>
                 <CLabel>
                   รหัสผ่านเข้ากลุ่มเรียน
-                        {" "}
+                  {" "}
                   <font color="#F00">
                     <b>*</b>
                   </font>
@@ -238,13 +222,11 @@ export default function Insert() {
 
               </CFormGroup>
             </CCol>
-          </CRow>
-          <CRow>
             <CCol md="3">
               <CFormGroup>
                 <CLabel>
                   ผู้รับผิดชอบ
-                        {" "}
+                  {" "}
                   <font color="#F00">
                     <b>*</b>
                   </font>
@@ -262,11 +244,14 @@ export default function Insert() {
 
               </CFormGroup>
             </CCol>
+          </CRow>
+          <CRow>
+
             <CCol md="3">
               <CFormGroup>
                 <CLabel>
                   ห้องเรียน
-                        {" "}
+                  {" "}
                   <font color="#F00">
                     <b>*</b>
                   </font>
@@ -276,9 +261,47 @@ export default function Insert() {
                   name="classgroup_number"
                   value={classroom.classgroup_number}
                   onChange={(e) => _changeFrom(e)}
+                  maxlength="6"
                 />
-                <p className="text-muted">Example :ห้อง 18311</p>
+                <p className="text-muted">ตัวอย่าง : 18311</p>
               </CFormGroup>
+            </CCol>
+
+            <CCol md="3">
+              <CFormGroup>
+                <CLabel>
+                  เวลาเข้าเรียน
+                  {" "}
+                  <font color="#F00">
+                    <b>*</b>
+                  </font>
+                </CLabel>
+                <CInput
+                  type="time"
+                  name="classgroup_time_start"
+                  value={classroom.classgroup_time_start}
+                  onChange={(e) => _changeFrom(e)}
+                />
+              </CFormGroup>
+            </CCol>
+            <CCol md="3">
+              <CFormGroup>
+                <CLabel>
+                  เวลาสิ้นสุด
+                  {" "}
+                  <font color="#F00">
+                    <b>*</b>
+                  </font>
+                </CLabel>
+                <CInput
+                  type="time"
+                  name="classgroup_time_end"
+                  value={classroom.classgroup_time_end}
+                  onChange={(e) => _changeFrom(e)}
+                  min={classroom.classgroup_time_end}
+                />
+              </CFormGroup>
+
             </CCol>
           </CRow>
         </CCardBody>
@@ -289,12 +312,12 @@ export default function Insert() {
             onClick={() => _handleSubmit()}
           >
             บันทึก
-            </CButton>
+          </CButton>
           <Link to="/class-group">
             <CButton color="btn btn-danger">ย้อนกลับ</CButton>
           </Link>
         </CCardFooter>
       </CCard>
-    </>
+    </form>
   );
 }

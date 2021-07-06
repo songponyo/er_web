@@ -1,11 +1,12 @@
 import React, { Component, useEffect, useState } from "react";
+import GLOBAL from "../../../GLOBAL";
 import {
   CContainer,
   CRow,
   CCol,
   CCard,
   CCardHeader,
-  CCardBody,
+  CCardBody, 
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,7 +14,6 @@ import {
   faEdit,
   faCheck,
   faWindowClose,
-  faSearch
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { Table, Loading } from "../../../component/revel-strap";
@@ -29,22 +29,24 @@ export default function View() {
   }, []);
 
   async function _fetchData() {
-    // const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    const classgroup_data = await classgroup_model.getClassgroupBy({});
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    const classgroup_data = await classgroup_model.getClassgroupByMycourse({
+      user_code: user_session.user_code
+    });
     setClassgroup(classgroup_data.data);
   }
 
   function _onDelete(data) {
     Swal.fire({
       title: "Are you sure ?",
-      text: "Confirm to delete " + data.classgroup_id + "   " + data.subject_fullname,
+      text: "Confirm to delete " + data.classgroup_code,
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
         setShowLoading(true);
         classgroup_model
-          .deleteClassgroupByCode({ classgroup_code: data.classgroup_code, table_name: data.classgroup_table_score })
+          .deleteClassgroupByCode({ classgroup_code: data.classgroup_code })
           .then((res) => {
             if (res.require) {
               setShowLoading(false);
@@ -64,9 +66,9 @@ export default function View() {
       <CCard>
         <CCardHeader className="header-t-red">
           กลุ่มเรียน / Class group
-          <Link to={`/class-group/insert`} className="btn btn-success float-right">
+          {/* <Link to={`/class-group/insert`} className="btn btn-success float-right">
             <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มกลุ่มเรียน
-          </Link>
+          </Link> */}
         </CCardHeader>
         <CCardBody>
           <Table
@@ -84,8 +86,8 @@ export default function View() {
                 align: "center",
               },
               {
-                title: "รหัสวิชา",
-                dataIndex: "subject_fullname",
+                title: "ชื่อวิชา",
+                dataIndex: "subject_fullname", 
                 filterAble: true,
                 ellipsis: true,
                 width: 150,
@@ -93,15 +95,7 @@ export default function View() {
               },
               {
                 title: "ผู้รับผิดชอบ",
-                dataIndex: "user_fullname",
-                filterAble: true,
-                ellipsis: true,
-                width: 150,
-                align: "center",
-              },
-              {
-                title: "ห้อง",
-                dataIndex: "classgroup_number",
+                dataIndex: "owner_fullname",
                 filterAble: true,
                 ellipsis: true,
                 width: 150,
@@ -113,28 +107,10 @@ export default function View() {
                 align: "center",
                 render: (cell) => {
                   const row_accessible = [];
-
                   row_accessible.push(
                     <Link
                       key="update"
-                      to={`/class-group/detail/${cell.classgroup_code}`}
-                      title="แก้ไขรายการ"
-                    >
-                      <button type="button" className="btn btn-success">
-                        <FontAwesomeIcon
-                          icon={faSearch}
-                          size="5s"
-                          color="white"
-                        />
-                      </button>
-                    </Link>
-                  );
-
-
-                  row_accessible.push(
-                    <Link
-                      key="update"
-                      to={`/class-group/update/${cell.classgroup_code}`}
+                      to={`/checkin-student/update/${cell.classgroup_code}`}
                       title="แก้ไขรายการ"
                     >
                       <button type="button" className="btn btn-primary">
@@ -146,19 +122,19 @@ export default function View() {
                       </button>
                     </Link>
                   );
-                  row_accessible.push(
-                    <button
-                      type="button"
-                      className={"btn btn-danger"}
-                      onClick={() => _onDelete(cell)}
-                    >
-                      <FontAwesomeIcon
-                        icon={faWindowClose}
-                        size="5s"
-                        color="white"
-                      />
-                    </button>
-                  );
+                  // row_accessible.push(
+                  //   <button
+                  //     type="button"
+                  //     className={"btn btn-danger"}
+                  //     onClick={() => _onDelete(cell)}
+                  //   >
+                  //     <FontAwesomeIcon
+                  //       icon={faWindowClose}
+                  //       size="5s"
+                  //       color="white"
+                  //     />
+                  //   </button>
+                  // );
 
                   return row_accessible;
                 },

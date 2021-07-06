@@ -1,8 +1,5 @@
 import React, { Component, useEffect, useState } from "react";
-import {
-  CContainer,
-  CRow,
-  CCol,
+import { 
   CCard,
   CCardHeader,
   CCardBody,
@@ -27,10 +24,8 @@ export default function View() {
   }, []);
 
   async function _fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    const classgroup_data = await classgroup_model.getClassgroupBy({
-      keyword: user_session.user_code
-    });
+    // const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    const classgroup_data = await classgroup_model.getClassgroupBy({});
     setClassgroup(classgroup_data.data);
   }
 
@@ -98,17 +93,9 @@ export default function View() {
                 ellipsis: true,
                 width: 150,
                 align: "center",
-              },
+              }, 
               {
-                title: "ห้อง",
-                dataIndex: "classgroup_number",
-                filterAble: true,
-                ellipsis: true,
-                width: 150,
-                align: "center",
-              },
-              {
-                title: "#",
+                title: "จัดการ",
                 dataIndex: "",
                 align: "center",
                 render: (cell) => {

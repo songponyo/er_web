@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom'
 import {
   CCard,
   CCardHeader,
@@ -30,14 +31,13 @@ const Register = () => {
     id_line: '',
 
   })
-  console.log(user);
-  const checkpassword = (e) => {
-    const { value, name } = e.target;
-    let users = { ...user };
-    users[name] = value;
-    console.log(value);
-    console.log(name);
-  }
+ 
+  console.log("user",user);
+
+  const _changeFrom = (e) => {
+    const { value, name } = e.target; 
+    setUser({...user,['name']:value});
+  };
   // async _handleSubmit = () => {
 
   //     const res = await user_model.insertUser({
@@ -67,8 +67,8 @@ const Register = () => {
   //   }
   // }
   return (
-    <div>
-      <div className="animated fadeIn" className="px-5">
+    <div className="c-app c-default-layout flex-row align-items-center">
+      <CContainer className="align-items-center" >
         <CCard >
           <CCardHeader className="header-t-red">
             สมัครสมาชิก / register
@@ -84,9 +84,9 @@ const Register = () => {
                     </CLabel>
                       <CInput
                         type="text"
-                      // name="classgroup_id"
-                      // value={classroom.classgroup_id}
-                      // onChange={(e) => _changeFrom(e)}
+                      name="user_id"
+                      value={user.user_id}
+                      onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
@@ -97,9 +97,9 @@ const Register = () => {
                     </CLabel>
                       <CInput
                         type="text"
-                      // name="classgroup_id"
-                      // value={classroom.classgroup_id}
-                      // onChange={(e) => _changeFrom(e)}
+                      name="user_id"
+                      value={user.user_id}
+                      onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
@@ -110,9 +110,9 @@ const Register = () => {
                     </CLabel>
                       <CInput
                         type="text"
-                      // name="classgroup_id"
-                      // value={classroom.classgroup_id}
-                      // onChange={(e) => _changeFrom(e)}
+                      name="user_id"
+                      value={user.user_id}
+                      onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
@@ -130,9 +130,9 @@ const Register = () => {
                     </CLabel>
                       <CInput
                         type="text"
-                      // name="classgroup_id"
-                      // value={classroom.classgroup_id}
-                      // onChange={(e) => _changeFrom(e)}
+                      name="user_id"
+                      value={user.user_id}
+                      onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
@@ -143,9 +143,9 @@ const Register = () => {
                     </CLabel>
                       <CInput
                         type="text"
-                      // name="classgroup_id"
-                      // value={classroom.classgroup_id}
-                      // onChange={(e) => _changeFrom(e)}
+                      name="user_id"
+                      value={user.user_id}
+                      onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
@@ -156,9 +156,9 @@ const Register = () => {
                     </CLabel>
                       <CInput
                         type="text"
-                      // name="classgroup_id"
-                      // value={classroom.classgroup_id}
-                      // onChange={(e) => _changeFrom(e)}
+                      name="user_id"
+                      value={user.user_id}
+                      onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
@@ -175,9 +175,9 @@ const Register = () => {
                     </CLabel>
                       <CInput
                         type="text"
-                      // name="classgroup_id"
-                      // value={classroom.classgroup_id}
-                      // onChange={(e) => _changeFrom(e)}
+                      name="user_id"
+                      value={user.user_id}
+                      onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
@@ -196,9 +196,9 @@ const Register = () => {
                     </CLabel>
                       <CInput
                         type="text"
-                      // name="classgroup_id"
-                      // value={classroom.classgroup_id}
-                      // onChange={(e) => _changeFrom(e)}
+                      name="user_id"
+                      value={user.user_id}
+                      onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
@@ -209,9 +209,9 @@ const Register = () => {
                     </CLabel>
                       <CInput
                         type="text"
-                      // name="classgroup_id"
-                      // value={classroom.classgroup_id}
-                      // onChange={(e) => _changeFrom(e)}
+                      name="user_id"
+                      value={user.user_id}
+                      onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
@@ -229,9 +229,9 @@ const Register = () => {
                     </CLabel>
                       <CInput
                         type="text"
-                      // name="classgroup_id"
-                      // value={classroom.classgroup_id}
-                      // onChange={(e) => _changeFrom(e)}
+                      name="user_id"
+                      value={user.user_id}
+                      onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
@@ -242,9 +242,9 @@ const Register = () => {
                     </CLabel>
                       <CInput
                         type="text"
-                      // name="classgroup_id"
-                      // value={classroom.classgroup_id}
-                      // onChange={(e) => _changeFrom(e)}
+                      name="user_id"
+                      value={user.user_id}
+                      onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
@@ -288,13 +288,13 @@ const Register = () => {
             >
               สมัครสมาชิก
           </CButton>
-            {/* <Link to="/material-type"> */}
+            <Link to="/Login">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
-            {/* </Link> */}
+            </Link>
           </CCardFooter>
         </CCard>
 
-      </div>
+      </CContainer>
     </div>
   )
 }
