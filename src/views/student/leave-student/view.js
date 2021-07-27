@@ -1,8 +1,5 @@
-import React, { Component, useEffect, useState } from "react";
-import {
-  CContainer,
-  CRow,
-  CCol,
+import React, {useEffect, useState } from "react";
+import { 
   CCard,
   CCardHeader,
   CCardBody,
@@ -10,17 +7,16 @@ import {
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEdit,
-  faCheck,
+  faEdit, 
   faWindowClose,
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
-import { Table, Loading } from "../../../component/revel-strap";
+import { Table } from "../../../component/revel-strap";
 import LeaveModel from "../../../models/LeaveModel";
 const leave_model = new LeaveModel();
 
 export default function View() {
-  const [showloading, setShowLoading] = useState(true);
+  // const [showloading, setShowLoading] = useState(true);
   const [leave, setLeave] = useState([]);
 
   useEffect(() => {
@@ -43,16 +39,16 @@ export default function View() {
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        setShowLoading(true);
+        // setShowLoading(true);
         leave_model
           .deleteLeaveByCode({ leave_code: data.leave_code })
           .then((res) => {
             if (res.require) {
-              setShowLoading(false);
+              // setShowLoading(false);
               Swal.fire("Success Deleted!", "", "success");
               window.location.reload();
             } else {
-              setShowLoading(false);
+              // setShowLoading(false);
               Swal.fire("Sorry, Someting worng !", "", "error");
             }
           });
@@ -100,7 +96,7 @@ export default function View() {
                     return <span className="text-danger">รออนุมัติ</span>;
                   } else {
                     return (
-                      cell != "NotAccept" 
+                      cell !== "NotAccept" 
                     ? <span className="text-success">อนุมัติ</span>
                     : <span className="text-success">ไม่อนุมัติ</span>
                       

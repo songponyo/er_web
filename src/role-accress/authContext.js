@@ -5,7 +5,7 @@ const authContext = createContext({
   authenticated: false,
   permissions: [],
   user: {},
-  initiateLogin: () => { },
+  initiateLogin: () => {},
   handleAuthentication: () => { },
   logout: () => { },
 })

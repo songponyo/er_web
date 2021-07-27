@@ -12,34 +12,30 @@ import {
   CLabel,
   CInput,
   CButton,
-
-  CImg
+  CImg,
 } from "@coreui/react";
-import { connect } from "react-redux";
-
 import Swal from "sweetalert2";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { FileController, TimeController } from "../../../controller";
 import { Select, DatePicker } from "../../../component/revel-strap";
 
-import ClassgroupModel from "../../../models/ClassgroupModel"
-import UserModel from "../../../models/UserModel"
-import LeaveModel from "../../../models/LeaveModel"
+import ClassgroupModel from "../../../models/ClassgroupModel";
+// import UserModel from "../../../models/UserModel"
+import LeaveModel from "../../../models/LeaveModel";
 
 const leave_model = new LeaveModel();
-const user_model = new UserModel();
+// const user_model = new UserModel();
 const classgroup_model = new ClassgroupModel();
 const time_controller = new TimeController();
 const file_controller = new FileController();
-
 
 export default function Update() {
   let history = useHistory();
 
   let code = useRouteMatch("/leave-student/update/:code");
   const [user, setUser] = useState([]);
-  const [classselect, setClassselect] = useState([])
-  const [classgroup, setClassgroup] = useState([])
+  const [classselect, setClassselect] = useState([]);
+  // const [classgroup, setClassgroup] = useState([])
   const [leave, setLeave] = useState({
     leave_image: {
       src: "default.png",
@@ -59,35 +55,33 @@ export default function Update() {
     addby: "",
     adddate: "",
     mindate: time_controller.reformatToDate(new Date()),
-  })
+  });
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  async function fetchData() {
+  const fetchData = async () => {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    setUser(user_session)
-
-
+    setUser(user_session);
 
     const leave_data = await leave_model.getLeaveByCode({
       leave_code: code.params.code,
-    })
-    let leave_form = {}
-    leave_form = leave_data.data[0]
+    });
+    let leave_form = {};
+    leave_form = leave_data.data[0];
     leave_form.leave_image = {
       src: "default.png",
       file: null,
       old: leave_data.data[0].leave_image,
-    }
+    };
 
     setLeave(leave_form);
 
     const classgroup_data = await classgroup_model.getClassgroupByMycourse({
-      user_code: user_session.user_code
+      user_code: user_session.user_code,
     });
-    setClassgroup(classgroup_data.data);
+    // setClassgroup(classgroup_data.data);
 
     let class_form = classgroup_data.data;
     let select_class = [];
@@ -98,7 +92,7 @@ export default function Update() {
       });
     }
     setClassselect(select_class);
-  }
+  };
 
   async function _handleSubmit() {
     if (_checkSubmit()) {
@@ -134,9 +128,6 @@ export default function Update() {
       } else {
         Swal.fire("Sorry, Someting worng !", "", "error");
       }
-
-
-
     }
   }
 
@@ -148,17 +139,16 @@ export default function Update() {
         icon: "warning",
       });
       return false;
-    } else
-      if (leave.leave_reason === "") {
-        Swal.fire({
-          title: "Warning!",
-          text: "Please Check Your reason",
-          icon: "warning",
-        });
-        return false;
-      } else {
-        return true;
-      }
+    } else if (leave.leave_reason === "") {
+      Swal.fire({
+        title: "Warning!",
+        text: "Please Check Your reason",
+        icon: "warning",
+      });
+      return false;
+    } else {
+      return true;
+    }
   };
 
   const _changeFrom = (e) => {
@@ -195,16 +185,14 @@ export default function Update() {
         <CCard>
           <CCardHeader className="header-t-red">
             รายวิชาที่ต้องการลา
-        </CCardHeader>
+          </CCardHeader>
           <CCardBody>
             <CRow>
-              <CCol md="6" >
+              <CCol md="6">
                 <CRow>
                   <CCol md="12">
                     <CFormGroup>
-                      <CLabel>
-                        กลุ่มเรียน
-                    </CLabel>
+                      <CLabel>กลุ่มเรียน</CLabel>
                       <Select
                         options={classselect}
                         value={leave.classgroup_code}
@@ -221,20 +209,28 @@ export default function Update() {
                   {/* ประเภทการลา */}
                   <CCol md="12">
                     <br />
-                    <CLabel>
-                      ประเภทการลา
-                    </CLabel>
-                    <tbody >
-                      <CCol ><input type="radio" name="leave_type"
-                        value="on_leave"
-                        checked={leave.leave_type === "on_leave"}
-                        onChange={(e) => _changeFrom(e)}
-                      /> ลากิจ</CCol>
-                      <CCol><input type="radio" name="leave_type"
-                        value="sick_leave"
-                        checked={leave.leave_type === "sick_leave"}
-                        onChange={(e) => _changeFrom(e)}
-                      /> ลาป่วย</CCol>
+                    <CLabel>ประเภทการลา</CLabel>
+                    <tbody>
+                      <CCol>
+                        <input
+                          type="radio"
+                          name="leave_type"
+                          value="on_leave"
+                          checked={leave.leave_type === "on_leave"}
+                          onChange={(e) => _changeFrom(e)}
+                        />{" "}
+                        ลากิจ
+                      </CCol>
+                      <CCol>
+                        <input
+                          type="radio"
+                          name="leave_type"
+                          value="sick_leave"
+                          checked={leave.leave_type === "sick_leave"}
+                          onChange={(e) => _changeFrom(e)}
+                        />{" "}
+                        ลาป่วย
+                      </CCol>
                     </tbody>
                   </CCol>
 
@@ -280,9 +276,7 @@ export default function Update() {
                   <CCol md="12">
                     <br />
                     <CFormGroup>
-                      <CLabel>
-                        เหตุผลการลา
-                    </CLabel>
+                      <CLabel>เหตุผลการลา</CLabel>
                       <br />
                       <textarea
                         style={{ padding: "1%" }}
@@ -296,7 +290,7 @@ export default function Update() {
                   </CCol>
                 </CRow>
               </CCol>
-              <CCol md="6" >
+              <CCol md="6">
                 <CLabel>อัพโหลดภาพ </CLabel>
                 <br />
                 <CImg
@@ -306,8 +300,8 @@ export default function Update() {
                     leave.leave_image.file !== null
                       ? leave.leave_image.src
                       : leave.leave_image.old !== ""
-                        ? GLOBAL.BASE_SERVER.URL_IMG + leave.leave_image.old
-                        : leave.leave_image.src
+                      ? GLOBAL.BASE_SERVER.URL_IMG + leave.leave_image.old
+                      : leave.leave_image.src
                   }
                 />
                 <br />
@@ -322,7 +316,6 @@ export default function Update() {
               </CCol>
             </CRow>
             <CRow>
-
               {leave.leave_approve == "NotAccept" ? (
                 <CCol md="12">
                   <br />
@@ -331,19 +324,14 @@ export default function Update() {
                     class="form-control"
                     rows="4"
                     value={leave.leave_approve_reason}
-                  // disabled="disable"
+                    // disabled="disable"
                   ></textarea>
                 </CCol>
               ) : (
                 ""
               )}
-
             </CRow>
-
           </CCardBody>
-
-
-
 
           <CCardFooter>
             <CButton
@@ -352,7 +340,7 @@ export default function Update() {
               onClick={() => _handleSubmit()}
             >
               บันทึก
-          </CButton>
+            </CButton>
             <Link to="/leave-student">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
             </Link>
@@ -362,4 +350,3 @@ export default function Update() {
     </div>
   );
 }
-

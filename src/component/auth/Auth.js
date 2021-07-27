@@ -43,8 +43,8 @@ class Auth extends Component {
             authcertifying: false,
           }, () => {
             Swal.fire({
-              title: "Can not login!",
-              text: "Sorry, Someting worng!",
+              title: "ไม่สามารถเข้าสู่ระบบได้",
+              text: "มีบางอย่างผิดพลาด",
               icon: "error",
             })
           })
@@ -54,8 +54,8 @@ class Auth extends Component {
             authcertifying: false,
           }, () => {
             Swal.fire({
-              title: "Can not login!",
-              text: "Please check your username and password!",
+              title: "ไม่สามารถเข้าสู่ระบบได้",
+              text: "โปรดเช็ค ชื่อผู้ใช้ และ รหัสผ่านอีกครั้ง",
               icon: "warning",
             })
           })

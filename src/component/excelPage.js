@@ -33,47 +33,7 @@ export default class ExcelPage extends Component {
           title: "นามสกุล",
           dataIndex: "user_lastname",
           editable: true
-        },
-        // {
-        //   title: "คะแนนชื่อที่ 1",
-        //   dataIndex: "score_one",
-        //   editable: true
-        // },
-        // {
-        //   title: "คะแนนชื่อที่ 2",
-        //   dataIndex: "score_two",
-        //   editable: true
-        // },
-        // {
-        //   title: "คะแนนชื่อที่ 3",
-        //   dataIndex: "score_three",
-        //   editable: true
-        // },
-        // {
-        //   title: "คะแนนชื่อที่ 4",
-        //   dataIndex: "score_four",
-        //   editable: true
-        // },
-        // {
-        //   title: "คะแนนชื่อที่ 5",
-        //   dataIndex: "score_five",
-        //   editable: true
-        // },
-        // {
-        //   title: "คะแนนชื่อที่ 6",
-        //   dataIndex: "score_sixt",
-        //   editable: true
-        // },
-        // {
-        //   title: "จำนวนครั้งทั้ลากิจ",
-        //   dataIndex: "leave_count",
-        //   editable: true
-        // },
-        // {
-        //   title: "คะแนนทั้งหมด",
-        //   dataIndex: "score_total",
-        //   editable: true
-        // },
+        }, 
         // {
         //   title: "การจัดการ",
         //   dataIndex: "action",

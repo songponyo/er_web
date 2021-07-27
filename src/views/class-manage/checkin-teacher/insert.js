@@ -29,8 +29,7 @@ const time_controller = new TimeController();
 
 
 export default function Insert() {
-  let history = useHistory();
-  const [user, setUser] = useState([]);
+  let history = useHistory(); 
   const [userselect, setUserselect] = useState([])
   const [subject, setSubject] = useState([]);
   const [classroom, setClassroom] = useState({
@@ -71,8 +70,7 @@ export default function Insert() {
 
     const user_data = await user_model.getUserBy({
       user_position_code: "UP002"
-    })
-    setUser(user_data.data)
+    }) 
 
     let user_form = user_data.data;
     let select_user = [];

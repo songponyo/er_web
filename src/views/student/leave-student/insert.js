@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import GLOBAL from "../../../GLOBAL";
+// import GLOBAL from "../../../GLOBAL";
 import { Link } from "react-router-dom";
 import {
   CCard,
@@ -12,10 +12,8 @@ import {
   CLabel,
   CInput,
   CButton,
-
   CImg
 } from "@coreui/react";
-import { connect } from "react-redux";
 
 import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
@@ -23,11 +21,11 @@ import { FileController, TimeController } from "../../../controller";
 import { Select, DatePicker } from "../../../component/revel-strap";
 
 import ClassgroupModel from "../../../models/ClassgroupModel"
-import UserModel from "../../../models/UserModel"
+// import UserModel from "../../../models/UserModel"
 import LeaveModel from "../../../models/LeaveModel"
 
 const leave_model = new LeaveModel();
-const user_model = new UserModel();
+// const user_model = new UserModel();
 const classgroup_model = new ClassgroupModel();
 const time_controller = new TimeController();
 const file_controller = new FileController();
@@ -37,7 +35,7 @@ export default function Insert() {
   let history = useHistory();
   const [user, setUser] = useState([]);
   const [classselect, setClassselect] = useState([])
-  const [classgroup, setClassgroup] = useState([])
+  // const [classgroup, setClassgroup] = useState([])
   const [leave, setLeave] = useState({
     leave_image: {
       src: "default.png",
@@ -63,7 +61,7 @@ export default function Insert() {
     fetchData();
   }, []);
 
-  async function fetchData() {
+  const fetchData = async () => {  
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
     setUser(user_session)
 
@@ -85,7 +83,7 @@ export default function Insert() {
     const classgroup_data = await classgroup_model.getClassgroupByMycourse({
       user_code: user_session.user_code
     });
-    setClassgroup(classgroup_data.data);
+    // setClassgroup(classgroup_data.data);
 
     let class_form = classgroup_data.data;
     let select_class = [];

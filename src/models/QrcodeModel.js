@@ -2,9 +2,9 @@ import { BaseModel } from './MainModel'
 
 export default class QrcodeModel extends BaseModel {
 
-  async getQrcodeLastcode(data) {
+  async getQrcodeLastCode(data) {
     return this.authFetch({
-      url: 'qrcode/getQrcodeLastcode',
+      url: 'qrcode/getQrcodeLastCode',
       method: 'POST',
       body: JSON.stringify(data),
     })
