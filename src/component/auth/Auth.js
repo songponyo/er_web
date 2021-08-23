@@ -15,8 +15,8 @@ const user_model = new UserModel()
 class Auth extends Component {
   state = {
     loading: true,
-    // authcertifying: false,
-    // authenticated: true,
+    authcertifying: false,
+    authenticated: true,
     authcertifying: true,
     authenticated: false,
     permissions: [],

@@ -8,6 +8,7 @@ const authContext = createContext({
   initiateLogin: () => {},
   handleAuthentication: () => { },
   logout: () => { },
+  
 })
 
 export const AuthProvider = authContext.Provider

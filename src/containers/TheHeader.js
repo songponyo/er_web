@@ -1,40 +1,57 @@
-import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   CHeader,
   CToggler,
   CHeaderBrand,
   CHeaderNav,
-  CHeaderNavItem,
-  CHeaderNavLink,
+  // CHeaderNavItem,
+  // CHeaderNavLink,
   CSubheader,
   CBreadcrumbRouter,
-  CLink
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
+  // CLink
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
 
 // routes config
-import routes from '../routes'
+import routes from "../routes";
 
 import {
   TheHeaderDropdown,
   // TheHeaderDropdownMssg,
   // TheHeaderDropdownNotif,
   // TheHeaderDropdownTasks
-} from './index'
+} from "./index";
 
 const TheHeader = (props) => {
-  const dispatch = useDispatch()
-  const sidebarShow = useSelector(state => state.sidebarShow)
+  const dispatch = useDispatch();
+  const [user, setUser] = useState({
+    user_firstname: "",
+    user_lastname: "",
+  });
+  const sidebarShow = useSelector((state) => state.sidebarShow);
 
   const toggleSidebar = () => {
-    const val = [true, 'responsive'].includes(sidebarShow) ? false : 'responsive'
-    dispatch({ type: 'set', sidebarShow: val })
-  }
+    const val = [true, "responsive"].includes(sidebarShow)
+      ? false
+      : "responsive";
+    dispatch({ type: "set", sidebarShow: val });
+  };
 
   const toggleSidebarMobile = () => {
-    const val = [false, 'responsive'].includes(sidebarShow) ? true : 'responsive'
-    dispatch({ type: 'set', sidebarShow: val })
+    const val = [false, "responsive"].includes(sidebarShow)
+      ? true
+      : "responsive";
+    dispatch({ type: "set", sidebarShow: val });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  async function fetchData() {
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    setUser(user_session);
   }
 
   return (
@@ -53,12 +70,11 @@ const TheHeader = (props) => {
         <CIcon name="logo" height="48" alt="Logo" />
       </CHeaderBrand>
 
-      <CHeaderNav className="d-md-down-none mr-auto">
-
-      </CHeaderNav>
+      <CHeaderNav className="d-md-down-none mr-auto"></CHeaderNav>
 
       <CHeaderNav className="px-3">
         {/* <TheHeaderDropdownNotif /> */}
+        {user.user_firstname + " " + user.user_lastname}
         <TheHeaderDropdown />
       </CHeaderNav>
 
@@ -67,10 +83,9 @@ const TheHeader = (props) => {
           className="border-0 c-subheader-nav m-0 px-0 px-md-3"
           routes={routes}
         />
-
       </CSubheader>
     </CHeader>
-  )
-}
+  );
+};
 
-export default TheHeader
+export default TheHeader;

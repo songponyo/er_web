@@ -16,6 +16,7 @@ import { useHistory, useRouteMatch } from "react-router-dom";
 import { TimeController } from "../../../controller";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import QrcodeModel from "../../../models/QrcodeModel";
+import GROBAL from "../../../GLOBAL";
 
 const qrcode_model = new QrcodeModel();
 const time_controller = new TimeController();
@@ -25,24 +26,26 @@ export default function Qrcode() {
   let history = useHistory();
   let code = useRouteMatch("/checkin-teacher/qrcode/:code");
   const [qrcode, setQrcode] = useState({
-    text: "Hello", 
+    text: "",
     show: false,
   });
-  const [checkin, setCheckin] = useState({}); 
-  const encoded = useQrEncode( qrcode.text /* object with options (if needed) */ ); 
+  const [checkin, setCheckin] = useState({});
+  const encoded = useQrEncode(qrcode.text /* object with options (if needed) */);
   const decoded = useQrDecode(encoded /* object with options (if needed) */);
- 
+
   useEffect(() => {
     fetchData();
   }, []);
  
+
   const generateQrCode = () => {
-      if(checkin.qr_timeout){ 
-        setQrcode({ ...qrcode, 'show' : true })
-      }
-      else { setQrcode({ ...qrcode, 'show' : false })}
+    if (checkin.qr_timeout) {
+      setQrcode({ ...qrcode, 'show': true, text:"https://elearning-21dc5.firebaseapp.com/#/checkin-student/update/?roomId=" + checkin.qr_code })
+    }
+    else { setQrcode({ ...qrcode, 'show': false }) }
   }
-  
+
+
   async function fetchData() {
     const date = new Date();
     let lastcode = "";
@@ -117,7 +120,7 @@ export default function Qrcode() {
   };
 
   const _changeFrom = (e) => {
-    const { value, name } = e.target; 
+    const { value, name } = e.target;
     setCheckin({ ...checkin, [name]: value });
   };
 
@@ -197,7 +200,7 @@ export default function Qrcode() {
                       <br />
                       <CButton
                         color="primary"
-                          onClick={() => generateQrCode()}
+                        onClick={() => generateQrCode()}
                       >
                         สร้างคิวอาร์โค้ด
                       </CButton>

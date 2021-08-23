@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import GLOBAL from "../../../GLOBAL";
+// import GLOBAL from "../../../GLOBAL";
 import ExcelPage from "../../../component/excelPage";
 
 import {

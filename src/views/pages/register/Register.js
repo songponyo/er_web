@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   CCard,
   CCardHeader,
@@ -12,31 +12,30 @@ import {
   CInput,
   CButton,
   CContainer,
-  CImg
+  CImg,
 } from "@coreui/react";
-import CIcon from '@coreui/icons-react'
+// import CIcon from '@coreui/icons-react'
 
 const Register = () => {
   const [user, setUser] = React.useState({
-    user_username: '',
-    user_password: '',
-    user_passwordre: '',
-    user_prefix: '',
-    fname: '',
-    lname: '',
-    id_student: '',
-    faculty: '',
-    program: '',
-    phone: '',
-    id_line: '',
+    user_username: "",
+    user_password: "",
+    user_passwordre: "",
+    user_prefix: "",
+    fname: "",
+    lname: "",
+    id_student: "",
+    faculty: "",
+    program: "",
+    phone: "",
+    id_line: "",
+  });
 
-  })
- 
-  console.log("user",user);
+  console.log("user", user);
 
   const _changeFrom = (e) => {
-    const { value, name } = e.target; 
-    setUser({...user,['name']:value});
+    const { value, name } = e.target;
+    setUser({ ...user, ["name"]: value });
   };
   // async _handleSubmit = () => {
 
@@ -69,96 +68,82 @@ const Register = () => {
   return (
     <div className="c-app c-default-layout flex-row align-items-center">
       <CContainer className="align-items-center" >
-        <CCard >
-          <CCardHeader className="header-t-red">
-            สมัครสมาชิก / register
-        </CCardHeader>
-          <CCardBody >
-          <CRow>
+        <CCard>
+          <CCardBody>
+            <h1>สมัครสมาชิก</h1>
+            <br />
+            <CRow>
               <CCol>
                 <CRow>
                   <CCol md="4">
                     <CFormGroup>
-                      <CLabel>
-                        ชื่อผู้ใช้
-                    </CLabel>
+                      <CLabel>ชื่อผู้ใช้</CLabel>
                       <CInput
                         type="text"
-                      name="user_id"
-                      value={user.user_id}
-                      onChange={(e) => _changeFrom(e)}
+                        name="user_id"
+                        value={user.user_id}
+                        onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
                   <CCol md="3">
                     <CFormGroup>
-                      <CLabel>
-                        รหัสผ่าน
-                    </CLabel>
+                      <CLabel>รหัสผ่าน</CLabel>
                       <CInput
                         type="text"
-                      name="user_id"
-                      value={user.user_id}
-                      onChange={(e) => _changeFrom(e)}
+                        name="user_id"
+                        value={user.user_id}
+                        onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
                   <CCol md="3">
                     <CFormGroup>
-                      <CLabel>
-                        ยืนยันรหัสผ่าน
-                    </CLabel>
+                      <CLabel>ยืนยันรหัสผ่าน</CLabel>
                       <CInput
                         type="text"
-                      name="user_id"
-                      value={user.user_id}
-                      onChange={(e) => _changeFrom(e)}
+                        name="user_id"
+                        value={user.user_id}
+                        onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
                 </CRow>
               </CCol>
-
             </CRow>
-            <CRow >
-              <CCol >
+            <CRow>
+              <CCol>
                 <CRow>
                   <CCol md="1">
                     <CFormGroup>
-                      <CLabel>
-                        คำนำหน้า
-                    </CLabel>
+                      <CLabel>คำนำหน้า</CLabel>
                       <CInput
                         type="text"
-                      name="user_id"
-                      value={user.user_id}
-                      onChange={(e) => _changeFrom(e)}
+                        name="user_id"
+                        value={user.user_id}
+                        onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
                   <CCol md="3">
                     <CFormGroup>
-                      <CLabel>
-                        ชื่อ
-                    </CLabel>
+                      <CLabel>ชื่อ</CLabel>
                       <CInput
                         type="text"
-                      name="user_id"
-                      value={user.user_id}
-                      onChange={(e) => _changeFrom(e)}
+                        name="user_id"
+                        value={user.user_id}
+                        onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
                   <CCol md="3">
                     <CFormGroup>
-                      <CLabel>
-                        นามสกุล
-                    </CLabel>
+                      <CLabel>นามสกุล</CLabel>
                       <CInput
                         type="text"
-                      name="user_id"
-                      value={user.user_id}
-                      onChange={(e) => _changeFrom(e)}
+                        name="user_id"
+                        value={user.user_id}
+                        onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
@@ -170,95 +155,79 @@ const Register = () => {
                 <CRow>
                   <CCol md="4">
                     <CFormGroup>
-                      <CLabel>
-                        รหัสนักศึกษา
-                    </CLabel>
+                      <CLabel>รหัสนักศึกษา</CLabel>
                       <CInput
                         type="text"
-                      name="user_id"
-                      value={user.user_id}
-                      onChange={(e) => _changeFrom(e)}
+                        name="user_id"
+                        value={user.user_id}
+                        onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
-
                 </CRow>
               </CCol>
-
             </CRow>
             <CRow>
               <CCol>
                 <CRow>
                   <CCol md="4">
                     <CFormGroup>
-                      <CLabel>
-                        คณะ
-                    </CLabel>
+                      <CLabel>คณะ</CLabel>
                       <CInput
                         type="text"
-                      name="user_id"
-                      value={user.user_id}
-                      onChange={(e) => _changeFrom(e)}
+                        name="user_id"
+                        value={user.user_id}
+                        onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
                   <CCol md="3">
                     <CFormGroup>
-                      <CLabel>
-                        สาขา
-                    </CLabel>
+                      <CLabel>สาขา</CLabel>
                       <CInput
                         type="text"
-                      name="user_id"
-                      value={user.user_id}
-                      onChange={(e) => _changeFrom(e)}
+                        name="user_id"
+                        value={user.user_id}
+                        onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
                 </CRow>
               </CCol>
-
             </CRow>
             <CRow>
               <CCol>
                 <CRow>
                   <CCol md="4">
                     <CFormGroup>
-                      <CLabel>
-                        Email
-                    </CLabel>
+                      <CLabel>Email</CLabel>
                       <CInput
                         type="text"
-                      name="user_id"
-                      value={user.user_id}
-                      onChange={(e) => _changeFrom(e)}
+                        name="user_id"
+                        value={user.user_id}
+                        onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
                   <CCol md="3">
                     <CFormGroup>
-                      <CLabel>
-                        เบอร์โทรศัพท์
-                    </CLabel>
+                      <CLabel>เบอร์โทรศัพท์</CLabel>
                       <CInput
                         type="text"
-                      name="user_id"
-                      value={user.user_id}
-                      onChange={(e) => _changeFrom(e)}
+                        name="user_id"
+                        value={user.user_id}
+                        onChange={(e) => _changeFrom(e)}
                       />
                     </CFormGroup>
                   </CCol>
                 </CRow>
               </CCol>
-
             </CRow>
             <CRow>
               <CCol>
                 <CRow>
                   <CCol md="4">
-                    <CLabel>
-                     รูปโปรไฟล์
-                    </CLabel>
+                    <CLabel>รูปโปรไฟล์</CLabel>
                     {/* <CImg
                 src={user.user_image.src}
                 alt="Logo"
@@ -271,13 +240,11 @@ const Register = () => {
                       type="file"
                       name="user_image"
                       accept="image/png, image/jpeg"
-                    // onChange={(e) => _handleImageChange("user_image", e)}
+                      // onChange={(e) => _handleImageChange("user_image", e)}
                     />
                   </CCol>
-
                 </CRow>
               </CCol>
-
             </CRow>
           </CCardBody>
           <CCardFooter>
@@ -287,16 +254,15 @@ const Register = () => {
               // onClick={() => _handleSubmit()}
             >
               สมัครสมาชิก
-          </CButton>
+            </CButton>
             <Link to="/Login">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
             </Link>
           </CCardFooter>
         </CCard>
-
       </CContainer>
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

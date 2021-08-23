@@ -3,9 +3,9 @@ const user = React.lazy(() => import("./views/master-data/user"))
 const user_position = React.lazy(() => import("./views/master-data/user-position")) 
 const course = React.lazy(() => import("./views/master-data/course"))
 
-const leave_form = React.lazy(() => import("./views/class-manage/leave-form"))
-const class_group = React.lazy(() => import("./views/class-manage/class-group"))
-const checkin_teacher  = React.lazy(() => import("./views/class-manage/checkin-teacher"))
+const leave_form = React.lazy(() => import("./views/teacher/leave-form"))
+const class_group = React.lazy(() => import("./views/teacher/class-group"))
+const checkin_teacher  = React.lazy(() => import("./views/teacher/checkin-teacher"))
 
 const course_student =  React.lazy(() => import("./views/student/course-student"))
 const class_student = React.lazy(() => import("./views/student/class-student"))

@@ -25,15 +25,15 @@ const Login = () => {
                 }
               >
                 <CRow>
-                  <CCol md="1"/>
-                  <CCol md="10">
+                  <CCol md="2" />
+                  <CCol md="8">
                     <div className="p-3 border bg-white">
                       <CRow>
-                        <CCol xs={5}>
-                          <img src="cpe.png" width="500" height="370" />
+                        <CCol md={6}>
+                          <img src="cpe.png" width="100%" height="100%" />
                         </CCol>
 
-                        <CCol xs={6}>
+                        <CCol md={5}>
                           <br />
                           <h3>เข้าสู่ระบบ / Login</h3>
                           <br />
@@ -91,7 +91,7 @@ const Login = () => {
                         </CCol>
                       </CRow>
                     </div>
-                  </CCol>
+                  </CCol> 
                 </CRow>
               </Form>
             </CContainer>

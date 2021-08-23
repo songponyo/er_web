@@ -1,11 +1,13 @@
-const accessMenu = ({ PERMISSIONS, notifications = [] }) => {  
-    const navigations = []
-    const masters = []
-    const classrooms = []
+
+
+const accessMenu = ({permissions}) => {    
+    const navigations = [] 
+    const masters = [] 
+    const teacher = []
     const students = []
     //====================================================== Teacher Classroom =========================================================//
 
-    classrooms.push({
+    teacher.push({
         _tag: "CSidebarNavItem",
         name: "กลุ่มเรียน",
         to: "/class-group",
@@ -16,7 +18,7 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
         //     text: 10,
         // },
     })
-    classrooms.push({
+    teacher.push({
         _tag: "CSidebarNavItem",
         name: "ใบลา",
         to: "/leave-form",
@@ -28,7 +30,7 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
         // },
     })
 
-    classrooms.push({
+    teacher.push({
         _tag: "CSidebarNavItem",
         name: "เช็คชื่อ",
         to: "/checkin-teacher",
@@ -118,13 +120,13 @@ const accessMenu = ({ PERMISSIONS, notifications = [] }) => {
 
     //===========================================================================================================================//
 
-    if (classrooms.length) {
+    if (teacher.length) {
         navigations.push(
             {
                 _tag: "CSidebarNavTitle",
-                _children: ["Class room"],
+                _children: ["Teacher"],
             },
-            ...classrooms,
+            ...teacher,
         )
     }
     if (students.length) {

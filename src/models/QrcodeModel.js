@@ -57,4 +57,13 @@ export default class QrcodeModel extends BaseModel {
       body: JSON.stringify(data),
     })
   }
+
+  async getRoomid(data) {
+    return this.authFetch({
+      url: 'qrcode/getRoomid',
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+  
 }
