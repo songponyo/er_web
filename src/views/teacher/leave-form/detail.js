@@ -110,7 +110,7 @@ export default function Detail() {
   const _checkSubmit = () => {
     if (leave.leave_type === "") {
       Swal.fire({
-        title: "Warning!",
+        title: "แจ้งเตือน!",
         text: "Please Check Your leave type ",
         icon: "warning",
       });
@@ -118,7 +118,7 @@ export default function Detail() {
     } else
       if (leave.leave_reason === "") {
         Swal.fire({
-          title: "Warning!",
+          title: "แจ้งเตือน!",
           text: "Please Check Your reason",
           icon: "warning",
         });

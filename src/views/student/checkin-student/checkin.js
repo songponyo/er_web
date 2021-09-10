@@ -8,7 +8,6 @@ import {
   CCol,
   CRow,
   CLabel,
-  CInput,
   CButton,
   CCardFooter,
 } from "@coreui/react";
@@ -30,34 +29,34 @@ export default function Checkin() {
     longtititude: "",
     latitude: "",
   });
-  const [classroom, setclassroom] = useState({});
+  const [qrcode, setQrcode] = useState({});
   const [checkin, setCheckin] = useState({});
+
   useEffect(() => {
     fetchData();
   }, []);
-
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
     setUser(user_session);
+    let coded = code.params.code;
 
+    const qrcode = await qrcode_model.getQrcodeByCode({
+      qr_code: coded,
+    });
     const date = new Date();
     let lastcode =
       "CK" +
       date.getFullYear() +
       (date.getMonth() + 1).toString().padStart(2, "0");
-
     const qrcode_data = await checkin_model.getCheckinLastCode({
       code: lastcode,
       digit: 4,
     });
 
-    const classroom = await qrcode_model.getQrcodeByCode({
-      qr_code: code.params.code,
-    });
-
     let room = {};
-    room = classroom.data[0];
-    setclassroom(room);
+    room = qrcode.data[0];
+    room.qr_code = coded;
+    setQrcode(room);
 
     let day = {};
     day.check_code = qrcode_data.data;
@@ -66,8 +65,13 @@ export default function Checkin() {
     day.time_stamp = time_controller.reformatToTime(day.date);
     setCheckin(day);
 
-    _checkSubmit(user_session.user_code, room.qr_code);
+    
+    let url = {}
+    url.qr = room.qr_code 
+    url.classID = room.classgroup_code
+    _checkSubmit(user_session.user_code,url);
   }
+
   async function _handleSubmit() {
     let status_in = "";
     checkin.time_stamp < checkin.time_out
@@ -79,33 +83,34 @@ export default function Checkin() {
       checkin_time: time_controller.reformatToDateTime(checkin.date),
       checkin_status: status_in,
       user_code: user.user_code,
-      qr_code: classroom.qr_code,
+      qr_code: qrcode.qr_code,
       longtititude: position.longtititude,
       latitude: position.latitude,
     });
     if (query_result.require) {
       checkin.time_stamp < checkin.time_out
-        ? Swal.fire("บันทึกเรียบร้อย! ทันเวลา ", "", "success")
-        : Swal.fire("บันทึกเรียบร้อย! ไม่ทันเวลา ", "", "success");
-
-      history.push("/checkin-student");
+        ? Swal.fire("ทันเวลา ", "", "success")
+        : Swal.fire("ไม่ทันเวลา ", "", "error");
+      let histy = " / checkin - student / history / " + qrcode.classgroup_code;
+      history.push(histy);
     } else {
       Swal.fire("บันทึกไม่สำเร็จ", "", "error");
     }
   }
 
-  const _checkSubmit = async (user, qr) => {
+  const _checkSubmit = async (user, qr) => { 
     const query_result = await checkin_model.getCheckinBy({
       keyword: user,
-      owner: qr,
-    });
-    if (query_result.data !== "") {
+      owner: qr.qr,
+    });  
+    if (query_result.data.length !== 0) {
       Swal.fire({
-        title: "Warning!",
-        text: "ไม่สามารถลงชื่อซ้ำ",
+        title: "แจ้งเตือน!",
+        text: "ไม่สามารถลงชื่อซ้ำได้",
         icon: "warning",
       });
-      history.push("/checkin-student");
+      let histy = "/checkin-student/history/" + qr.classID; 
+      history.push(histy);
       return false;
     } else {
       return true;
@@ -114,7 +119,7 @@ export default function Checkin() {
 
   return (
     <>
-      <CContainer style={{ width: "50%", paddingTop: "20px" }}>
+      <CContainer style={{ width: "350px", paddingTop: "20px" }}>
         <CCard>
           <CCardBody>
             <CRow>
@@ -122,13 +127,14 @@ export default function Checkin() {
                 <CLabel style={{ fontSize: "25px" }}>
                   {checkin.time_stamp}
                 </CLabel>
+
                 <br />
-                <CLabel style={{ fontSize: "25px" }}>
-                  {classroom.subject_code}
+                <CLabel style={{ fontSize: "20px" }}>
+                  {qrcode.subject_code}
                 </CLabel>
                 <br />
                 <CLabel style={{ fontSize: "20px" }}>
-                  {classroom.subject_name}
+                  {qrcode.subject_name}
                 </CLabel>
               </CCol>
               <br />
@@ -136,7 +142,7 @@ export default function Checkin() {
                 <CLabel style={{ fontSize: "18" }}>อาจารย์ประจำวิชา</CLabel>
                 <br />
                 <CLabel style={{ fontSize: "16" }}>
-                  {classroom.owner_fullname}
+                  {qrcode.owner_fullname}
                 </CLabel>
               </CCol>
               <CCol lg="12">

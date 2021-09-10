@@ -6,7 +6,7 @@ import {
   CCardBody,
   CButton,
 } from "@coreui/react";
-import { Link } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 // import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -15,14 +15,14 @@ import {
   // faWindowClose,
 } from "@fortawesome/free-solid-svg-icons";
 import { Table } from "../../../component/revel-strap";
-import CheckinModel from "../../../models/CheckinModel";
 import { TimeController } from "../../../controller";
+import QrcodeModel from "../../../models/QrcodeModel";
 
 const time_controller = new TimeController();
-const checkin_model = new CheckinModel();
+const qrcode_model = new QrcodeModel();
 
 export default function History() {
-  const [showloading, setShowLoading] = useState(true);
+  let code = useRouteMatch("/checkin-student/history/:code");
   const [checkin, setCheckin] = useState([]);
 
   useEffect(() => {
@@ -32,8 +32,8 @@ export default function History() {
   async function _fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
 
-    const checkin_data = await checkin_model.getCheckinBy({
-      user_code: user_session.user_code,
+    const checkin_data = await qrcode_model.getQrcodeBy({
+      keyword: code.params.code,
     });
 
     setCheckin(checkin_data.data);
@@ -59,40 +59,66 @@ export default function History() {
                 align: "center",
               },
               {
-                title: "เวลาเข้าเรียน",
-                dataIndex: "checkin_time",
+                title: "เวลาเช็คชื่อ",
+                dataIndex: "qr_timeout",
                 render: (cell) => {
-                  let time = time_controller.reformatToTime(cell); 
-                  return time
+                  if (cell != null) {
+                    let time = time_controller.reformatToTime(cell);
+                    return time;
+                  } else {
+                    return (
+                      <span className="text-danger">ไม่มีการเช็คชื่อ</span>
+                    );
+                  }
                 },
                 filterAble: true,
                 align: "center",
                 width: 120,
               },
               {
-                title: "สถานะเรียน",
-                dataIndex: "checkin_status",
-                render: (cell) => { 
-                  if (cell === "Active") {
-                    return <span className="text-success">เข้าเรียน</span>;
+                title: "เวลาเข้าเรียน",
+                dataIndex: "checkin_time",
+                render: (cell) => {
+                  if (cell != null) {
+                    let time = time_controller.reformatToTime(cell);
+                    return time;
                   } else {
                     return (
-                      cell !== "Deactive" 
-                    ? <span className="text-danger">ล่าช้า</span>
-                    : <span className="text-danger">ลา</span>
-                      
-                      
+                      <span className="text-danger">ไม่มีการเช็คชื่อ</span>
+                    );
+                  }
+                },
+                filterAble: true,
+                align: "center",
+                width: 120,
+              },
+              {
+                title: "สถานะเรียนเรียน",
+                dataIndex: "checkin_status",
+                render: (cell) => {
+                  if (cell === "Active") {
+                    return <span className="text-success">ทันเวลา</span>;
+                  } else {
+                    return cell !== "Inactive" ? (
+                      cell !== "Leave" ? (
+                        <span className="text-danger">ขาดเรียน</span>
+                      ) : (
+                        <span className="text-danger">ลา</span>
+                      )
+                    ) : (
+                      <span className="text-danger">ไม่ทันเวลา</span>
                     );
                   }
                 },
                 filters: [
-                  { text: "เสร็จสิ้น", value: "complete" },
-                  { text: "รออนุมัติ", value: "Waiting" },
+                  { text: "ทันเวลา", value: "Active" },
+                  { text: "ไม่ทันเวลา", value: "Inactive" },
+                  { text: "ลา", value: "Leave" },
                 ],
                 align: "center",
                 width: 120,
               },
-              {  
+              {
                 title: "เมนูจัดการ",
                 dataIndex: "",
                 align: "center",
@@ -100,8 +126,8 @@ export default function History() {
                   const row_accessible = [];
                   row_accessible.push(
                     <Link
-                      key="update"
-                      to={`/checkin-student/checkin/${cell.qr_code}`}
+                      key="checkin"
+                      to={`/checkin-student/checkin/${cell.qr_code_check}`}
                       title="เช็คชื่อ"
                     >
                       <button type="button" className="btn btn-warning">

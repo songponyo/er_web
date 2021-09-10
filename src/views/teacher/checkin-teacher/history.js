@@ -104,7 +104,7 @@ export default function History() {
                   row_accessible.push(
                     <Link
                       key="detail"
-                      to={`/checkin-teacher/detail/${cell.classgroup_code}`}
+                      to={`/checkin-teacher/detail/${cell.qr_code}`}
                       title="รายชื่อที่เข้าเรียน"
                     >
                       <button type="button" className="btn btn-success">

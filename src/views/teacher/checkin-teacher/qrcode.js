@@ -141,7 +141,7 @@ export default function Qrcode() {
   const _checkSubmit = () => {
     if (checkin.qr_timeout === "" || checkin.qr_timeout > 60) {
       Swal.fire({
-        title: "Warning!",
+        title: "แจ้งเตือน!",
         text: "โปรดระบุ เวลาหมดสิทธิ์เช็คชื่อไม่เกิน 60 นาที",
         icon: "warning",
       });

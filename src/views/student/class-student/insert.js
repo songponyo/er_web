@@ -113,16 +113,16 @@ export default function Insert() {
   const _checkSubmit = () => {
     if (classroom.subject_code === "") {
       Swal.fire({
-        title: "Warning!",
-        text: "Please Check Your subject_code ",
+        title: "แจ้งเตือน!",
+        text: "เช็ครายวิชา",
         icon: "warning",
       });
       return false;
     } else
       if (classroom.user_code === "") {
         Swal.fire({
-          title: "Warning!",
-          text: "Please Check Your user_code",
+          title: "แจ้งเตือน!",
+          text: "เช็คไอดีผู้ใช้",
           icon: "warning",
         });
         return false;

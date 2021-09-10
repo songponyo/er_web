@@ -97,7 +97,7 @@ export default function Register() {
   const _checkSubmit = () => {
     if (classroom.classgroup_password != classroom.class_password) {
       Swal.fire({
-        title: "Warning!",
+        title: "แจ้งเตือน!",
         text: "โปรดเช็ครหัสผ่านของคุณ",
         icon: "warning",
       });

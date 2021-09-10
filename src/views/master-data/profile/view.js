@@ -110,8 +110,8 @@ export default function View() {
   const _checkSubmit = () => {
     if (user.user_profile_image === "") {
       Swal.fire({
-        title: "Warning!",
-        text: "Please Check Your user name ",
+        title: "แจ้งเตือน!",
+        text: "โปรดเช็คชื่อผู้ใช้ ",
         icon: "warning",
       });
       return false;

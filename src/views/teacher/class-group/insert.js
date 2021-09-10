@@ -147,35 +147,35 @@ export default function Insert() {
   const _checkSubmit = () => {
     if (classroom.subject_code === "") {
       Swal.fire({
-        title: "Warning!",
+        title: "แจ้งเตือน!",
         text: "โปรดตรวจสอบ รายวิชา",
         icon: "warning",
       });
       return false;
     } else if (classroom.classgroup_id === "") {
       Swal.fire({
-        title: "Warning!",
+        title: "แจ้งเตือน!",
         text: "โปรดตรวจสอบ กลุ่มเรียน",
         icon: "warning",
       });
       return false;
     } else if (classroom.classgroup_password === "") {
       Swal.fire({
-        title: "Warning!",
+        title: "แจ้งเตือน!",
         text: "โปรดตรวจสอบ รหัสผ่าน",
         icon: "warning",
       });
       return false;
     } else if (time.time_start >= time.time_end) {
       Swal.fire({
-        title: "Warning!",
+        title: "แจ้งเตือน!",
         text: "โปรดตรวจสอบ เวลาการสอน",
         icon: "warning",
       });
       return false;
     } else if (classroom.user_code === "") {
       Swal.fire({
-        title: "Warning!",
+        title: "แจ้งเตือน!",
         text: "โปรดตรวจสอบ ผู้รับผิดชอบ",
         icon: "warning",
       });

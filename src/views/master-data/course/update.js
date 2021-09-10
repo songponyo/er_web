@@ -64,8 +64,8 @@ export default function Insert() {
   const _checkSubmit = () => {
     if (subject.subject_name === "") {
       Swal.fire({
-        title: "Warning!",
-        text: "Please Check Your subject name ",
+        title: "แจ้งเตือน!",
+        text: "โปรดเช็คชื่อรายวิชา ",
         icon: "warning",
       });
       return false;
