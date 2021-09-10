@@ -25,8 +25,7 @@ class Auth extends Component {
 
   componentDidMount() {
     this.handleAuthentication()
-  }
-
+  } 
   initiateLogin = (data) => {
     if (this.state.loading === false) {
       this.setState({
@@ -112,8 +111,7 @@ class Auth extends Component {
 
       GLOBAL.ACCESS_TOKEN = { 'x-access-token': session.x_access_token }
 
-      const { permissions } = jwt_decode(session.permissions_token)
-
+      const { permissions } = jwt_decode(session.permissions_token) 
       this.setState({
         loading: false,
         authcertifying: false,

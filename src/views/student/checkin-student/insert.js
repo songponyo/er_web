@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import GLOBAL from "../../../GLOBAL";
-import { Link } from "react-router-dom";
+import GLOBAL from "../../../GLOBAL"; 
 import {
   CCard,
   CCardHeader,
@@ -14,7 +13,7 @@ import {
   CButton,
 } from "@coreui/react";
 import Swal from "sweetalert2";
-import { useHistory } from "react-router-dom";
+import { useHistory,Link } from "react-router-dom";
 import { TimeController } from "../../../controller";
 import { Select } from "../../../component/revel-strap";
 
@@ -114,7 +113,7 @@ export default function Insert() {
     if (classroom.subject_code === "") {
       Swal.fire({
         title: "Warning!",
-        text: "Please Check Your subject_code ",
+        text: "เช็ครายวิชา ",
         icon: "warning",
       });
       return false;
@@ -122,7 +121,7 @@ export default function Insert() {
       if (classroom.user_code === "") {
         Swal.fire({
           title: "Warning!",
-          text: "Please Check Your user_code",
+          text: "เช็คชื่อผู้ใช้",
           icon: "warning",
         });
         return false;
@@ -234,7 +233,7 @@ export default function Insert() {
             >
               บันทึก
             </CButton>
-            <Link to="/material-type">
+            <Link to="/checkin-student">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
             </Link>
           </CCardFooter>

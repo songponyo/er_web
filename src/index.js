@@ -1,5 +1,6 @@
 import 'react-app-polyfill/ie11'; // For IE 11 support
 import 'react-app-polyfill/stable';
+import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import './polyfill'
 import React from 'react';
 import ReactDOM from 'react-dom';

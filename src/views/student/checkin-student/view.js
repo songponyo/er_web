@@ -1,9 +1,5 @@
-import React, { Component, useEffect, useState } from "react";
-import GLOBAL from "../../../GLOBAL";
-import {
-  CContainer,
-  CRow,
-  CCol,
+import React, { Component, useEffect, useState } from "react"; 
+import { 
   CCard,
   CCardHeader,
   CCardBody, 
@@ -12,8 +8,8 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEdit,
-  faCheck,
-  faWindowClose,
+  // faCheck,
+  // faWindowClose,
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { Table, Loading } from "../../../component/revel-strap";
@@ -102,40 +98,26 @@ export default function View() {
                 align: "center",
               },
               {
-                title: "#",
+                title: "เมนูจัดการ",
                 dataIndex: "",
                 align: "center",
                 render: (cell) => {
-                  const row_accessible = [];
+                  const row_accessible = []; 
                   row_accessible.push(
                     <Link
                       key="update"
-                      to={`/checkin-student/update/${cell.classgroup_code}`}
+                      to={`/checkin-student/history/${cell.classgroup_code}`}
                       title="แก้ไขรายการ"
-                    >
+                    > 
                       <button type="button" className="btn btn-primary">
                         <FontAwesomeIcon
                           icon={faEdit}
                           size="5s"
                           color="white"
-                        />
+                        /> ประวัติ
                       </button>
                     </Link>
-                  );
-                  // row_accessible.push(
-                  //   <button
-                  //     type="button"
-                  //     className={"btn btn-danger"}
-                  //     onClick={() => _onDelete(cell)}
-                  //   >
-                  //     <FontAwesomeIcon
-                  //       icon={faWindowClose}
-                  //       size="5s"
-                  //       color="white"
-                  //     />
-                  //   </button>
-                  // );
-
+                  ); 
                   return row_accessible;
                 },
                 width: 120,

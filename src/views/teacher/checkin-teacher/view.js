@@ -103,7 +103,7 @@ export default function View() {
 
                   row_accessible.push(
                     <Link
-                      key="update"
+                      key="qrcode"
                       to={`/checkin-teacher/qrcode/${cell.classgroup_code}`}
                       title="สร้างรายการเช็คชื่อ"
                     >
@@ -112,7 +112,7 @@ export default function View() {
                           icon={faQrcode}
                           size="5s"
                           color="white"
-                        />
+                        /> คิวร์อาร์โค้ด
                       </button>
                     </Link>
                   );
@@ -120,8 +120,8 @@ export default function View() {
 
                   row_accessible.push(
                     <Link
-                      key="update"
-                      to={`/checkin-teacher/detail/${cell.classgroup_code}`}
+                      key="้history"
+                      to={`/checkin-teacher/history/${cell.classgroup_code}`}
                       title="รายชื่อที่เข้าเรียน"
                     >
                       <button type="button" className="btn btn-success">
@@ -129,7 +129,7 @@ export default function View() {
                           icon={faAddressBook}
                           size="5s"
                           color="white"
-                        />
+                        /> ประวัติเช็คชื่อ
                       </button>
                     </Link>
                   );

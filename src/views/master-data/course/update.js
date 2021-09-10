@@ -13,15 +13,15 @@ import {
   CInput,
   CButton,
 } from "@coreui/react";
-import Swal from "sweetalert2"; 
+import Swal from "sweetalert2";
 import { TimeController } from "../../../controller";
 
-import SubjectModel from "../../../models/SubjectModel"
+import SubjectModel from "../../../models/SubjectModel";
 const time_controller = new TimeController();
 const subject_model = new SubjectModel();
 
 export default function Insert() {
-  let history = useHistory(); 
+  let history = useHistory();
   let code = useRouteMatch("/course/update/:code");
   const [user, setUser] = useState([]);
   const [subject, setSubject] = useState({
@@ -40,14 +40,14 @@ export default function Insert() {
     const date = new Date();
     const subject_data = await subject_model.getSubjectByCode({
       subject_code: code.params.code,
-    })
-    setSubject(subject_data.data[0])
+    });
+    setSubject(subject_data.data[0]);
   }
 
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let query_result = await subject_model.insertSubject({
-        subject_code: subject.subject_code, 
+        subject_code: subject.subject_code,
         subject_name_th: subject.subject_name_th,
         subject_name_en: subject.subject_name_en,
       });
@@ -76,9 +76,7 @@ export default function Insert() {
 
   const _changeFrom = (e) => {
     const { value, name } = e.target;
-    let new_material = { ...subject };
-    new_material[name] = value;
-    setSubject(new_material);
+    setSubject({ ...subject, [name]: value });
   };
 
   return (
@@ -90,7 +88,7 @@ export default function Insert() {
           </CCardHeader>
           <CCardBody>
             <CRow>
-              <CCol >
+              <CCol>
                 <CRow>
                   <CCol md="3">
                     <CLabel>
@@ -105,13 +103,11 @@ export default function Insert() {
                       value={subject.subject_code}
                       // disabled
                     />
-
                   </CCol>
                   <CCol md="3">
                     <CFormGroup>
                       <CLabel>
-                        ชื่อวิชาภาษาไทย
-                        {" "}
+                        ชื่อวิชาภาษาไทย{" "}
                         <font color="#F00">
                           <b>*</b>
                         </font>
@@ -122,14 +118,12 @@ export default function Insert() {
                         value={subject.subject_name_th}
                         onChange={(e) => _changeFrom(e)}
                       />
-
                     </CFormGroup>
                   </CCol>
                   <CCol md="3">
                     <CFormGroup>
                       <CLabel>
-                        ชื่อวิชาภาษาอังกฤษ
-                        {" "}
+                        ชื่อวิชาภาษาอังกฤษ{" "}
                         <font color="#F00">
                           <b>*</b>
                         </font>

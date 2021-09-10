@@ -13,7 +13,7 @@ import {
   faEdit,
   faCheck,
   faWindowClose,
-  faSearch
+  faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { Table, Loading } from "../../../component/revel-strap";
@@ -37,14 +37,21 @@ export default function View() {
   function _onDelete(data) {
     Swal.fire({
       title: "Are you sure ?",
-      text: "Confirm to delete " + data.classgroup_id + "   " + data.subject_fullname,
+      text:
+        "Confirm to delete " +
+        data.classgroup_id +
+        "   " +
+        data.subject_fullname,
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
         setShowLoading(true);
         classgroup_model
-          .deleteClassgroupByCode({ classgroup_code: data.classgroup_code, table_name: data.classgroup_table_score })
+          .deleteClassgroupByCode({
+            classgroup_code: data.classgroup_code,
+            table_name: data.classgroup_table_score,
+          })
           .then((res) => {
             if (res.require) {
               setShowLoading(false);
@@ -64,7 +71,17 @@ export default function View() {
       <CCard>
         <CCardHeader className="header-t-red">
           กลุ่มเรียน / Class group
-          <Link to={`/class-group/insert`} className="btn btn-success float-right">
+          <Link
+            to={`/class-group/insert`}
+            className="btn btn-success float-right"
+          >
+            <i className="fa fa-plus" aria-hidden="true"></i>{" "}
+            รายวิชาทั้งหมดที่เปิดสอน
+          </Link>
+          <Link
+            to={`/class-group/insert`}
+            className="btn btn-success float-right"
+          >
             <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มกลุ่มเรียน
           </Link>
         </CCardHeader>
@@ -125,11 +142,11 @@ export default function View() {
                           icon={faSearch}
                           size="5s"
                           color="white"
-                        />
+                        />{" "}
+                        รายชื่อนักศึกษา
                       </button>
                     </Link>
                   );
-
 
                   row_accessible.push(
                     <Link
@@ -142,7 +159,7 @@ export default function View() {
                           icon={faEdit}
                           size="5s"
                           color="white"
-                        />
+                        />  แก้ไข
                       </button>
                     </Link>
                   );
@@ -156,7 +173,7 @@ export default function View() {
                         icon={faWindowClose}
                         size="5s"
                         color="white"
-                      />
+                      /> ลบห้องเรียน
                     </button>
                   );
 

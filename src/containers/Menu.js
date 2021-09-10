@@ -1,10 +1,11 @@
 
 
-const accessMenu = ({permissions}) => {    
+const accessMenu = ({PERMISSIONS}) => {  
+    // console.log("PERMISSIONS",PERMISSIONS);  
     const navigations = [] 
     const masters = [] 
     const teacher = []
-    const students = []
+    const students = [] 
     //====================================================== Teacher Classroom =========================================================//
 
     teacher.push({
@@ -120,16 +121,7 @@ const accessMenu = ({permissions}) => {
 
     //===========================================================================================================================//
 
-    if (teacher.length) {
-        navigations.push(
-            {
-                _tag: "CSidebarNavTitle",
-                _children: ["Teacher"],
-            },
-            ...teacher,
-        )
-    }
-    if (students.length) {
+    if (students.length  && PERMISSIONS == 0) {
         navigations.push(
             {
                 _tag: "CSidebarNavTitle",
@@ -138,7 +130,18 @@ const accessMenu = ({permissions}) => {
             ...students,
         )
     }
-    if (masters.length) {
+
+    if (teacher.length  && PERMISSIONS == 1) {
+        navigations.push(
+            {
+                _tag: "CSidebarNavTitle",
+                _children: ["Teacher"],
+            },
+            ...teacher,
+        )
+    }
+    
+    if (masters.length && PERMISSIONS == 2) {
         navigations.push(
             {
                 _tag: "CSidebarNavTitle",

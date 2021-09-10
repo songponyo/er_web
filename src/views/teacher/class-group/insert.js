@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import GLOBAL from "../../../GLOBAL";
 import { Link } from "react-router-dom";
+import moment from "moment";
 import {
   CCard,
   CCardHeader,
@@ -18,20 +18,23 @@ import { useHistory } from "react-router-dom";
 import { TimeController } from "../../../controller";
 import { Select } from "../../../component/revel-strap";
 
-import SubjectModel from "../../../models/SubjectModel"
-import ClassgroupModel from "../../../models/ClassgroupModel"
-import UserModel from "../../../models/UserModel"
+import SubjectModel from "../../../models/SubjectModel";
+import ClassgroupModel from "../../../models/ClassgroupModel";
+import UserModel from "../../../models/UserModel";
 
 const user_model = new UserModel();
 const classgroup_model = new ClassgroupModel();
 const subject_model = new SubjectModel();
 const time_controller = new TimeController();
 
-
 export default function Insert() {
   let history = useHistory();
-  const [userselect, setUserselect] = useState([])
+  const [userselect, setUserselect] = useState([]);
   const [subject, setSubject] = useState([]);
+  const [time, setTime] = useState({
+    time_start: "",
+    time_end: "",
+  });
   const [classroom, setClassroom] = useState({
     classgroup_code: "",
     classgroup_id: "",
@@ -39,15 +42,33 @@ export default function Insert() {
     classgroup_number: "",
     subject_code: "",
     user_code: "",
+    classgroup_time_start: "",
+    classgroup_time_end: "",
     user_fullname: "",
     leave_maxcount: "",
     max_score: "",
-    addby: ""
-  })
-
+    addby: "",
+  });
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    let timer_start = moment(
+      `${moment().format("YYYY-MM-DD")} ${classroom.classgroup_time_start}`,
+      "YYYY-MM-DD HH:mm"
+    );
+
+    let timer_end = moment(
+      `${moment().format("YYYY-MM-DD")} ${classroom.classgroup_time_end}`,
+      "YYYY-MM-DD HH:mm"
+    );
+    let classrooma = {};
+    classrooma.time_start = timer_start._i;
+    classrooma.time_end = timer_end._i;
+    setTime(classrooma);
+  }, [classroom.classgroup_time_start, classroom.classgroup_time_end]);
+
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
 
@@ -62,15 +83,15 @@ export default function Insert() {
       code: code,
       digit: 4,
     });
-    let classform = {}
-    classform = { ...classroom }
-    classform.classgroup_code = class_data.data
-    classform.addby = user_session.user_code
+    let classform = {};
+    classform = { ...classroom };
+    classform.classgroup_code = class_data.data;
+    classform.addby = user_session.user_code;
     setClassroom(classform);
 
     const user_data = await user_model.getUserBy({
-      user_position_code: "UP002"
-    })
+      user_position_code: "UP002",
+    });
 
     let user_form = user_data.data;
     let select_user = [];
@@ -80,7 +101,7 @@ export default function Insert() {
         label: user_form[i].user_full_name,
       });
     }
-    setUserselect(select_user)
+    setUserselect(select_user);
 
     const subject_data = await subject_model.getSubjectBy({});
     let subject_form = subject_data.data;
@@ -88,7 +109,11 @@ export default function Insert() {
     for (let i = 0; i < subject_form.length; i++) {
       select_subject.push({
         value: subject_form[i].subject_code,
-        label: "[ " + subject_form[i].subject_code + " ] " + subject_form[i].subject_name_th,
+        label:
+          "[ " +
+          subject_form[i].subject_code +
+          " ] " +
+          subject_form[i].subject_name_th,
       });
     }
     setSubject(select_subject);
@@ -105,14 +130,14 @@ export default function Insert() {
         user_code: classroom.user_code,
         max_score: classroom.max_score,
         leave_maxcount: classroom.leave_maxcount,
-        classgroup_time_start: classroom.classgroup_time_start,
-        classgroup_time_end: classroom.classgroup_time_end,
+        classgroup_time_start: time.time_start,
+        classgroup_time_end: time.time_end,
         addby: classroom.addby,
         adddate: time_controller.reformatToDate(new Date()),
       });
       if (query_result.require) {
         Swal.fire("Save success!!", "", "success");
-        // history.push("/class-group");
+        history.push("/class-group");
       } else {
         Swal.fire("Sorry, Someting worng !", "", "error");
       }
@@ -127,54 +152,59 @@ export default function Insert() {
         icon: "warning",
       });
       return false;
-    } else
-      if (classroom.classgroup_id === "") {
-        Swal.fire({
-          title: "Warning!",
-          text: "โปรดตรวจสอบ กลุ่มเรียน",
-          icon: "warning",
-        });
-        return false;
-      } else
-        if (classroom.classgroup_password === "") {
-          Swal.fire({
-            title: "Warning!",
-            text: "โปรดตรวจสอบ รหัสผ่าน",
-            icon: "warning",
-          });
-          return false;
-        } else
-          if (classroom.user_code === "") {
-            Swal.fire({
-              title: "Warning!",
-              text: "โปรดตรวจสอบ ผู้รับผิดชอบ",
-              icon: "warning",
-            });
-            return false;
-          } else {
-            return true;
-          }
+    } else if (classroom.classgroup_id === "") {
+      Swal.fire({
+        title: "Warning!",
+        text: "โปรดตรวจสอบ กลุ่มเรียน",
+        icon: "warning",
+      });
+      return false;
+    } else if (classroom.classgroup_password === "") {
+      Swal.fire({
+        title: "Warning!",
+        text: "โปรดตรวจสอบ รหัสผ่าน",
+        icon: "warning",
+      });
+      return false;
+    } else if (time.time_start >= time.time_end) {
+      Swal.fire({
+        title: "Warning!",
+        text: "โปรดตรวจสอบ เวลาการสอน",
+        icon: "warning",
+      });
+      return false;
+    } else if (classroom.user_code === "") {
+      Swal.fire({
+        title: "Warning!",
+        text: "โปรดตรวจสอบ ผู้รับผิดชอบ",
+        icon: "warning",
+      });
+      return false;
+    } else {
+      return true;
+    }
   };
 
   const _changeFrom = (e) => {
     const { value, name } = e.target;
-    let new_data = { ...classroom };
-    new_data[name] = value;
-    setClassroom(new_data);
+    setClassroom({ ...classroom, [name]: value });
   };
-  return (
-    <form autoComplete="off">
 
-      <CCard >
+  return (
+    <>
+      <CCard>
         <CCardHeader className="header-t-red">
           กลุ่มเรียน / Class group
         </CCardHeader>
         <CCardBody>
           <CRow>
             <CCol md="3">
-              <CLabel>รหัสวิชา <font color="#F00">
-                <b>*</b>
-              </font></CLabel>
+              <CLabel>
+                รหัสวิชา{" "}
+                <font color="#F00">
+                  <b>*</b>
+                </font>
+              </CLabel>
               <Select
                 options={subject}
                 value={classroom.subject_code}
@@ -189,8 +219,7 @@ export default function Insert() {
             <CCol md="3">
               <CFormGroup>
                 <CLabel>
-                  กลุ่มเรียน
-                  {" "}
+                  กลุ่มเรียน{" "}
                   <font color="#F00">
                     <b>*</b>
                   </font>
@@ -201,14 +230,12 @@ export default function Insert() {
                   value={classroom.classgroup_id}
                   onChange={(e) => _changeFrom(e)}
                 />
-
               </CFormGroup>
             </CCol>
             <CCol md="3">
               <CFormGroup>
                 <CLabel>
-                  รหัสผ่านเข้ากลุ่มเรียน
-                  {" "}
+                  รหัสผ่านเข้ากลุ่มเรียน{" "}
                   <font color="#F00">
                     <b>*</b>
                   </font>
@@ -219,14 +246,12 @@ export default function Insert() {
                   value={classroom.classgroup_password}
                   onChange={(e) => _changeFrom(e)}
                 />
-
               </CFormGroup>
             </CCol>
             <CCol md="3">
               <CFormGroup>
                 <CLabel>
-                  ผู้รับผิดชอบ
-                  {" "}
+                  ผู้รับผิดชอบ{" "}
                   <font color="#F00">
                     <b>*</b>
                   </font>
@@ -241,17 +266,14 @@ export default function Insert() {
                     })
                   }
                 />
-
               </CFormGroup>
             </CCol>
           </CRow>
           <CRow>
-
             <CCol md="3">
               <CFormGroup>
                 <CLabel>
-                  ห้องเรียน
-                  {" "}
+                  ห้องเรียน{" "}
                   <font color="#F00">
                     <b>*</b>
                   </font>
@@ -270,8 +292,7 @@ export default function Insert() {
             <CCol md="3">
               <CFormGroup>
                 <CLabel>
-                  เวลาเข้าเรียน
-                  {" "}
+                  เวลาเข้าเรียน{" "}
                   <font color="#F00">
                     <b>*</b>
                   </font>
@@ -287,8 +308,7 @@ export default function Insert() {
             <CCol md="3">
               <CFormGroup>
                 <CLabel>
-                  เวลาสิ้นสุด
-                  {" "}
+                  เวลาสิ้นสุด{" "}
                   <font color="#F00">
                     <b>*</b>
                   </font>
@@ -298,10 +318,44 @@ export default function Insert() {
                   name="classgroup_time_end"
                   value={classroom.classgroup_time_end}
                   onChange={(e) => _changeFrom(e)}
-                  min={classroom.classgroup_time_end}
                 />
               </CFormGroup>
+            </CCol>
+          </CRow>
+          <CRow>
+            <CCol md="3">
+              <CFormGroup>
+                <CLabel>
+                  คะแนนเก็บสูงสุด{" "}
+                  <font color="#F00">
+                    <b>*</b>
+                  </font>
+                </CLabel>
+                <CInput
+                  type="number"
+                  name="max_score"
+                  value={classroom.max_score}
+                  onChange={(e) => _changeFrom(e)}
+                  max="100"
+                />
+              </CFormGroup>
+            </CCol>
 
+            <CCol md="3">
+              <CFormGroup>
+                <CLabel>
+                  จำนวนครั้งที่สามารถขาดได้{" "}
+                  <font color="#F00">
+                    <b>*</b>
+                  </font>
+                </CLabel>
+                <CInput
+                  type="number"
+                  name="leave_maxcount"
+                  value={classroom.leave_maxcount}
+                  onChange={(e) => _changeFrom(e)}
+                />
+              </CFormGroup>
             </CCol>
           </CRow>
         </CCardBody>
@@ -318,6 +372,6 @@ export default function Insert() {
           </Link>
         </CCardFooter>
       </CCard>
-    </form>
+    </>
   );
 }

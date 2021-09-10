@@ -30,41 +30,13 @@ const Register = () => {
     phone: "",
     id_line: "",
   });
-
-  console.log("user", user);
+ 
 
   const _changeFrom = (e) => {
     const { value, name } = e.target;
     setUser({ ...user, ["name"]: value });
   };
-  // async _handleSubmit = () => {
-
-  //     const res = await user_model.insertUser({
-  //       user_code: this.state.user_code.trim(),
-  //       license_code: this.state.license_code,
-  //       user_position_code: this.state.user_position_code,
-  //       user_prefix: this.state.user_prefix,
-  //       user_name: this.state.user_name.trim(),
-  //       user_lastname: this.state.user_lastname.trim(),
-  //       user_tel: this.state.user_tel.trim(),
-  //       user_email: this.state.user_email.trim(),
-  //       user_address: this.state.user_address.trim(),
-  //       user_zipcode: this.state.user_zipcode.trim(),
-  //       user_username: this.state.user_username.trim(),
-  //       user_password: this.state.user_password.trim(),
-  //       user_profile_image: user_profile_image,
-  //       user_status: this.state.user_status,
-  //       addby: this.props.USER.user_code,
-  //     });
-
-  //     if (res.require) {
-  //       Swal.fire("Save success!!", "", "success");
-  //       this.props.history.push("/user");
-  //     } else {
-  //       Swal.fire("Sorry, Someting worng !", "", "error");
-  //     }
-  //   }
-  // }
+ 
   return (
     <div className="c-app c-default-layout flex-row align-items-center">
       <CContainer className="align-items-center" >

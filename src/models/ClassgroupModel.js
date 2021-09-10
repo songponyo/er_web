@@ -57,7 +57,7 @@ export default class ClassgroupModel extends BaseModel {
     })
   }
 
-  async insertClassgroup(data) {
+  async insertClassgroup(data) { 
     return this.authFetch({
       url: 'classgroup/insertClassgroup',
       method: 'POST',

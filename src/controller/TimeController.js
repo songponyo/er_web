@@ -29,6 +29,8 @@ export default class TimeController {
     return moment(date).isValid() && str !== undefined ? date : "";
   }
 
+  
+
   addMinutes(time, minsToAdd) {
     return moment
       .utc(time)

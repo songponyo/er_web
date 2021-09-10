@@ -13,10 +13,10 @@ import {
 } from "@coreui/react";
 import Swal from "sweetalert2";
 import { useHistory, useRouteMatch } from "react-router-dom";
+import moment from "moment";
 import { TimeController } from "../../../controller";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import QrcodeModel from "../../../models/QrcodeModel";
-import GROBAL from "../../../GLOBAL";
 
 const qrcode_model = new QrcodeModel();
 const time_controller = new TimeController();
@@ -29,27 +29,20 @@ export default function Qrcode() {
     text: "",
     show: false,
   });
-  const [checkin, setCheckin] = useState({});
-  const encoded = useQrEncode(qrcode.text /* object with options (if needed) */);
-  const decoded = useQrDecode(encoded /* object with options (if needed) */);
-
+  const [checkin, setCheckin] = useState({
+    qr_url: "",
+  });
+  //img
+  const encoded = useQrEncode(qrcode.text);
+  //link qrcode
+  const decoded = useQrDecode(encoded);
   useEffect(() => {
     fetchData();
   }, []);
- 
-
-  const generateQrCode = () => {
-    if (checkin.qr_timeout) {
-      setQrcode({ ...qrcode, 'show': true, text:"https://elearning-21dc5.firebaseapp.com/#/checkin-student/update/?roomId=" + checkin.qr_code })
-    }
-    else { setQrcode({ ...qrcode, 'show': false }) }
-  }
-
 
   async function fetchData() {
     const date = new Date();
-    let lastcode = "";
-    lastcode =
+    let lastcode =
       "QR" +
       date.getFullYear() +
       (date.getMonth() + 1).toString().padStart(2, "0");
@@ -81,42 +74,80 @@ export default function Qrcode() {
       checkin.classgroup_time_start = time_controller.reformatToTime(
         checkin.classgroup_time_start
       );
+      checkin.time_start = checkin.classgroup_time_start;
       checkin.classgroup_time_end = time_controller.reformatToTime(
         checkin.classgroup_time_end
       );
       checkin.qr_timeout = "";
-      await setCheckin(checkin);
+      checkin.qr_url = "";
+      setCheckin(checkin);
     }
   }
 
-  async function _handleSubmit() {
+  async function _handleSubmit(url) {
     if (_checkSubmit()) {
+      let time_out = moment(
+        `${moment().format("YYYY-MM-DD")} ${checkin.time_start}`,
+        "YYYY-MM-DD HH:mm"
+      )
+        .add(`${checkin.qr_timeout}`, "minutes")
+        .format("YYYY-MM-DD HH:mm");
+
       let query_result = await qrcode_model.insertQrcode({
         classgroup_code: checkin.classgroup_code,
         qr_code: checkin.qr_code,
         qr_No: checkin.qr_No,
-        qr_timestamp: time_controller.reformatToDateTime(new Date()),
-        qr_timeout: checkin.qr_timeout,
+        qr_timeout: time_out,
+        qr_url: url,
       });
       if (query_result.require) {
-        Swal.fire("Save success!!", "", "success");
+        Swal.fire("บันทึกเรียบร้อย!!", "", "success");
+        // history.push("/checkin-teacher");
       } else {
-        Swal.fire("Sorry, Someting worng !", "", "error");
+        Swal.fire("บันทึกไม่สำเร็จ", "", "error");
       }
     }
   }
 
+  function seturl(e) {
+    return new Promise((resolve, reject) => {
+      let url =
+        "https://elearnning-323808.web.app/#/" +
+        "checkin-student/checkin/" +
+        checkin.qr_code;
+      setCheckin({ ...checkin, qr_url: url });
+      return resolve(url);
+    });
+  }
+
+  const createQrcode = async () => {
+    let createQrcode = await generateQrCode();
+    if (!createQrcode) return false;
+  };
+
+  const generateQrCode = async () => {
+    if (checkin.qr_timeout) {
+      let url = await seturl();
+      _handleSubmit(url);
+      setQrcode({ ...qrcode, text: url, show: true });
+      if (url) return true;
+    } else {
+      alert("โปรดระบุเวลา");
+      setQrcode({ ...qrcode, show: false });
+      return false;
+    }
+  };
+
   const _checkSubmit = () => {
-    if (checkin.qr_timeout === "") {
+    if (checkin.qr_timeout === "" || checkin.qr_timeout > 60) {
       Swal.fire({
         title: "Warning!",
-        text: "โปรดระบุ เวลาหมดสิทธิ์เช็คชื่อ",
+        text: "โปรดระบุ เวลาหมดสิทธิ์เช็คชื่อไม่เกิน 60 นาที",
         icon: "warning",
       });
       return false;
-    } else {
-      return true;
     }
+    return true;
   };
 
   const _changeFrom = (e) => {
@@ -183,7 +214,7 @@ export default function Qrcode() {
                   </CCol>
 
                   <CCol md="2">
-                    <CLabel>ระบุเวลาที่เปิดให้เช็คชื่อ (วินาที)</CLabel>
+                    <CLabel>ระบุเวลาที่เปิดให้เช็คชื่อ (นาที)</CLabel>
                   </CCol>
                   <CCol md="2">
                     <CInput
@@ -196,19 +227,17 @@ export default function Qrcode() {
                   </CCol>
 
                   <CCol md="12">
-                    <div alignItems="center">
+                    <div>
                       <br />
-                      <CButton
-                        color="primary"
-                        onClick={() => generateQrCode()}
-                      >
+                      <CButton color="primary" onClick={() => createQrcode()}>
                         สร้างคิวอาร์โค้ด
                       </CButton>
                       <br />
                       {qrcode.show ? (
-                        <>
-                          <img src={encoded} /> <p>{decoded}</p>{" "}
-                        </>
+                        <div>
+                          <img src={encoded} />
+                          <p>{decoded}</p>
+                        </div>
                       ) : null}
                     </div>
                   </CCol>

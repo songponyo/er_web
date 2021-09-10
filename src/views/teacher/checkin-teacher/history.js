@@ -1,53 +1,38 @@
-import React, { useState, useEffect } from "react"; 
-import {
-  CCard,
-  CCardHeader,
-  CCardBody, 
-} from "@coreui/react";
-import {
-  faAddressBook,
-  faQrcode,
-} from "@fortawesome/free-solid-svg-icons"; 
+import React, { useState, useEffect } from "react";
+import { CCard, CCardHeader, CCardBody } from "@coreui/react";
+import { faAddressBook, faQrcode } from "@fortawesome/free-solid-svg-icons";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Table, } from "../../../component/revel-strap";
-import { TimeController } from "../../../controller"; 
-import QrcodeModel from "../../../models/QrcodeModel"
-import CheckinModel from "../../../models/CheckinModel"
+import { Table } from "../../../component/revel-strap";
 
-const qrcode_model = new QrcodeModel()
+import QrcodeModel from "../../../models/QrcodeModel";
+import { TimeController } from "../../../controller";
+
+const qrcode_model = new QrcodeModel();
 const time_controller = new TimeController();
-const checkin_model = new CheckinModel()
 
-export default function Detail() { 
-  let code = useRouteMatch("/checkin-teacher/detail/:code");
-  const [classgroup, setClassgroup] = useState([])
-
+export default function History() {
+  let history = useHistory();
+  let code = useRouteMatch("/checkin-teacher/history/:code");
+  const [classgroup, setClassgroup] = useState([]);
 
   useEffect(() => {
     fetchData();
   }, []);
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-
-    const qrcode_data = await checkin_model.getCheckinBy({
+    const qrcode_data = await qrcode_model.getQrcodeBy({
       keyword: code.params.code,
-    })
-
-    setClassgroup(qrcode_data.data)
-
+      owner: user_session.user_code,
+    }); 
+    setClassgroup(qrcode_data.data);
   }
 
-  async function _handleSubmit() {
-  }
-
-
+  async function _handleSubmit() {}
 
   const _changeFrom = (e) => {
     const { value, name } = e.target;
-    let new_data = { ...classgroup };
-    new_data[name] = value;
-    setClassgroup(new_data);
+    setClassgroup({ ...classgroup, [name]: value });
   };
 
   return (
@@ -58,11 +43,19 @@ export default function Detail() {
         </CCardHeader>
         <CCardBody>
           <Table
-            showRowNo={true}
+            showRowNo={false}
             dataSource={classgroup}
             dataTotal={classgroup}
             rowKey=""
             columns={[
+              {
+                title: "ครั้งที่",
+                dataIndex: "qr_No",
+                filterAble: true,
+                ellipsis: true,
+                width: 120,
+                align: "center",
+              },
               {
                 title: "รหัสกลุ่มเรียน",
                 dataIndex: "classgroup_id",
@@ -78,15 +71,29 @@ export default function Detail() {
                 ellipsis: true,
                 width: 150,
                 align: "center",
+              }, 
+              {
+                title: "วันที่",
+                dataIndex: "qr_timeout",
+                render: (cell) => {
+                  let time = time_controller.reformatToDate(cell); 
+                  return time
+                },
+                filterAble: true,
+                align: "center",
+                width: 120,
               },
               {
-                title: "ผู้รับผิดชอบ",
-                dataIndex: "user_fullname",
+                title: "เวลาเข้าเช็คชื่อ",
+                dataIndex: "qr_timeout",
+                render: (cell) => {
+                  let time = time_controller.reformatToTime(cell); 
+                  return time
+                },
                 filterAble: true,
-                ellipsis: true,
-                width: 150,
                 align: "center",
-              },
+                width: 120,
+              },  
               {
                 title: "จัดการ",
                 dataIndex: "",
@@ -96,24 +103,7 @@ export default function Detail() {
 
                   row_accessible.push(
                     <Link
-                      key="update"
-                      to={`/checkin-teacher/qrcode/${cell.classgroup_code}`}
-                      title="สร้างรายการเช็คชื่อ"
-                    >
-                      <button type="button" className="btn btn-primary">
-                        <FontAwesomeIcon
-                          icon={faQrcode}
-                          size="5s"
-                          color="white"
-                        />
-                      </button>
-                    </Link>
-                  );
-
-
-                  row_accessible.push(
-                    <Link
-                      key="update"
+                      key="detail"
                       to={`/checkin-teacher/detail/${cell.classgroup_code}`}
                       title="รายชื่อที่เข้าเรียน"
                     >
@@ -122,12 +112,10 @@ export default function Detail() {
                           icon={faAddressBook}
                           size="5s"
                           color="white"
-                        />
+                        /> รายชื่อ
                       </button>
                     </Link>
                   );
-
-
 
                   return row_accessible;
                 },

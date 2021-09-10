@@ -12,13 +12,14 @@ export default class TimeFormat {
 
     return str !== undefined && moment(date).isValid() ? date : ''
   }
+ 
 
   toDateStr(date) {
     return date !== undefined && moment(date).isValid() ? moment.utc(date).tz("Asia/Bangkok").format('YYYY-MM-DD') : ''
   }
 
   toTimeStr(date) {
-    return date !== undefined && moment(date).isValid() ? moment.utc(date).tz("Asia/Bangkok").format('HHmm') : ''
+    return date !== undefined && moment(date).isValid() ? moment.utc(date).tz("Asia/Bangkok").format('HH-mm') : ''
   }
 
   toDateTimeStr(date) {
