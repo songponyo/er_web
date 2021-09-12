@@ -5,10 +5,10 @@ const authContext = createContext({
   authenticated: false,
   permissions: [],
   user: {},
-  initiateLogin: () => {},
+  initiateRegister: () => {},
+  initiateLogin: () => {}, 
   handleAuthentication: () => { },
-  logout: () => { },
-  
+  logout: () => { }, 
 })
 
 export const AuthProvider = authContext.Provider

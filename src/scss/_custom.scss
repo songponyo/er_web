@@ -178,17 +178,7 @@ body {
   color: #666;
   box-sizing: border-box;
 }
-// .arrows {
-//   text-align: center;
-// }
-
-// .arrows span {
-//   display: block;
-//   font-size: 48px;
-//   line-height: 32px;
-//   color: green;
-//   font-weight: bold;
-// }
+ 
 .arrow {
   display: block;
   height: 2px;
@@ -200,11 +190,7 @@ body {
 .arrow.Arrow {
   background-color: red;
 }
-
-// .arrowWrapper {
-//   margin-right: -20px;
-//   margin-left: -20px;
-// }
+ 
 .arrow.Arrow:after {
   position: absolute;
   content: "";
@@ -283,5 +269,15 @@ body {
   &[class*="-down"] {
     transform: rotate(135deg);
   }
+}
+
+.registerbtn {  
+  color: rgb(255, 255, 255);
+  padding: 16px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
 }
   

@@ -9,6 +9,14 @@ export default class UserModel extends BaseModel {
     })
   }
 
+  async checkUser(data) {
+    return this.directFetch({
+      url: 'user/checkUser',
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   async getUserMaxCode(data) {
     return this.authFetch({
       url: 'user/getUserMaxCode',
@@ -52,6 +60,14 @@ export default class UserModel extends BaseModel {
   async insertUser(data) {
     return this.authFetch({
       url: 'user/insertUser',
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async registertUser(data) {
+    return this.authFetch({
+      url: 'user/registertUser',
       method: 'POST',
       body: JSON.stringify(data),
     })
