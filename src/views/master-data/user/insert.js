@@ -277,9 +277,7 @@ class Insert extends React.Component {
     }
   }
 
-  render() {
-
-
+  render() { 
     const license_options = this.state.license.map((item) => ({
       value: item.license_code,
       label: item.license_name,

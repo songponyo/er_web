@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import GoogleMapReact from "google-map-react";
-import moment from "moment";
+import Maps from "../../../controller/Maps";
 import {
   CCard,
   CCardBody,
@@ -31,10 +30,28 @@ export default function Checkin() {
   });
   const [qrcode, setQrcode] = useState({});
   const [checkin, setCheckin] = useState({});
+  const [Lat, setLat] = useState(0);
+  const [Lot, setLot] = useState(0);
 
   useEffect(() => {
     fetchData();
+    getLocation();
   }, []);
+
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  }
+  function showPosition(position) {
+    var lat = position.coords.latitude;
+    var lng = position.coords.longitude;
+    setLat(lat);
+    setLot(lng);
+  }
+
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
     setUser(user_session);
@@ -65,11 +82,10 @@ export default function Checkin() {
     day.time_stamp = time_controller.reformatToTime(day.date);
     setCheckin(day);
 
-    
-    let url = {}
-    url.qr = room.qr_code 
-    url.classID = room.classgroup_code
-    _checkSubmit(user_session.user_code,url);
+    let url = {};
+    url.qr = room.qr_code;
+    url.classID = room.classgroup_code;
+    _checkSubmit(user_session.user_code, url);
   }
 
   async function _handleSubmit() {
@@ -84,8 +100,8 @@ export default function Checkin() {
       checkin_status: status_in,
       user_code: user.user_code,
       qr_code: qrcode.qr_code,
-      longtititude: position.longtititude,
-      latitude: position.latitude,
+      longtititude: Lat,
+      latitude: Lot,
     });
     if (query_result.require) {
       checkin.time_stamp < checkin.time_out
@@ -98,18 +114,18 @@ export default function Checkin() {
     }
   }
 
-  const _checkSubmit = async (user, qr) => { 
+  const _checkSubmit = async (user, qr) => {
     const query_result = await checkin_model.getCheckinBy({
       keyword: user,
       owner: qr.qr,
-    });  
+    });
     if (query_result.data.length !== 0) {
       Swal.fire({
         title: "แจ้งเตือน!",
         text: "ไม่สามารถลงชื่อซ้ำได้",
         icon: "warning",
       });
-      let histy = "/checkin-student/history/" + qr.classID; 
+      let histy = "/checkin-student/history/" + qr.classID;
       history.push(histy);
       return false;
     } else {

@@ -15,7 +15,7 @@ import {
   // CButton,
 } from "@coreui/react";
 // import Swal from "sweetalert2";
-// import { Modal } from "react-bootstrap"; 
+// import { Modal } from "react-bootstrap";
 import {
   // Link,
   useHistory,
@@ -27,7 +27,7 @@ import {
   faCheck,
   faSearch,
   faWindowClose,
-} from "@fortawesome/free-solid-svg-icons"; 
+} from "@fortawesome/free-solid-svg-icons";
 // import { TimeController } from "../../../controller";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import ScoreModel from "../../../models/ScoreModel";
@@ -42,8 +42,7 @@ export default function Detail() {
   // let history = useHistory();
   // const [showloading, setShowLoading] = useState(true);
   let code = useRouteMatch("/class-group/detail/:code");
-  const [classgroup, setClassgroup] = useState([]);
-
+  const [classgroup, setClassgroup] = useState([]); 
   useEffect(() => {
     fetchData();
   }, []);
@@ -67,16 +66,15 @@ export default function Detail() {
     let new_data = { ...classgroup };
     new_data[name] = value;
     setClassgroup(new_data);
+   
   };
-
- 
 
   const data = [];
   for (let i = 0; i < 10; i++) {
     data.push({
       key: i,
       name: `User ${i}`,
-      age: 312323223-4,
+      age: 312323223 - 4,
       address: `10`,
     });
   }
@@ -84,75 +82,71 @@ export default function Detail() {
   return (
     <>
       <CCard>
-        <CCardHeader className="header-t-red"> รายชื่อ / Name list
-        <Link
+        <CCardHeader className="header-t-red">
+          {" "}
+          รายชื่อ / Name list
+          <Link
             to={`/class-group/insert`}
             className="btn btn-success float-right"
           >
-            <i className="fa fa-plus" aria-hidden="true"></i>{" "}
-            เพิ่มรายชื่อ
+            <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มรายชื่อ
           </Link>
         </CCardHeader>
         <CCardBody>
           <Table
+            dataSource={classgroup}
+            scroll={{ x: 1500, y: 450 }}
             columns={[
               {
                 title: "ชื่อ",
-                width: 100,
-                dataIndex: "name",
-                key: "name",
+                width: 150,
+                dataIndex: "user_full_name",
+                key: "user_full_name",
                 fixed: "left",
               },
               {
                 title: "รหัสนักศึกษา",
-                width: 120,
-                dataIndex: "age",
-                key: "user_id",
+                width: 130,
+                dataIndex: "user_uid",
+                key: "user_uid",
                 fixed: "left",
               },
               {
                 title: "คะแนนช่องที่ 1",
-                dataIndex: "address",
+                dataIndex: "score_one",
                 key: "1",
                 width: 150,
               },
               {
                 title: "คะแนนช่องที่ 2",
-                dataIndex: "address",
+                dataIndex: "score_two",
                 key: "2",
                 width: 150,
               },
               {
                 title: "คะแนนช่องที่ 3",
-                dataIndex: "address",
+                dataIndex: "score_three",
                 key: "3",
                 width: 150,
               },
               {
                 title: "คะแนนช่องที่ 4",
-                dataIndex: "address",
+                dataIndex: "score_four",
                 key: "4",
                 width: 150,
               },
               {
                 title: "คะแนนช่องที่ 5",
-                dataIndex: "address",
+                dataIndex: "score_five",
                 key: "5",
                 width: 150,
               },
               {
                 title: "คะแนนช่องที่ 6",
-                dataIndex: "address",
+                dataIndex: "score_sixt",
                 key: "6",
                 width: 150,
-              },
-              {
-                title: "คะแนนช่องที่ 7",
-                dataIndex: "address",
-                key: "7",
-                width: 150,
-              },
-              { title: "คะแนนช่องที่ 8", dataIndex: "address", key: "8" },
+              }, 
               {
                 title: "เมนูจัดการ",
                 key: "operation",
@@ -167,7 +161,7 @@ export default function Detail() {
                       title="แก้ไขรายการ"
                     >
                       <button type="button" className="btn btn-primary">
-                          แก้ไข
+                        แก้ไข
                       </button>
                     </Link>
                   );
@@ -176,9 +170,7 @@ export default function Detail() {
                 width: 120,
               },
             ]}
-            dataSource={data}
-            scroll={{ x: 1500, y: 300 }}
-          /> 
+          />
         </CCardBody>
       </CCard>
     </>

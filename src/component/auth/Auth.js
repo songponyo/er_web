@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Swal from "sweetalert2";
-import jwt_decode from "jwt-decode"; 
+import jwt_decode from "jwt-decode";
 
 import { AuthProvider } from "../../role-accress/authContext";
 
@@ -10,22 +10,19 @@ import GLOBAL from "../../GLOBAL";
 
 import UserModel from "../../models/UserModel";
 
-const user_model = new UserModel(); 
+const user_model = new UserModel();
 class Auth extends Component {
-  
   state = {
     loading: true,
-    authcertifying: false, 
+    authcertifying: false,
     authenticated: false,
     permissions: [],
     user: {},
   };
-  
 
   componentDidMount() {
-    this.handleAuthentication();
-  }
-
+    this.handleAuthentication(); 
+  } 
   initiateLogin = (data) => {
     if (this.state.loading === false) {
       this.setState(
@@ -72,89 +69,6 @@ class Auth extends Component {
               permissions_token: login_result.permissions_token,
               user: login_result.data[0],
             });
-          }
-        }
-      );
-    }
-  };
-
-  initiateRegister = (data) => {
-    if (this.state.loading === false) {
-      this.setState(
-        {
-          loading: true,
-        },
-        async () => {
-          if (data.user_password !== data.user_passwordre) {
-            Swal.fire({
-              title: "โปรดตรวจสอบรหัสผ่านอีกครั้ง",
-              icon: "error",
-            });
-          } else {
-            const register_result = await user_model.checkUser({
-              user_username: data.user_username,
-            });
-            if (register_result.require === false) {
-              this.setState(
-                {
-                  loading: false,
-                  authcertifying: false,
-                },
-                () => {
-                  Swal.fire({
-                    title: "ไม่สามารถสมัครสมาชิกได้",
-                    text: "มีบางอย่างผิดพลาด",
-                    icon: "error",
-                  });
-                }
-              );
-            } else if (register_result.data.length !== 0) {
-              this.setState(
-                {
-                  loading: false,
-                  authcertifying: false,
-                },
-                () => {
-                  Swal.fire({
-                    title: "ไม่สามารถใช้ชื่อนี้ได้",
-                    text: "เนื่องจากมีชื่อผู้ใช้นี้แล้ว",
-                    icon: "warning",
-                  });
-                }
-              );
-            } else {
-              const date = new Date();
-              const last_code = await user_model.getUserMaxCode({
-                code: "U" + date.getFullYear(),
-                digit: 3,
-              });
-              if (last_code.require) { 
-                const register_result = await user_model.registertUser({
-                  user_code: last_code.data,
-                  user_username: data.user_username,
-                  user_password: data.user_password,
-                  user_firstname: data.user_firstname,
-                  user_lastname: data.user_lastname,
-                  user_uid: data.user_uid,
-                  user_status: "Waiting",
-                });
-                if (register_result.require) {
-                  this.setState(
-                    {
-                      loading: false,
-                      authcertifying: false,
-                    },
-                    () => {
-                      Swal.fire({
-                        title: "บันทึกเรียบร้อย",
-                        text: "โปรดรอการตรวจสอบจากผู้ดูแล",
-                        icon: "success",
-                      });  
-                    }
-                  );
-                }
-              }
-            }
           }
         }
       );
@@ -230,9 +144,8 @@ class Auth extends Component {
 
   render() {
     const authProviderValue = {
-      ...this.state,
+      ...this.state, 
       initiateLogin: this.initiateLogin,
-      initiateRegister: this.initiateRegister,
       handleAuthentication: this.handleAuthentication,
       logout: this.logout,
     };

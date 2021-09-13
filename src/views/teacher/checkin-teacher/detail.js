@@ -1,27 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { CCard, CCardHeader, CCardBody } from "@coreui/react";
-import { faAddressBook, faQrcode } from "@fortawesome/free-solid-svg-icons";
+import { faMap } from "@fortawesome/free-solid-svg-icons";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Table } from "../../../component/revel-strap";
-import { TimeController } from "../../../controller"; 
+import { TimeController } from "../../../controller";
 import CheckinModel from "../../../models/CheckinModel";
- 
+// import { Modal } from "antd";
+import Modal from "react-bootstrap/Modal";
+import Maps from "../../../controller/Maps";
+
 const time_controller = new TimeController();
 const checkin_model = new CheckinModel();
 
 export default function Detail() {
   let code = useRouteMatch("/checkin-teacher/detail/:code");
   const [classgroup, setClassgroup] = useState([]);
+  const [mapModalVisible, setMapModalVisible] = useState(false);
+  const [fullscreen, setFullscreen] = useState(true);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     fetchData();
   }, []);
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-
-    const qrcode_data = await checkin_model.getCheckinByCode({ 
-      qr_code: code.params.code, 
+    let code_form = code.params.code;
+    var n = code_form.split("-");
+    const qrcode_data = await checkin_model.getCheckinByCode({
+      classgroup_code: n[1],
+      owner: n[0],
     });
 
     setClassgroup(qrcode_data.data);
@@ -69,8 +77,8 @@ export default function Detail() {
                 title: "เวลาเข้าเรียน",
                 dataIndex: "checkin_time",
                 render: (cell) => {
-                  let time = time_controller.reformatToTime(cell); 
-                  return time
+                  let time = time_controller.reformatToTime(cell);
+                  return time;
                 },
                 filterAble: true,
                 align: "center",
@@ -79,57 +87,62 @@ export default function Detail() {
               {
                 title: "สถานะเรียน",
                 dataIndex: "checkin_status",
-                render: (cell) => { 
+                render: (cell) => {
                   if (cell === "Active") {
                     return <span className="text-success">เข้าเรียน</span>;
                   } else {
-                    return (
-                      cell !== "Deactive" 
-                    ? <span className="text-danger">ล่าช้า</span>
-                    : <span className="text-danger">ลา</span>
-                      
-                      
+                    return cell !== "Deactive" ? (
+                      <span className="text-danger">ล่าช้า</span>
+                    ) : (
+                      <span className="text-danger">ลา</span>
                     );
                   }
                 },
                 // filters: [
-                //   { text: "เสร็จสิ้น", value: "complete" },
-                //   { text: "รออนุมัติ", value: "Waiting" },
+                //   { text: "เ", value: "Activate" },
+                //   { text: "เข้าสาย", value: "Waiting" },
                 // ],
                 align: "center",
                 width: 120,
               },
-              // {
-              //   title: "จัดการ",
-              //   dataIndex: "",
-              //   align: "center",
-              //   render: (cell) => {
-              //     const row_accessible = [];
-
-              //     row_accessible.push(
-              //       <Link
-              //         key="update"
-              //         to={`/checkin-teacher/qrcode/${cell.classgroup_code}`}
-              //         title="สร้างรายการเช็คชื่อ"
-              //       >
-              //         <button type="button" className="btn btn-warning">
-              //           <FontAwesomeIcon
-              //             icon={faQrcode}
-              //             size="5s"
-              //             color="white"
-              //           /> แก้ไข
-              //         </button>
-              //       </Link>
-              //     ); 
-
-              //     return row_accessible;
-              //   },
-              //   width: 120,
-              // },
+              {
+                title: "จัดการ",
+                dataIndex: "",
+                align: "center",
+                render: (cell) => {
+                  const row_accessible = [];
+                  row_accessible.push(
+                    <button
+                      type="button"
+                      className="btn btn-success"
+                      // onClick={showModal}
+                      onClick={() => setShow(true)}
+                    >
+                      <FontAwesomeIcon icon={faMap} size="5s" color="white" />{" "}
+                      แผนที่
+                    </button>
+                  );
+                  return row_accessible;
+                },
+                width: 120,
+              },
             ]}
           />
         </CCardBody>
       </CCard>
+      <Modal
+        show={show}
+        onHide={() => setShow(false)}
+        dialogClassName="modal-90w"
+        aria-labelledby="example-custom-modal-styling-title" 
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>จุดเช็คอิน</Modal.Title>
+        </Modal.Header> 
+        <div>
+          <Maps />
+        </div>
+      </Modal>
     </>
   );
 }

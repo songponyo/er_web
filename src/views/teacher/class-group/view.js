@@ -137,7 +137,7 @@ export default function View() {
                       to={`/class-group/detail/${cell.classgroup_code}`}
                       title="แก้ไขรายการ"
                     >
-                      <button type="button" className="btn btn-success">
+                      <button type="button" className="btn btn-primary">
                         <FontAwesomeIcon
                           icon={faSearch}
                           size="5s"
@@ -150,16 +150,34 @@ export default function View() {
 
                   row_accessible.push(
                     <Link
-                      key="update"
-                      to={`/class-group/update/${cell.classgroup_code}`}
+                      key="excel"
+                      to={`/class-group/excel/${cell.classgroup_code}`}
                       title="แก้ไขรายการ"
                     >
-                      <button type="button" className="btn btn-primary">
+                      <button type="button" className="btn btn-success">
                         <FontAwesomeIcon
                           icon={faEdit}
                           size="5s"
                           color="white"
-                        />  แก้ไข
+                        />{" "}
+                        Excel
+                      </button>
+                    </Link>
+                  );
+
+                  row_accessible.push(
+                    <Link
+                      key="update"
+                      to={`/class-group/update/${cell.classgroup_code}`}
+                      title="แก้ไขรายการ"
+                    >
+                      <button type="button" className="btn btn-warning">
+                        <FontAwesomeIcon
+                          icon={faEdit}
+                          size="5s"
+                          color="white"
+                        />{" "}
+                        แก้ไข
                       </button>
                     </Link>
                   );
@@ -173,7 +191,8 @@ export default function View() {
                         icon={faWindowClose}
                         size="5s"
                         color="white"
-                      /> ลบห้องเรียน
+                      />{" "}
+                      ลบ
                     </button>
                   );
 
