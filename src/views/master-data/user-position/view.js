@@ -77,7 +77,7 @@ class View extends React.Component {
       <div className="animated fadeIn">
         <Loading showloading={this.state.showloading} />
         <Card>
-          <CardHeader>
+        <CardHeader className="header-t-red">
             จัดการตำแหน่งพนักงาน / Employee Position
             {permission_add ?
               <Link to={`/user-position/insert`} className="btn btn-success float-right">
@@ -98,7 +98,7 @@ class View extends React.Component {
                   dataIndex: "user_position_code",
                   filterAble: true,
                   ellipsis: true,
-                  width: 240,
+                  width: 250,
                 },
                 {
                   title: "ตำแหน่ง ",

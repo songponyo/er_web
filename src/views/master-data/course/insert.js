@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import GLOBAL from "../../../GLOBAL";
+import React, { useState } from "react"; 
 import { Link } from "react-router-dom";
 import {
   CCard,
@@ -14,32 +13,20 @@ import {
   CButton,
 } from "@coreui/react";
 import Swal from "sweetalert2";
-import { useHistory } from "react-router-dom";
-import { TimeController } from "../../../controller";
+import { useHistory } from "react-router-dom"; 
 
-import SubjectModel from "../../../models/SubjectModel"
-const time_controller = new TimeController();
+import SubjectModel from "../../../models/SubjectModel" 
 const subject_model = new SubjectModel();
 
 export default function Insert() {
-  let history = useHistory();
-  const [user, setUser] = useState([]);
+  let history = useHistory(); 
   const [subject, setSubject] = useState({
     subject_code: "",
     subject_name: "",
     addby: "",
     adddate: "",
   });
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  async function fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`)); 
-    await setUser(user_session);
-  }
-
+  
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let query_result = await subject_model.insertSubject({

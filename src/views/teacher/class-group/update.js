@@ -96,7 +96,7 @@ export default function Update() {
 
   async function _handleSubmit() {
     if (_checkSubmit()) {
-      let query_result = await classgroup_model.insertClassgroup({
+      let query_result = await classgroup_model.updateClassgroupBy({
         classgroup_code: classroom.classgroup_code,
         classgroup_id: classroom.classgroup_id,
         classgroup_number: classroom.classgroup_number,

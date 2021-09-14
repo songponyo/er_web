@@ -43,8 +43,8 @@ class View extends React.Component {
 
   _onDelete(code) {
     Swal.fire({
-      title: "Are you sure ?",
-      text: "Confirm to delete this item",
+      title: "ลบรายการนี้?",
+      text: "ยืนยันที่จะลบรายการนัี้หรือไม่",
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
@@ -53,12 +53,11 @@ class View extends React.Component {
           showloading: true,
         }, async () => {
           user_model.deleteUserByCode({ user_code: code }).then(res => {
-            if (res.require) {
-              Swal.fire('Success Deleted!', '', 'success')
-              this._fetchData()
-            } else {
-              this.setState({ showloading: false })
-              Swal.fire('Sorry, Someting worng !', '', 'error')
+            if (res.require) { 
+              Swal.fire("ลบเรียบร้อย", "", "success");
+              window.location.reload();
+            } else { 
+              Swal.fire("ขออภัย  มีบางอย่างผิดพลาด", "", "error");
             }
           })
         })
@@ -92,13 +91,7 @@ class View extends React.Component {
               dataSource={this.state.users.data}
               dataTotal={this.state.users.total}
               rowKey='user_code'
-              columns={[
-                {
-                  title: "รหัสพนักงาน",
-                  dataIndex: "user_code",
-                  filterAble: true,
-                  ellipsis: true,
-                },
+              columns={[ 
                 {
                   title: "ชื่อ",
                   dataIndex: "user_full_name",
@@ -116,24 +109,27 @@ class View extends React.Component {
                   dataIndex: "license_name",
                   filterAble: true,
                   ellipsis: true,
-                },
+                },  
                 {
-                  title: "โทรศัพท์ ",
-                  dataIndex: "user_tel",
-                  filterAble: true,
-                  ellipsis: true,
-                },
-                {
-                  title: "อีเมล์ ",
-                  dataIndex: "user_email",
-                  filterAble: true,
-                  ellipsis: true,
-                },
-                {
-                  title: "สถานะ ",
+                  title: "สถานะเรียน",
                   dataIndex: "user_status",
-                  filterAble: true,
-                  ellipsis: true,
+                  render: (cell) => {
+                    if (cell === "Active") {
+                      return <span className="text-success">ใช้งาน</span>;
+                    } else {
+                      return cell !== "Deactive" ? (
+                        <span className="text-danger">ไม่ใช้งาน</span>
+                      ) : (
+                        <span className="text-danger">รอการอนุญาติ</span>
+                      );
+                    }
+                  },
+                  // filters: [
+                  //   { text: "เ", value: "Activate" },
+                  //   { text: "เข้าสาย", value: "Waiting" },
+                  // ],
+                  align: "center",
+                  width: 120,
                 },
                 {
                   title: "",

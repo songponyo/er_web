@@ -1,18 +1,13 @@
 import React, { Component, useEffect, useState } from "react";
-import {
-  CContainer,
-  CRow,
-  CCol,
+import { 
   CCard,
   CCardHeader,
   CCardBody,
 } from "@coreui/react";
-import { Link } from "react-router-dom";
-import { Card, CardBody, CardHeader, Nav } from "reactstrap";
+import { Link } from "react-router-dom"; 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEdit,
-  faCheck,
+  faEdit, 
   faWindowClose,
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
@@ -29,15 +24,14 @@ export default function View() {
   }, []);
 
   async function _fetchData() {
-    const subject_data = await subject_model.getSubjectBy({});
-    console.log("subject_data",subject_data);
+    const subject_data = await subject_model.getSubjectBy({}); 
     setSubject(subject_data.data);
   }
 
-  function _onDelete(data) {
+  function _onDelete(data) { 
     Swal.fire({
-      title: "Are you sure ?",
-      text: "Confirm to delete " + data.subject_name,
+      title: "ลบรายวิชา?",
+      text: "ยืนยันที่จะลบวิชา " + data.subject_name_th + " หรือไม่",
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
@@ -50,11 +44,11 @@ export default function View() {
           .then((res) => {
             if (res.require) {
               setShowLoading(false);
-              Swal.fire("Success Deleted!", "", "success");
+              Swal.fire("ลบเรียบร้อย", "", "success");
               window.location.reload();
             } else {
               setShowLoading(false);
-              Swal.fire("Sorry, Someting worng !", "", "error");
+              Swal.fire("ขออภัย  มีบางอย่างผิดพลาด", "", "error");
             }
           });
       }

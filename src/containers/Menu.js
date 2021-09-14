@@ -119,6 +119,14 @@ const accessMenu = ({PERMISSIONS}) => {
         exact: false,
     })
 
+    masters.push({
+        _tag: "CSidebarNavItem",
+        name: "ผู้สมัครเข้าเว็บ",
+        to: "/user-register",
+        icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
+        exact: false,
+    })
+
     //===========================================================================================================================//
 
     if (students.length  && PERMISSIONS == 0) {

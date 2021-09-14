@@ -42,7 +42,7 @@ const Maps = (props) => {
     <div>
       <Map
         google={props.google}
-        zoom={25}
+        zoom={15}
         style={mapStyles}
         center={{ lat: Lat, lng: Lot }}
       >

@@ -2,6 +2,7 @@ import React from "react"
 const user = React.lazy(() => import("./views/master-data/user"))
 const user_position = React.lazy(() => import("./views/master-data/user-position")) 
 const course = React.lazy(() => import("./views/master-data/course"))
+const user_register = React.lazy(() => import("./views/master-data/user-register"))
 
 const leave_form = React.lazy(() => import("./views/teacher/leave-form"))
 const class_group = React.lazy(() => import("./views/teacher/class-group"))
@@ -27,6 +28,7 @@ const routes = [
   { path: "/profile", name: "Profile", permission_name: 'profile', component: profile },
   { path: "/checkin-teacher", name: "Checkin-teacher", permission_name: 'checkin-teacher', component: checkin_teacher },
   { path: "/checkin-student", name: "Checkin-student", permission_name: 'checkin-student', component: checkin_student },
+  { path: "/user-register", name: "user-register", permission_name: 'user-register', component: user_register},
   { path: "/", exact: true, name: "Home" }
   
 ]

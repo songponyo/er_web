@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import GLOBAL from "../../../GLOBAL";
+import React, { useState, useEffect } from "react"; 
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import {
   CCard,
@@ -13,17 +12,13 @@ import {
   CInput,
   CButton,
 } from "@coreui/react";
-import Swal from "sweetalert2";
-import { TimeController } from "../../../controller";
-
-import SubjectModel from "../../../models/SubjectModel";
-const time_controller = new TimeController();
+import Swal from "sweetalert2";  
+import SubjectModel from "../../../models/SubjectModel"; 
 const subject_model = new SubjectModel();
 
 export default function Insert() {
   let history = useHistory();
-  let code = useRouteMatch("/course/update/:code");
-  const [user, setUser] = useState([]);
+  let code = useRouteMatch("/course/update/:code"); 
   const [subject, setSubject] = useState({
     subject_code: "",
     subject_name: "",
@@ -35,9 +30,7 @@ export default function Insert() {
     fetchData();
   }, []);
 
-  async function fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    const date = new Date();
+  async function fetchData() { 
     const subject_data = await subject_model.getSubjectByCode({
       subject_code: code.params.code,
     });
@@ -46,7 +39,7 @@ export default function Insert() {
 
   async function _handleSubmit() {
     if (_checkSubmit()) {
-      let query_result = await subject_model.insertSubject({
+      let query_result = await subject_model.updateSubjectBy({
         subject_code: subject.subject_code,
         subject_name_th: subject.subject_name_th,
         subject_name_en: subject.subject_name_en,

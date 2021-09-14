@@ -17,6 +17,14 @@ export default class UserModel extends BaseModel {
     })
   }
 
+  async getUserByRegister(data) {
+    return this.directFetch({
+      url: 'user/getUserByRegister',
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   async getUserMaxCode(data) {
     return this.authFetch({
       url: 'user/getUserMaxCode',

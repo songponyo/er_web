@@ -307,28 +307,27 @@ class Insert extends React.Component {
             <CardBody>
               <Row>
                 <Col md="8">
-                  <Row>
-                    <Col md="3">
-                      <Label>
-                        รหัสบัญชีผู้ใช้{" "}
-                        <font color="#F00">
-                          <b>*</b>
-                        </font>
-                      </Label>
-                      <Input
-                        type="text"
-                        id="user_code"
-                        name="user_code"
-                        value={this.state.user_code}
-                        className={this.state.code_validate.class}
-                        onChange={(e) =>
-                          this.setState({ user_code: e.target.value })
-                        }
-                        onBlur={() => this._checkCode()}
-                        required
-                        disabled
-                      />
-                      <p className="text-muted">Example : U0001.</p>
+                  <Row> 
+                  <Col md="3">
+                      <FormGroup>
+                        <Label>
+                          รหัสประจำตัว{" "}
+                          <font color="#F00">
+                            <b>*</b>
+                          </font>
+                        </Label>
+                        <Input
+                          type="text"
+                          id="user_uid"
+                          name="user_uid"
+                          value={this.state.user_uid}
+                          onChange={(e) =>
+                            this.setState({ user_uid: e.target.value })
+                          }
+                          required
+                        />
+                        <p className="text-muted">เลข 13 หลักไม่มี -</p>
+                      </FormGroup>
                     </Col>
                     <Col md="3">
                       <FormGroup>

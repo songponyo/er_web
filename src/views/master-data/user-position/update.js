@@ -90,7 +90,7 @@ class Update extends React.Component {
       
       <div className="animated fadeIn">
         <Card>
-          <CardHeader>
+        <CardHeader className="header-t-red">
             แก้ไขตำแหน่งพนักงาน / Update Employee Position
           </CardHeader>
           <Form onSubmit={this._handleSubmit.bind(this)}>
@@ -104,8 +104,7 @@ class Update extends React.Component {
                     name="user_position_code"
                     value={this.state.user_position_code}
                     readOnly
-                  />
-                  <p className="text-muted">Example : admin.</p>
+                  /> 
                 </Col>
                 <Col md="4">
                   <FormGroup row>
@@ -117,16 +116,14 @@ class Update extends React.Component {
                       value={this.state.user_position_name}
                       onChange={(e) => this.setState({ user_position_name: e.target.value })}
                       required
-                    />
-                    <p className="text-muted">Example : ฝ่ายขาย.</p>
+                    /> 
                   </FormGroup>
                 </Col>
               </Row>
             </CardBody>
             <CardFooter>
-              <Button type="submit" color="success">Save</Button>
-              <Button type="reset" color="danger"> Reset</Button>
-              <Link to="/user-position"><Button color="btn btn-default">Back</Button></Link>
+              <Button type="submit" color="success">Save</Button> 
+              <Link to="/user-position"><Button color="btn btn-danger">Back</Button></Link>
             </CardFooter>
           </Form>
         </Card>
