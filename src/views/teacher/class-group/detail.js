@@ -1,82 +1,37 @@
 import React, { useState, useEffect } from "react";
-// import ExcelPage from "../../../component/excelPage";
 import { Table } from "antd";
 import { Link } from "react-router-dom";
-import {
-  CCard,
-  CCardHeader,
-  CCardBody,
-  // CCardFooter,
-  // CCol,
-  // CRow,
-  // CFormGroup,
-  // CLabel,
-  // CInput,
-  // CButton,
-} from "@coreui/react";
-// import Swal from "sweetalert2";
-// import { Modal } from "react-bootstrap";
-import {
-  // Link,
-  useHistory,
-  useRouteMatch,
-} from "react-router-dom";
+import { CCard, CCardHeader, CCardBody } from "@coreui/react";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit,
-  faCheck,
-  faSearch,
-  faWindowClose,
-} from "@fortawesome/free-solid-svg-icons";
-// import { TimeController } from "../../../controller";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import ScoreModel from "../../../models/ScoreModel";
-// import UserModel from "../../../models/UserModel";
-
-// const user_model = new UserModel();
 const score_model = new ScoreModel();
 const classgroup_model = new ClassgroupModel();
-const { Column, ColumnGroup } = Table;
 
 export default function Detail() {
   // let history = useHistory();
-  // const [showloading, setShowLoading] = useState(true);
   let code = useRouteMatch("/class-group/detail/:code");
-  const [classgroup, setClassgroup] = useState([]); 
+  const [classgroup, setClassgroup] = useState([]);
+
   useEffect(() => {
     fetchData();
   }, []);
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-
+    let class_code = code.params.code;
     const class_group = await classgroup_model.getClassgroupByCode({
-      classgroup_code: code.params.code,
+      classgroup_code: class_code,
     });
-
     const score_group = await score_model.getScoreByCode({
       table_name: class_group.data[0].classgroup_table_score,
     });
-    setClassgroup(score_group.data);
-  }
 
-  async function _handleSubmit() {}
-
-  const _changeFrom = (e) => {
-    const { value, name } = e.target;
-    let new_data = { ...classgroup };
-    new_data[name] = value;
-    setClassgroup(new_data);
-   
-  };
-
-  const data = [];
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      key: i,
-      name: `User ${i}`,
-      age: 312323223 - 4,
-      address: `10`,
-    });
+    let score_info = {};
+    score_info = score_group.data;
+    score_info.table_name = class_group.data[0].classgroup_table_score;
+    setClassgroup(score_info);
   }
 
   return (
@@ -146,7 +101,7 @@ export default function Detail() {
                 dataIndex: "score_sixt",
                 key: "6",
                 width: 150,
-              }, 
+              },
               {
                 title: "เมนูจัดการ",
                 key: "operation",
@@ -156,11 +111,16 @@ export default function Detail() {
                   const row_accessible = [];
                   row_accessible.push(
                     <Link
-                      key="update"
-                      to={`/class-group/update/${cell.classgroup_code}`}
+                      key="score"
+                      to={`/class-group/score/${cell.user_uid}-${classgroup.table_name}`}
                       title="แก้ไขรายการ"
                     >
                       <button type="button" className="btn btn-primary">
+                        <FontAwesomeIcon
+                          icon={faEdit}
+                          size="5s"
+                          color="white"
+                        />
                         แก้ไข
                       </button>
                     </Link>

@@ -1,58 +1,49 @@
-import React, {useEffect, useState } from "react"; 
-import { 
-  CCard,
-  CCardHeader,
-  CCardBody, 
-} from "@coreui/react";
+import React, { useEffect, useState } from "react";
+import { CCard, CCardHeader, CCardBody } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEdit,
   // faCheck,
-  // faWindowClose,
+  faWindowClose,
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { Table } from "../../../component/revel-strap";
-import ClassgroupModel from "../../../models/ClassgroupModel";
-const classgroup_model = new ClassgroupModel();
+import UserModel from "../../../models/UserModel";
+
+const user_model = new UserModel();
 
 export default function View() {
-  const [showloading, setShowLoading] = useState(true);
-  const [classgroup, setClassgroup] = useState([]);
+  const [user, setUser] = useState([]);
 
   useEffect(() => {
     _fetchData();
   }, []);
 
   async function _fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    const classgroup_data = await classgroup_model.getClassgroupByMycourse({
-      user_code: user_session.user_code
-    });
-    setClassgroup(classgroup_data.data);
+    const user_data = await user_model.getUserByRegister({});
+    setUser(user_data.data);
   }
 
   function _onDelete(data) {
     Swal.fire({
-      title: "Are you sure ?",
-      text: "Confirm to delete " + data.classgroup_code,
+      title: "คุณแน่ใจใช่ไหม",
+      text: "ยืนยันที่จะลบรายการนี้",
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        setShowLoading(true);
-        classgroup_model
-          .deleteClassgroupByCode({ classgroup_code: data.classgroup_code })
-          .then((res) => {
-            if (res.require) {
-              setShowLoading(false);
-              Swal.fire("Success Deleted!", "", "success");
-              window.location.reload();
-            } else {
-              setShowLoading(false);
-              Swal.fire("Sorry, Someting worng !", "", "error");
-            }
-          });
+        // setShowLoading(true);
+        user_model.deleteUserByCode({ user_code: data.user }).then((res) => {
+          if (res.require) {
+            // setShowLoading(false);
+            Swal.fire("ลบเรียบร้อย", "", "success");
+            window.location.reload();
+          } else {
+            // setShowLoading(false);
+            Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
+          }
+        });
       }
     });
   }
@@ -62,36 +53,31 @@ export default function View() {
       <CCard>
         <CCardHeader className="header-t-red">
           กลุ่มเรียน / Class group
-          {/* <Link to={`/class-group/insert`} className="btn btn-success float-right">
-            <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มกลุ่มเรียน
-          </Link> */}
+          <Link
+            to={`/user-register/insert`}
+            className="btn btn-success float-right"
+          >
+            <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มรูปภาพ
+          </Link>
         </CCardHeader>
         <CCardBody>
           <Table
             showRowNo={true}
-            dataSource={classgroup}
-            dataTotal={classgroup}
+            dataSource={user}
+            dataTotal={user}
             rowKey=""
             columns={[
               {
-                title: "รหัสกลุ่มเรียน",
-                dataIndex: "classgroup_id",
+                title: "รหัสประจำตัว",
+                dataIndex: "user_uid",
                 filterAble: true,
                 ellipsis: true,
                 width: 120,
                 align: "center",
               },
               {
-                title: "ชื่อวิชา",
-                dataIndex: "subject_fullname", 
-                filterAble: true,
-                ellipsis: true,
-                width: 150,
-                align: "center",
-              },
-              {
-                title: "ผู้รับผิดชอบ",
-                dataIndex: "owner_fullname",
+                title: "ชื่อ",
+                dataIndex: "user_full_name",
                 filterAble: true,
                 ellipsis: true,
                 width: 150,
@@ -102,22 +88,38 @@ export default function View() {
                 dataIndex: "",
                 align: "center",
                 render: (cell) => {
-                  const row_accessible = []; 
+                  const row_accessible = [];
                   row_accessible.push(
                     <Link
                       key="update"
-                      to={`/checkin-student/history/${cell.classgroup_code}`}
+                      to={`/user-register/update/${cell.user_code}`}
                       title="แก้ไขรายการ"
-                    > 
+                    >
                       <button type="button" className="btn btn-primary">
                         <FontAwesomeIcon
                           icon={faEdit}
                           size="5s"
                           color="white"
-                        /> ประวัติ
+                        />{" "}
+                        ข้อมูล
                       </button>
                     </Link>
-                  ); 
+                  );
+
+                  row_accessible.push(
+                    <button
+                      type="button"
+                      className={"btn btn-danger"}
+                      onClick={() => _onDelete(cell)}
+                    >
+                      <FontAwesomeIcon
+                        icon={faWindowClose}
+                        size="5s"
+                        color="white"
+                      /> ลบ
+                    </button>
+                  );
+
                   return row_accessible;
                 },
                 width: 120,

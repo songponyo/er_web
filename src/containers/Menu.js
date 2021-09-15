@@ -42,6 +42,13 @@ const accessMenu = ({PERMISSIONS}) => {
         //     text: 10,
         // },
     })
+    teacher.push({
+        _tag: "CSidebarNavItem",
+        name: "ข้อมูลส่วนตัว",
+        to: "/profile",
+        icon: <i className="c-sidebar-nav-icon fa fa-user" />,
+        exact: false,
+    })
 
 
       //====================================================== Student Classroom =========================================================//
@@ -93,6 +100,13 @@ const accessMenu = ({PERMISSIONS}) => {
         //     text: 10,
         // },
     })
+    students.push({
+        _tag: "CSidebarNavItem",
+        name: "ข้อมูลส่วนตัว",
+        to: "/profile",
+        icon: <i className="c-sidebar-nav-icon fa fa-user" />,
+        exact: false,
+    })
 
 
     //====================================================== Menu MASTER DATA =========================================================//
@@ -106,23 +120,29 @@ const accessMenu = ({PERMISSIONS}) => {
     }) 
     masters.push({
         _tag: "CSidebarNavItem",
+        name: "ข้อมูลส่วนตัว",
+        to: "/profile",
+        icon: <i className="c-sidebar-nav-icon fa fa-user" />,
+        exact: false,
+    })
+    masters.push({
+        _tag: "CSidebarNavItem",
         name: "รายวิชา",
         to: "/course",
         icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
         exact: false,
-    })
-    masters.push({
-        _tag: "CSidebarNavItem",
-        name: "ข้อมูลส่วนตัว",
-        to: "/profile",
-        icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
-        exact: false,
-    })
-
+    }) 
     masters.push({
         _tag: "CSidebarNavItem",
         name: "ผู้สมัครเข้าเว็บ",
         to: "/user-register",
+        icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
+        exact: false,
+    })
+    masters.push({
+        _tag: "CSidebarNavItem",
+        name: "กลุ่มเรียน",
+        to: "/all-class",
         icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
         exact: false,
     })

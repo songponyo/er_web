@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import GLOBAL from "../../../GLOBAL";
+import React, { useState, useEffect } from "react"; 
 import { Link } from "react-router-dom";
 import {
   CCard,
@@ -16,26 +15,22 @@ import {
 } from "@coreui/react";
 import Swal from "sweetalert2";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { FileController, TimeController } from "../../../controller";
 import { Select, DatePicker } from "../../../component/revel-strap";
-
+import { Uploadimage, TimeController } from "../../../controller";
 import ClassgroupModel from "../../../models/ClassgroupModel";
-// import UserModel from "../../../models/UserModel"
 import LeaveModel from "../../../models/LeaveModel";
 
+const upload_contoller = new Uploadimage();
 const leave_model = new LeaveModel();
-// const user_model = new UserModel();
 const classgroup_model = new ClassgroupModel();
 const time_controller = new TimeController();
-const file_controller = new FileController();
 
 export default function Update() {
   let history = useHistory();
 
   let code = useRouteMatch("/leave-student/update/:code");
   const [user, setUser] = useState([]);
-  const [classselect, setClassselect] = useState([]);
-  // const [classgroup, setClassgroup] = useState([])
+  const [classselect, setClassselect] = useState([]); 
   const [leave, setLeave] = useState({
     leave_image: {
       src: "default.png",
@@ -57,6 +52,7 @@ export default function Update() {
     mindate: time_controller.reformatToDate(new Date()),
   });
 
+  
   useEffect(() => {
     fetchData();
   }, []);
@@ -92,43 +88,41 @@ export default function Update() {
       });
     }
     setClassselect(select_class);
-  };
+  }; 
+
 
   async function _handleSubmit() {
     if (_checkSubmit()) {
-      let leave_image = "";
-      const res_upload = await file_controller.uploadFile({
+      const res_upload = await upload_contoller.uploadFile({
         src: leave.leave_image,
-        upload_path: "leave/",
+        upload_path: "leave",
       });
 
-      if (res_upload.require) {
-        leave_image = res_upload.data.file_name;
-      }
+      if (res_upload !== "") { 
+        let query_result = await leave_model.updateLeaveBy({
+          leave_image: res_upload,
+          leave_code: leave.leave_code,
+          classgroup_code: leave.classgroup_code,
+          owner_class: leave.owner_class,
+          leave_start: time_controller.reformatToDate(leave.leave_start),
+          leave_end: time_controller.reformatToDate(leave.leave_end),
+          leave_type: leave.leave_type,
+          leave_reason: leave.leave_reason,
+          leave_approve: "Waiting",
+          addby: user.user_code,
+          adddate: time_controller.reformatToDate(new Date()),
+          updateby: user.user_code,
+          lastupdate: time_controller.reformatToDate(new Date()),
+        });
 
-      let query_result = await leave_model.insertLeaveBy({
-        leave_image: leave_image,
-        leave_code: leave.leave_code,
-        classgroup_code: leave.classgroup_code,
-        owner_class: leave.owner_class,
-        leave_start: time_controller.reformatToDate(leave.leave_start),
-        leave_end: time_controller.reformatToDate(leave.leave_end),
-        leave_type: leave.leave_type,
-        leave_reason: leave.leave_reason,
-        leave_approve: "Waiting",
-        addby: user.user_code,
-        adddate: time_controller.reformatToDate(new Date()),
-        updateby: user.user_code,
-        lastupdate: time_controller.reformatToDate(new Date()),
-      });
-
-      if (query_result.require) {
-        Swal.fire("Save success!!", "", "success");
-        history.push("/leave-student");
-      } else {
-        Swal.fire("Sorry, Someting worng !", "", "error");
-      }
-    }
+        if (query_result.require) {
+          Swal.fire("Save success!!", "", "success");
+          history.push("/leave-student");
+        } else {
+          Swal.fire("Sorry, Someting worng !", "", "error");
+        }
+      } else alert("การอัพโหลดมีปัญหา");
+    } 
   }
 
   const _checkSubmit = () => {
@@ -153,9 +147,7 @@ export default function Update() {
 
   const _changeFrom = (e) => {
     const { value, name } = e.target;
-    let new_data = { ...leave };
-    new_data[name] = value;
-    setLeave(new_data);
+    setLeave({ ...leave, [name]: value });
   };
 
   const _handleImageChange = (img_name, e) => {
@@ -166,13 +158,13 @@ export default function Update() {
       if (file !== undefined) {
         let reader = new FileReader();
         reader.onloadend = () => {
-          let new_leave = { ...leave };
-          new_leave[img_name] = {
+          let new_material = { ...leave };
+          new_material[img_name] = {
             src: reader.result,
             file: file,
-            old: new_leave[img_name].old,
+            old: new_material[img_name].old,
           };
-          setLeave(new_leave);
+          setLeave(new_material);
         };
         reader.readAsDataURL(file);
       }
@@ -300,7 +292,7 @@ export default function Update() {
                     leave.leave_image.file !== null
                       ? leave.leave_image.src
                       : leave.leave_image.old !== ""
-                      ? GLOBAL.BASE_SERVER.URL_IMG + leave.leave_image.old
+                      ? leave.leave_image.old
                       : leave.leave_image.src
                   }
                 />

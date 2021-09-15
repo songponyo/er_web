@@ -74,8 +74,7 @@ export default function Authrule() {
       let query_result = await user_model.registertUser({
         user_code: user.user_code,
         user_username: user.user_username,
-        user_password: user.user_password,
-        user_passwordre: user.user_passwordre,
+        user_password: user.user_password, 
         user_firstname: user.user_firstname,
         user_lastname: user.user_lastname,
         user_uid: user.user_uid,

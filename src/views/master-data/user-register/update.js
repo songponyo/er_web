@@ -1,121 +1,225 @@
-import React, { useState, useEffect } from "react";
-import GoogleMapReact from "google-map-react";
-import moment from "moment";
+import React, { useEffect, useState } from "react";
 import {
   CCard,
+  CCardHeader,
   CCardBody,
-  CContainer,
+  CCardFooter,
   CCol,
   CRow,
   CLabel,
   CInput,
   CButton,
-  CCardFooter,
+  CImg,
 } from "@coreui/react";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useHistory, useRouteMatch, Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import QrcodeModel from "../../../models/QrcodeModel";
-import { TimeController } from "../../../controller";
+import UserModel from "../../../models/UserModel";
+import LicenseModel from "../../../models/LicenseModel";
+import UserPositionModel from "../../../models/UserPositionModel";
+import { Select } from "../../../component/revel-strap";
 
-const qrcode_model = new QrcodeModel();
-const time_controller = new TimeController();
-export default function Update() {
+const license_model = new LicenseModel();
+const user_model = new UserModel();
+const user_position_model = new UserPositionModel();
+
+export default function View() {
   let history = useHistory();
-  let code = useRouteMatch("/checkin-student/update/:code");
-  const [user, setUser] = useState([]);
-  const [position, setPosition] = useState({});
-  const [classroom, setclassroom] = useState({});
-  const [checkin, setCheckin] = useState({});
+  let code = useRouteMatch("/user-register/update/:code");
+  const [license, setLicense] = useState([]);
+  const [position, setPosition] = useState([]);
+  const [user, setUser] = useState({
+    user_profile_image: {
+      src: "default.png",
+      file: null,
+      old: "",
+    },
+  });
+
   useEffect(() => {
-    fetchData();
+    _fetchData();
   }, []);
 
-  async function fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    setUser(user_session);
-
-    const classroom = await qrcode_model.getQrcodeByCode({
-      qr_code: code.params.code,
+  async function _fetchData() {
+    const user_data = await user_model.getUserByCode({
+      user_code: code.params.code,
     });
+    let user_info = {};
+    user_info = user_data.data[0];
+    setUser(user_info);
 
-    let room = {};
-    room = classroom.data[0];
-    setclassroom(room);
+    const license_data = await license_model.getLicenseBy({});
+    let license_info = license_data.data;
+    let selecter_lc = [];
+    for (let i = 0; i < license_info.length; i++) {
+      selecter_lc.push({
+        value: license_info[i].license_code,
+        label: license_info[i].license_name,
+      });
+    }
+    setLicense(selecter_lc);
 
-    let day = {};
-    day.date = new Date();
-    day.time_out = time_controller.reformatToTime(room.qr_timeout);
-    day.time_stamp = time_controller.reformatToTime(day.date);
-    setCheckin(day);
+    const position_data = await user_position_model.getUserPositionBy({});
+    let position_info = position_data.data;
+    let select_ps = [];
+    for (let i = 0; i < position_info.length; i++) {
+      select_ps.push({
+        value: position_info[i].user_position_code,
+        label: position_info[i].user_position_name,
+      });
+    }
+    setPosition(select_ps);
   }
+
   async function _handleSubmit() {
-  //   let query_result = await checkin_model.insertQrcode({
-  //     classgroup_code: checkin.classgroup_code,
-  //     qr_code: checkin.qr_code,
-  //     qr_No: checkin.qr_No,
-  //     qr_timeout: time_out,
-  //     qr_url: checkin.qr_url,
-  //   });
-  //   if (query_result.require) {
-  //     checkin.time_stamp < checkin.time_out
-  //       ? Swal.fire("บันทึกเรียบร้อย! ทันเวลา ", "", "success")
-  //       : Swal.fire("บันทึกเรียบร้อย! ไม่ทันเวลา ", "", "success");
-  //     // history.push("/checkin-teacher");
-  //   } else {
-  //     Swal.fire("บันทึกไม่สำเร็จ", "", "error");
-  //   }
+    if (_checkSubmit()) {
+      let query_result = await user_model.updateUserBy({
+        user_code: user.user_code,
+        user_position_code: user.user_position_code,
+        license_code: user.license_code,
+        user_prefix: user.user_prefix,
+        user_firstname: user.user_firstname,
+        user_lastname: user.user_lastname,
+        user_tel: user.user_tel,
+        user_address: user.user_address,
+        user_email: user.user_email,
+        user_username: user.user_username,
+        user_password: user.user_password,
+        user_status: "Active",
+        user_zipcode: user.user_zipcode,
+      });
+
+      if (query_result.require) {
+        Swal.fire("Save success!!", "", "success");
+        history.push("/user-register");
+      } else {
+        Swal.fire("Sorry, Someting worng !", "", "error");
+      }
+    }
   }
+
+  const _checkSubmit = () => {
+    if (user.user_license === "") {
+      Swal.fire({
+        title: "แจ้งเตือน!",
+        text: "โปรดเช็คชื่อผู้ใช้ ",
+        icon: "warning",
+      });
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const _changeFrom = (e) => {
+    const { value, name } = e.target;
+    setUser({ ...user, [name]: value });
+  };
 
   return (
     <>
-      <CContainer style={{ width: "30%", paddingTop: "20px" }}>
+      <div>
         <CCard>
+          <CCardHeader className="header-t-red">
+            ข้อมูลส่วนตัว / Profile
+          </CCardHeader>
           <CCardBody>
             <CRow>
-              <CCol className="text-center">
-                <CLabel style={{ fontSize: "25px" }}>
-                  {checkin.qr_timestamp}
-                </CLabel>
+              <CCol md="6">
+                <CRow>
+                  <CCol md="3">
+                    <CLabel>รหัสประจำตัว</CLabel>
+                  </CCol>
+                  <CCol md="7">
+                    <CInput
+                      type="text"
+                      name="user_uid "
+                      value={user.user_uid}
+                      disabled
+                    />
+                  </CCol>
+                </CRow>
                 <br />
-                <CLabel style={{ fontSize: "25px" }}>
-                  {classroom.subject_code}
-                </CLabel>
+                <CRow>
+                  <CCol md="3">
+                    <CLabel>ชื่อ</CLabel>
+                  </CCol>
+                  <CCol md="7">
+                    <CInput
+                      type="text"
+                      name="user_firstname"
+                      value={user.user_firstname}
+                      disabled
+                    />
+                  </CCol>
+                </CRow>
                 <br />
-                <CLabel style={{ fontSize: "20px" }}>
-                  {classroom.subject_name}
-                </CLabel>
+                <CRow>
+                  <CCol md="3">
+                    <CLabel>นามสกุล</CLabel>
+                  </CCol>
+                  <CCol md="7">
+                    <CInput
+                      type="text"
+                      name="user_lastname"
+                      value={user.user_lastname}
+                      disabled
+                    />
+                  </CCol>
+                </CRow>
               </CCol>
-              <br />
-              <CCol lg="12" className="text-center">
-                <CLabel style={{ fontSize: "18" }}>อาจารย์ประจำวิชา</CLabel>
+              <CCol md="6">
+                <CRow>
+                  <CCol md="3">
+                    <CLabel>ระดับการเข้าใช้งาน</CLabel>
+                  </CCol>
+                  <CCol md="7">
+                    <Select
+                      options={license}
+                      value={user.license_code}
+                      onChange={(e) =>
+                        setUser({
+                          ...user,
+                          [`license_code`]: e,
+                        })
+                      }
+                    />
+                  </CCol>
+                </CRow>
                 <br />
-                <CLabel style={{ fontSize: "16" }}>
-                  {classroom.owner_fullname}
-                </CLabel>
-              </CCol>
-              <CCol lg="12">
-                <br />
+                <CRow>
+                  <CCol md="3">
+                    <CLabel>ตำแหน่งงานผู้ใช้</CLabel>
+                  </CCol>
+                  <CCol md="7">
+                    <Select
+                      options={position}
+                      value={user.user_position_code}
+                      onChange={(e) =>
+                        setUser({
+                          ...user,
+                          [`user_position_code`]: e,
+                        })
+                      }
+                    />
+                  </CCol>
+                </CRow>
               </CCol>
             </CRow>
           </CCardBody>
           <CCardFooter>
-            <CContainer>
-              <CRow>
-                <CCol align="center">
-                  <CButton
-                    type="button"
-                    color="success"
-                    size="xs"
-                    onClick={() => _handleSubmit()}
-                  >
-                    เช็คชื่อ
-                  </CButton>
-                </CCol>
-              </CRow>
-            </CContainer>
+            <CButton
+              type="submit"
+              color="success"
+              onClick={() => _handleSubmit()}
+            >
+              บันทึก
+            </CButton>
+            <Link to="/profile">
+              <CButton color="danger">ย้อนกลับ</CButton>
+            </Link>
           </CCardFooter>
         </CCard>
-      </CContainer>
+      </div>
     </>
   );
 }

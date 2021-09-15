@@ -4,3 +4,4 @@ export { default as PermissionController } from "./PermissionController";
 export { default as TimeController } from "./TimeController";
 export { default as FileController } from "./FileController";
 export { default as ValueController } from "./ValueController";
+export { default as Uploadimage } from "./Uploadimage";

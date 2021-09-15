@@ -1,29 +1,15 @@
 import React, { Component, useEffect, useState } from "react";
-import GLOBAL from "../../../GLOBAL";
-import {
-  CContainer,
-  CRow,
-  CCol,
-  CCard,
-  CCardHeader,
-  CCardBody, 
-} from "@coreui/react";
+import { CCard, CCardHeader, CCardBody } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit,
-  faCheck,
-  faWindowClose,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
-import { Table, Loading } from "../../../component/revel-strap";
+import { Table } from "../../../component/revel-strap";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 const classgroup_model = new ClassgroupModel();
 
 export default function View() {
-  const [showloading, setShowLoading] = useState(true);
-  const [classgroup, setClassgroup] = useState([]);
-
+  const [classgroup, setClassgroup] = useState([]); 
   useEffect(() => {
     _fetchData();
   }, []);
@@ -31,9 +17,9 @@ export default function View() {
   async function _fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
     const classgroup_data = await classgroup_model.getClassgroupByMycourse({
-      user_code: user_session.user_code
+      user_code: user_session.user_code,
     });
-    setClassgroup(classgroup_data.data);
+    setClassgroup(classgroup_data.data); 
   }
 
   function _onDelete(data) {
@@ -43,17 +29,14 @@ export default function View() {
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
-      if (result.isConfirmed) {
-        setShowLoading(true);
+      if (result.isConfirmed) { 
         classgroup_model
           .deleteClassgroupByCode({ classgroup_code: data.classgroup_code })
           .then((res) => {
-            if (res.require) {
-              setShowLoading(false);
+            if (res.require) { 
               Swal.fire("Success Deleted!", "", "success");
               window.location.reload();
-            } else {
-              setShowLoading(false);
+            } else { 
               Swal.fire("Sorry, Someting worng !", "", "error");
             }
           });
@@ -87,7 +70,7 @@ export default function View() {
               },
               {
                 title: "ชื่อวิชา",
-                dataIndex: "subject_fullname", 
+                dataIndex: "subject_fullname",
                 filterAble: true,
                 ellipsis: true,
                 width: 150,
@@ -109,16 +92,16 @@ export default function View() {
                   const row_accessible = [];
                   row_accessible.push(
                     <Link
-                      key="update"
-                      to={`/class-student/update/${cell.classgroup_code}`}
+                      key="detail"
+                      to={`/class-student/detail/${cell.classgroup_table_score}`}
                       title="แก้ไขรายการ"
                     >
                       <button type="button" className="btn btn-primary">
                         <FontAwesomeIcon
-                          icon={faEdit}
+                          icon={faCheck}
                           size="5s"
                           color="white"
-                        />
+                        /> ข้อมูล
                       </button>
                     </Link>
                   );

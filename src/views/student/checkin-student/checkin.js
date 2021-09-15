@@ -15,7 +15,9 @@ import Swal from "sweetalert2";
 import QrcodeModel from "../../../models/QrcodeModel";
 import CheckinModel from "../../../models/CheckinModel";
 import { TimeController } from "../../../controller";
+import ScoreModel from "../../../models/ScoreModel";
 
+const score_model = new ScoreModel();
 const qrcode_model = new QrcodeModel();
 const checkin_model = new CheckinModel();
 const time_controller = new TimeController();
@@ -24,10 +26,6 @@ export default function Checkin() {
   let history = useHistory();
   let code = useRouteMatch("/checkin-student/checkin/:code");
   const [user, setUser] = useState([]);
-  const [position, setPosition] = useState({
-    longtititude: "",
-    latitude: "",
-  });
   const [qrcode, setQrcode] = useState({});
   const [checkin, setCheckin] = useState({});
   const [Lat, setLat] = useState(0);
@@ -87,7 +85,7 @@ export default function Checkin() {
     url.classID = room.classgroup_code;
     _checkSubmit(user_session.user_code, url);
   }
-
+console.log("qr_code",qrcode);
   async function _handleSubmit() {
     let status_in = "";
     checkin.time_stamp < checkin.time_out
@@ -104,9 +102,27 @@ export default function Checkin() {
       latitude: Lot,
     });
     if (query_result.require) {
-      checkin.time_stamp < checkin.time_out
-        ? Swal.fire("ทันเวลา ", "", "success")
-        : Swal.fire("ไม่ทันเวลา ", "", "error");
+      if (checkin.time_stamp < checkin.time_out) {
+        Swal.fire("ทันเวลา ", "", "success");
+      } else {
+        Swal.fire("ไม่ทันเวลา ", "", "error").then((result) => {
+          if (result) {
+            score_model
+              .updateScoreLeaveBy({
+                user_uid: user.user_uid,
+                table_name: qrcode.classgroup_table_score,
+              })
+              .then((res) => {
+                if (res.require) {
+                  Swal.fire("บันทึกเวลามาสายเรียบร้อย", "", "success");
+                  window.location.reload();
+                } else {
+                  Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
+                }
+              });
+          }
+        });
+      }
       let histy = " / checkin - student / history / " + qrcode.classgroup_code;
       history.push(histy);
     } else {

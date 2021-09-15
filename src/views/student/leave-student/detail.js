@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import GLOBAL from "../../../GLOBAL";
 import { Link } from "react-router-dom";
 import {
   CCard,
@@ -14,27 +13,24 @@ import {
   CButton,
   CImg,
 } from "@coreui/react";
-
 import Swal from "sweetalert2";
-import { useHistory } from "react-router-dom";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import { Select, DatePicker } from "../../../component/revel-strap";
-
+import { Uploadimage, TimeController } from "../../../controller";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import LeaveModel from "../../../models/LeaveModel";
 
-import { Uploadimage, TimeController } from "../../../controller";
-
 const upload_contoller = new Uploadimage();
-
 const leave_model = new LeaveModel();
 const classgroup_model = new ClassgroupModel();
 const time_controller = new TimeController();
 
-export default function Insert() {
+export default function Detail() {
   let history = useHistory();
+
+  let code = useRouteMatch("/leave-student/detail/:code");
   const [user, setUser] = useState([]);
   const [classselect, setClassselect] = useState([]);
-  // const [classgroup, setClassgroup] = useState([])
   const [leave, setLeave] = useState({
     leave_image: {
       src: "default.png",
@@ -64,19 +60,18 @@ export default function Insert() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
     setUser(user_session);
 
-    const date = new Date();
-    var code = "";
-    code =
-      "LC" +
-      date.getFullYear() +
-      (date.getMonth() + 1).toString().padStart(2, "0");
-
-    const leave_data = await leave_model.getLeaveMaxCode({
-      code: code,
-      digit: 4,
+    const leave_data = await leave_model.getLeaveByCode({
+      leave_code: code.params.code,
     });
+    let leave_form = {};
+    leave_form = leave_data.data[0];
+    leave_form.leave_image = {
+      src: "default.png",
+      file: null,
+      old: leave_data.data[0].leave_image,
+    };
 
-    setLeave({ ...leave, [`leave_code`]: leave_data.data });
+    setLeave(leave_form);
 
     const classgroup_data = await classgroup_model.getClassgroupByMycourse({
       user_code: user_session.user_code,
@@ -92,63 +87,6 @@ export default function Insert() {
       });
     }
     setClassselect(select_class);
-  };
-
-  async function _handleSubmit() {
-    if (_checkSubmit()) {
-      let img = "";
-      const res_upload = await upload_contoller.uploadFile({
-        src: leave.leave_image,
-        upload_path: "leave",
-      });
-      if (res_upload !== "") {
-        img = res_upload;
-      } else { 
-        alert("fault")
-      }
-      let query_result = await leave_model.insertLeaveBy({
-        leave_image: img,
-        leave_code: leave.leave_code,
-        classgroup_code: leave.classgroup_code,
-        owner_class: leave.owner_class,
-        leave_start: time_controller.reformatToDate(leave.leave_start),
-        leave_end: time_controller.reformatToDate(leave.leave_end),
-        leave_type: leave.leave_type,
-        leave_reason: leave.leave_reason,
-        leave_approve: "Waiting",
-        addby: user.user_code,
-        adddate: time_controller.reformatToDate(new Date()),
-        updateby: user.user_code,
-        lastupdate: time_controller.reformatToDate(new Date()),
-      });
-
-      if (query_result.require) {
-        Swal.fire("บันทึกเรียบร้อย", "", "success");
-        history.push("/leave-student");
-      } else {
-        Swal.fire("ขออภัย มีอย่างอย่างผิดพลาด!", "", "error");
-      }
-    }
-  }
-
-  const _checkSubmit = () => {
-    if (leave.leave_type === "") {
-      Swal.fire({
-        title: "แจ้งเตือน!",
-        text: "Please Check Your leave type ",
-        icon: "warning",
-      });
-      return false;
-    } else if (leave.leave_reason === "") {
-      Swal.fire({
-        title: "แจ้งเตือน!",
-        text: "Please Check Your reason",
-        icon: "warning",
-      });
-      return false;
-    } else {
-      return true;
-    }
   };
 
   const _changeFrom = (e) => {
@@ -215,7 +153,7 @@ export default function Insert() {
                           name="leave_type"
                           value="on_leave"
                           checked={leave.leave_type === "on_leave"}
-                          onChange={(e) => _changeFrom(e)}
+                          readOnly
                         />{" "}
                         ลากิจ
                       </CCol>
@@ -294,7 +232,11 @@ export default function Insert() {
                 <CImg
                   name="logo"
                   style={{ width: "350px", alignSelf: "center" }}
-                  src={leave.leave_image.src}
+                  src={
+                    leave.leave_image.old !== ""
+                      ? leave.leave_image.old
+                      : leave.leave_image.src
+                  }
                   alt="Logo"
                 />
                 <br />
@@ -311,13 +253,6 @@ export default function Insert() {
           </CCardBody>
 
           <CCardFooter>
-            <CButton
-              type="submit"
-              color="success"
-              onClick={() => _handleSubmit()}
-            >
-              บันทึก
-            </CButton>
             <Link to="/leave-student">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
             </Link>

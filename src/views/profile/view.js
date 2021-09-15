@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import GLOBAL from "../../../GLOBAL";
 import {
   CCard,
   CCardHeader,
@@ -10,27 +9,26 @@ import {
   CLabel,
   CInput,
   CButton,
-  CImg
+  CImg,
 } from "@coreui/react";
 
 import { Link, useHistory } from "react-router-dom";
 import Swal from "sweetalert2";
-import UserModel from "../../../models/UserModel";
-import { FileController } from "../../../controller";
+import UserModel from "../../models/UserModel";
+import { Uploadimage } from "../../controller";
 
-
-const file_controller = new FileController();
+const upload_contoller = new Uploadimage();
 const user_model = new UserModel();
+
 export default function View() {
   let history = useHistory();
-  const [showloading, setShowLoading] = useState(true);
   const [user, setUser] = useState({
     user_profile_image: {
       src: "default.png",
       file: null,
       old: "",
     },
-  })
+  });
 
   useEffect(() => {
     _fetchData();
@@ -38,16 +36,19 @@ export default function View() {
 
   async function _fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    let user_data = {}
-    user_data = user_session
-    user_data.user_profile_image = {
+    const user_data = await user_model.getUserByCode({
+      user_code: user_session.user_code,
+    });
+
+    let user_info = {};
+    user_info = user_data.data[0];
+    user_info.user_profile_image = {
       src: "default.png",
       file: null,
-      old: user_session.user_profile_image
-    }
-    setUser(user_data);
+      old: user_session.user_profile_image,
+    };
+    setUser(user_info);
   }
-
 
   const _handleImageChange = (img_name, e) => {
     if (e.target.files.length) {
@@ -70,32 +71,33 @@ export default function View() {
     }
   };
 
-
   async function _handleSubmit() {
     if (_checkSubmit()) {
-      let user_profile_image = "";
-      const res_upload = await file_controller.uploadFile({
+      let img = "";
+      const res_upload = await upload_contoller.uploadFile({
         src: user.user_profile_image,
-        upload_path: "user/",
+        upload_path: "users",
       });
-
-      if (res_upload.require) {
-        if (user.user_profile_image.src !== "default.png") {
-          await file_controller.deleteFile({
-            file_path: user.user_profile_image.old,
-          });
-          user_profile_image = res_upload.data.file_name;
-        } else {
-          user_profile_image = user.user_profile_image.old;
-        }
+      if (res_upload !== "") {
+        img = res_upload;
       } else {
-        user_profile_image = user.user_profile_image.old;
+        img = user.user_profile_image.old;
       }
-
       let query_result = await user_model.updateUserBy({
-
-        user_profile_image: user_profile_image,
-
+        user_code: user.user_code,
+        user_position_code: user.user_position_code,
+        license_code: user.license_code,
+        user_prefix: user.user_prefix,
+        user_firstname: user.user_firstname,
+        user_lastname: user.user_lastname,
+        user_tel: user.user_tel,
+        user_address: user.user_address,
+        user_email: user.user_email,
+        user_username: user.user_username,
+        user_password: user.user_password,
+        user_status: user.user_status,
+        user_zipcode: user.user_zipcode,
+        user_profile_image: img,
       });
 
       if (query_result.require) {
@@ -120,21 +122,38 @@ export default function View() {
     }
   };
 
+  const _changeFrom = (e) => {
+    const { value, name } = e.target;
+    setUser({ ...user, [name]: value });
+  };
+
   return (
     <>
-      <div  >
+      <div>
         <CCard>
           <CCardHeader className="header-t-red">
             ข้อมูลส่วนตัว / Profile
           </CCardHeader>
-          <CCardBody >
-            <CRow >
+          <CCardBody>
+            <CRow>
               <CCol md="6">
                 <CRow>
-                  <CCol md="4">
-                    <CLabel>
-                      ชื่อ
-                    </CLabel>
+                  <CCol md="3">
+                    <CLabel>รหัสประจำตัว</CLabel>
+                  </CCol>
+                  <CCol md="7">
+                    <CInput
+                      type="text"
+                      name="user_uid "
+                      value={user.user_uid}
+                      disabled
+                    />
+                  </CCol>
+                </CRow>
+                <br />
+                <CRow>
+                  <CCol md="3">
+                    <CLabel>ชื่อ</CLabel>
                   </CCol>
                   <CCol md="7">
                     <CInput
@@ -147,10 +166,8 @@ export default function View() {
                 </CRow>
                 <br />
                 <CRow>
-                  <CCol md="4">
-                    <CLabel>
-                      นามสกุล
-                    </CLabel>
+                  <CCol md="3">
+                    <CLabel>นามสกุล</CLabel>
                   </CCol>
                   <CCol md="7">
                     <CInput
@@ -163,39 +180,49 @@ export default function View() {
                 </CRow>
                 <br />
                 <CRow>
-                  <CCol md="4">
-                    <CLabel>
-                      อีเมลล์
-                    </CLabel>
+                  <CCol md="3">
+                    <CLabel>อีเมลล์</CLabel>
                   </CCol>
                   <CCol md="7">
                     <CInput
                       type="text"
                       name="user_email"
                       value={user.user_email}
-                      disabled
+                      onChange={(e) => _changeFrom(e)}
                     />
                   </CCol>
                 </CRow>
                 <br />
                 <CRow>
-                  <CCol md="4">
-                    <CLabel>
-                      รหัสประจำตัว
-                    </CLabel>
+                  <CCol md="3">
+                    <CLabel>เบอร์โทรศัพท์</CLabel>
                   </CCol>
                   <CCol md="7">
                     <CInput
                       type="text"
-                      name="user_username"
-                      value={user.user_username}
-                      disabled
+                      name="user_tel"
+                      value={user.user_tel}
+                      onChange={(e) => _changeFrom(e)}
+                    />
+                  </CCol>
+                </CRow>
+                <br />
+                <CRow>
+                  <CCol md="3">
+                    <CLabel>ไอดีไลน์</CLabel>
+                  </CCol>
+                  <CCol md="7">
+                    <CInput
+                      type="text"
+                      name="user_lineId"
+                      value={user.user_lineId}
+                      onChange={(e) => _changeFrom(e)}
                     />
                   </CCol>
                 </CRow>
                 <br />
               </CCol>
-              <CCol md="4">
+              <CCol md="3">
                 <CLabel>อัพโหลดภาพ </CLabel>
                 <br />
                 <CImg
@@ -205,8 +232,8 @@ export default function View() {
                     user.user_profile_image.file !== null
                       ? user.user_profile_image.src
                       : user.user_profile_image.old !== ""
-                        ? GLOBAL.BASE_SERVER.URL + user.user_profile_image.old
-                        : user.user_profile_image.src
+                      ? user.user_profile_image.old
+                      : user.user_profile_image.src
                   }
                 />
                 <br />
@@ -233,9 +260,7 @@ export default function View() {
               <CButton color="danger">ย้อนกลับ</CButton>
             </Link>
           </CCardFooter>
-
         </CCard>
-
       </div>
     </>
   );

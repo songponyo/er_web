@@ -56,4 +56,17 @@ export default class ScoreModel extends BaseModel {
       body: JSON.stringify(data),
     })
   }
+
+  async updateScoreLeaveBy(data) {
+    return this.authFetch({
+      url: 'score/updateScoreLeaveBy',
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+  
+
+
+
+
 }

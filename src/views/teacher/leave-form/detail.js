@@ -12,20 +12,18 @@ import {
   CLabel,
   CInput,
   CButton,
-
-  CImg
+  CImg,
 } from "@coreui/react";
 import { connect } from "react-redux";
 
 import Swal from "sweetalert2";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import {  TimeController } from "../../../controller";
- 
-import LeaveModel from "../../../models/LeaveModel"
+import { TimeController } from "../../../controller";
 
-const leave_model = new LeaveModel(); 
-const time_controller = new TimeController(); 
+import LeaveModel from "../../../models/LeaveModel";
 
+const leave_model = new LeaveModel();
+const time_controller = new TimeController();
 
 export default function Detail() {
   let history = useHistory();
@@ -51,7 +49,7 @@ export default function Detail() {
     addby: "",
     adddate: "",
     mindate: time_controller.reformatToDate(new Date()),
-  })
+  });
 
   useEffect(() => {
     fetchData();
@@ -59,26 +57,24 @@ export default function Detail() {
 
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    setUser(user_session)
+    setUser(user_session);
 
     const leave_data = await leave_model.getLeaveByCode({
       leave_code: code.params.code,
-    })
-    let leave_form = {}
-    leave_form = leave_data.data[0]
+    });
+    let leave_form = {};
+    leave_form = leave_data.data[0];
     leave_form.leave_image = {
       src: "default.png",
       file: null,
       old: leave_data.data[0].leave_image,
-    }
+    };
 
     setLeave(leave_form);
   }
-
   async function _handleSubmit() {
-    if (_checkSubmit()) {
-      let query_result = await leave_model.updateLeaveBy({  
-        leave_image: leave.leave_image.old,
+    if (_checkSubmit()) { 
+      let query_result = await leave_model.updateLeaveBy({ 
         leave_code: leave.leave_code,
         classgroup_code: leave.classgroup_code,
         owner_class: leave.owner_class,
@@ -92,7 +88,6 @@ export default function Detail() {
         adddate: time_controller.reformatToDate(new Date()),
         updateby: user.user_code,
         lastupdate: time_controller.reformatToDate(new Date()),
-        
       });
 
       if (query_result.require) {
@@ -101,9 +96,6 @@ export default function Detail() {
       } else {
         Swal.fire("Sorry, Someting worng !", "", "error");
       }
-
-
-
     }
   }
 
@@ -115,36 +107,31 @@ export default function Detail() {
         icon: "warning",
       });
       return false;
-    } else
-      if (leave.leave_reason === "") {
-        Swal.fire({
-          title: "แจ้งเตือน!",
-          text: "Please Check Your reason",
-          icon: "warning",
-        });
-        return false;
-      } else {
-        return true;
-      }
+    } else if (leave.leave_reason === "") {
+      Swal.fire({
+        title: "แจ้งเตือน!",
+        text: "Please Check Your reason",
+        icon: "warning",
+      });
+      return false;
+    } else {
+      return true;
+    }
   };
   const _changeFrom = (e) => {
     const { value, name } = e.target;
-    let new_data = { ...leave };
-    new_data[name] = value;
-    setLeave(new_data);
+    setLeave({ ...leave, [name]: value });
   };
-  console.log("leave", leave);
+
   return (
     <div>
       <div className="animated fadeIn">
         <CCard>
-          <CCardHeader className="header-t-red">
-            รายละเอียดใบคำร้อง
-        </CCardHeader>
+          <CCardHeader className="header-t-red">รายละเอียดใบคำร้อง</CCardHeader>
           <CCardBody>
             <CRow>
-              <CCol md="6" >
-                <CContainer >
+              <CCol md="6">
+                <CContainer>
                   {/* Content */}
                   <br />
                   <CRow>
@@ -153,6 +140,7 @@ export default function Detail() {
                       <CInput
                         name="classgroup_id"
                         value={leave.classgroup_id}
+                        readOnly
                       />
                     </CCol>
                     <CCol md="6">
@@ -160,7 +148,7 @@ export default function Detail() {
                       <CInput
                         name="subject_name"
                         value={leave.subject_name}
-                      // disabled="disabled"
+                        readOnly
                       />
                     </CCol>
 
@@ -169,11 +157,10 @@ export default function Detail() {
                       <CLabel>อาจารย์ประจำวิชา</CLabel>
                       <CInput
                         value={leave.owner_fullname}
-                        name=""
-                      // disabled="disabled"
+                        name="owner_fullname"
+                        readOnly
                       />
                     </CCol>
-
                   </CRow>
                   <br />
                   <CRow>
@@ -182,20 +169,19 @@ export default function Detail() {
                       <CLabel>ชื่อผู้ยื่น</CLabel>
                       <CInput
                         value={leave.user_fullname}
-                        name=""
-                      // disabled="disabled"
+                        name="user_fullname"
+                        readOnly
                       />
                     </CCol>
                     <CCol lg="6">
                       <br />
                       <CLabel>ประเภทการลา</CLabel>
                       <CInput
-                        value={leave.leave_type == "on_leave"
-                          ? "ลากิจ"
-                          : "ลาป่วย"
+                        value={
+                          leave.leave_type == "on_leave" ? "ลากิจ" : "ลาป่วย"
                         }
-                        name=""
-                      // disabled="disabled"
+                        name="leave_type"
+                        readOnly
                       />
                     </CCol>
 
@@ -206,18 +192,16 @@ export default function Detail() {
                         class="form-control"
                         rows="4"
                         value={leave.leave_reason}
-                      // disabled="disable"
+                        name="leave_reason"
+                        readOnly
                       ></textarea>
                     </CCol>
                   </CRow>
                   <br />
-
-
                 </CContainer>
               </CCol>
 
-
-              <CCol md="6" >
+              <CCol md="6">
                 <CRow>
                   <CCol md="12">
                     <CLabel>หลักฐานการยื่น</CLabel>
@@ -230,38 +214,44 @@ export default function Detail() {
                           leave.leave_image.file !== null
                             ? leave.leave_image.src
                             : leave.leave_image.old !== ""
-                              ? GLOBAL.BASE_SERVER.URL_IMG + leave.leave_image.old
-                              : leave.leave_image.src
+                            ? leave.leave_image.old
+                            : leave.leave_image.src
                         }
                       />
                       <br />
                     </div>
                   </CCol>
-                  <CCol md="12">
-                  </CCol>
+                  <CCol md="12"></CCol>
                 </CRow>
               </CCol>
-
             </CRow>
             <CRow>
               <CContainer>
                 <CCol md="12">
                   <br />
-                  <CLabel>
-                    ยืนยันสถานะ
-                    </CLabel>
-                  <tbody >
-                    <CCol ><input type="radio" name="leave_approve"
-                      value="Accept"
-                      checked={leave.leave_approve === "Accept"}
-                      onChange={(e) => _changeFrom(e)}
-                    /> อนุมัติ</CCol>
+                  <CLabel>ยืนยันสถานะ</CLabel>
+                  <tbody>
+                    <CCol>
+                      <input
+                        type="radio"
+                        name="leave_approve"
+                        value="Accept"
+                        checked={leave.leave_approve === "Accept"}
+                        onChange={(e) => _changeFrom(e)}
+                      />{" "}
+                      อนุมัติ
+                    </CCol>
 
-                    <CCol><input type="radio" name="leave_approve"
-                      value="NotAccept"
-                      checked={leave.leave_approve === "NotAccept"}
-                      onChange={(e) => _changeFrom(e)}
-                    /> ไม่อนุมัติ</CCol>
+                    <CCol>
+                      <input
+                        type="radio"
+                        name="leave_approve"
+                        value="NotAccept"
+                        checked={leave.leave_approve === "NotAccept"}
+                        onChange={(e) => _changeFrom(e)}
+                      />{" "}
+                      ไม่อนุมัติ
+                    </CCol>
                   </tbody>
                 </CCol>
 
@@ -272,24 +262,17 @@ export default function Detail() {
                     <textarea
                       class="form-control"
                       rows="4"
+                      name="leave_approve_reason"
                       value={leave.leave_approve_reason}
-                    // disabled="disable"
+                      onChange={(e) => _changeFrom(e)}
                     ></textarea>
                   </CCol>
                 ) : (
                   ""
                 )}
-
-
-
               </CContainer>
-
-
             </CRow>
           </CCardBody>
-
-
-
 
           <CCardFooter>
             <CButton
@@ -298,7 +281,7 @@ export default function Detail() {
               onClick={() => _handleSubmit()}
             >
               บันทึก
-          </CButton>
+            </CButton>
             <Link to="/leave-form">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
             </Link>
@@ -308,4 +291,3 @@ export default function Detail() {
     </div>
   );
 }
-

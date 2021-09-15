@@ -6,7 +6,6 @@ import { ExcelRenderer } from "react-excel-renderer";
 import { EditableFormRow, EditableCell } from "../utility/editable";
 import Swal from "sweetalert2";
 import ScoreModel from "../models/ScoreModel";
- 
 
 const score_model = new ScoreModel();
 export default class ExcelPage extends Component {
@@ -32,23 +31,6 @@ export default class ExcelPage extends Component {
           dataIndex: "user_lastname",
           editable: false,
         },
-        // {
-        //   title: "การจัดการ",
-        //   dataIndex: "action",
-        //   render: (text, record) =>
-        //     this.state.rows.length >= 1 ? (
-        //       <Popconfirm
-        //         title="Sure to delete?"
-        //         onConfirm={() => this.handleDelete(record.key)}
-        //       >
-        //         <Icon
-        //           type="delete"
-        //           theme="filled"
-        //           style={{ color: "red", fontSize: "20px" }}
-        //         />
-        //       </Popconfirm>
-        //     ) : null
-        // }
       ],
     };
   }
@@ -80,7 +62,7 @@ export default class ExcelPage extends Component {
     if (!isExcel) {
       errorMessage = "You can only upload Excel file!";
     }
-    console.log("file", file[0].type);
+    // console.log("file", file[0].type);
     const isLt2M = file[0].size / 1024 / 1024 < 2;
     if (!isLt2M) {
       errorMessage = "File must be smaller than 2MB!";
@@ -117,11 +99,13 @@ export default class ExcelPage extends Component {
         console.log(err);
       } else {
         let newRows = [];
+
         resp.rows.slice(1).map((row, index) => {
           if (row && row !== "undefined") {
+            let rowone = row[0].trim();  
             newRows.push({
               key: index,
-              user_uid: row[0].trim(),
+              user_uid: rowone.replace("-", ""),
               user_firstname: row[1],
               user_lastname: row[2],
             });
@@ -144,13 +128,13 @@ export default class ExcelPage extends Component {
     return false;
   };
 
-  handleSubmit = async () => { 
+  handleSubmit = async () => {
     const query_result = await score_model.insertScore({
       table_name: this.props.data.classgroup_table_score,
       row: this.state.rows,
       user_status: "Not active",
     });
-
+    // console.log("query_result", query_result);
     this.setState(
       {
         loading: false,
@@ -159,10 +143,10 @@ export default class ExcelPage extends Component {
       () => {
         if (query_result.require) {
           Swal.fire({ title: "บันทึกข้อมูลสำเร็จ !", icon: "success" });
-          this.props.history.push("/class-group/");
+          // this.props.history.push("/class-group/");
         } else {
           Swal.fire({ title: "เกิดข้อผิดพลาด !", icon: "error" });
-          window.location.reload();
+          // window.location.reload();
         }
       }
     );
@@ -244,7 +228,7 @@ export default class ExcelPage extends Component {
         <div style={{ marginTop: 20 }}>
           <Table
             components={components}
-            rowClassName={() => "editable-row"}
+            // rowClassName={() => "editable-row"}
             dataSource={this.state.rows}
             columns={columns}
           />

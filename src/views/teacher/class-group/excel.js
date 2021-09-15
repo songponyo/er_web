@@ -1,29 +1,17 @@
 import React, { useState, useEffect } from "react";
-import ExcelPage from "../../../controller/excelPage";
+import ExcelPage from "../../../component/excelPage";
 import {
   CCard,
   CCardHeader,
   CCardBody,
-  CCardFooter,
-  CCol,
-  CRow,
-  CFormGroup,
-  CLabel,
-  CInput,
+  CCardFooter, 
   CButton,
 } from "@coreui/react";
 import Swal from "sweetalert2";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
-import { TimeController } from "../../../controller";
-import SubjectModel from "../../../models/SubjectModel";
+import { Link, useHistory, useRouteMatch } from "react-router-dom"; 
 import ClassgroupModel from "../../../models/ClassgroupModel";
-import UserModel from "../../../models/UserModel";
-
-const user_model = new UserModel();
-const classgroup_model = new ClassgroupModel();
-const subject_model = new SubjectModel();
-const time_controller = new TimeController();
-
+ 
+const classgroup_model = new ClassgroupModel(); 
 export default function Update() {
   let history = useHistory();
   const [showloading, setShowLoading] = useState(true);

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
-import { Modal, Button } from "antd";
+import { Map, GoogleApiWrapper, Marker } from "google-maps-react"; 
 
 const Maps = (props) => { 
   const mapStyles = {

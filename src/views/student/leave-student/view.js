@@ -1,15 +1,8 @@
-import React, {useEffect, useState } from "react";
-import { 
-  CCard,
-  CCardHeader,
-  CCardBody,
-} from "@coreui/react";
+import React, { useEffect, useState } from "react";
+import { CCard, CCardHeader, CCardBody } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit, 
-  faWindowClose,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faWindowClose } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { Table } from "../../../component/revel-strap";
 import LeaveModel from "../../../models/LeaveModel";
@@ -24,17 +17,17 @@ export default function View() {
   }, []);
 
   async function _fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`)); 
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
     const leave_data = await leave_model.getLeaveBy({
-    addby : user_session.user_code
+      addby: user_session.user_code,
     });
     setLeave(leave_data.data);
   }
 
   function _onDelete(data) {
     Swal.fire({
-      title: "Are you sure ?",
-      text: "Confirm to delete " + data.leave_code,
+      title: "คุณแน่ใจใช่ไหม",
+      text: "ยืนยันที่จะลบรายการนี้",
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
@@ -45,23 +38,26 @@ export default function View() {
           .then((res) => {
             if (res.require) {
               // setShowLoading(false);
-              Swal.fire("Success Deleted!", "", "success");
+              Swal.fire("ลบเรียบร้อย", "", "success");
               window.location.reload();
             } else {
               // setShowLoading(false);
-              Swal.fire("Sorry, Someting worng !", "", "error");
+              Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
             }
           });
       }
     });
   }
- 
+
   return (
     <div>
       <CCard>
         <CCardHeader className="header-t-red">
           คำขอลา / Leave list
-          <Link to={`/leave-student/insert`} className="btn btn-success float-right">
+          <Link
+            to={`/leave-student/insert`}
+            className="btn btn-success float-right"
+          >
             <i className="fa fa-plus" aria-hidden="true"></i> ยื่นขออนุญาติ
           </Link>
         </CCardHeader>
@@ -91,16 +87,14 @@ export default function View() {
               {
                 title: "สถานะ",
                 dataIndex: "leave_approve",
-                render: (cell) => { 
+                render: (cell) => {
                   if (cell === "Waiting") {
-                    return <span className="text-danger">รออนุมัติ</span>;
+                    return <p>รออนุมัติ</p>
                   } else {
-                    return (
-                      cell !== "NotAccept" 
-                    ? <span className="text-success">อนุมัติ</span>
-                    : <span className="text-success">ไม่อนุมัติ</span>
-                      
-                      
+                    return cell !== "NotAccept" ? (
+                      <span className="text-success">อนุมัติ</span>
+                    ) : (
+                      <span className="text-danger">ไม่อนุมัติ</span>
                     );
                   }
                 },
@@ -116,22 +110,43 @@ export default function View() {
                 dataIndex: "",
                 align: "center",
                 render: (cell) => {
-                  const row_accessible = [];
-                  row_accessible.push(
-                    <Link
-                      key="update"
-                      to={`/leave-student/update/${cell.leave_code}`}
-                      title="แก้ไขรายการ"
-                    >
-                      <button type="button" className="btn btn-primary">
-                        <FontAwesomeIcon
-                          icon={faEdit}
-                          size="5s"
-                          color="white"
-                        />
-                      </button>
-                    </Link>
-                  );
+                  const row_accessible = []; 
+                  if (cell.leave_approve !== "Waiting") {
+                    row_accessible.push(
+                      <Link
+                        key="detail"
+                        to={`/leave-student/detail/${cell.leave_code}`}
+                        title="รายละเอียดคำร้อง"
+                      >
+                        <button type="button" className="btn btn-success">
+                          <FontAwesomeIcon
+                            icon={faEdit}
+                            size="5s"
+                            color="white"
+                          />{" "}
+                          รายละเอียด
+                        </button>
+                      </Link>
+                    );
+                  } else {
+                    row_accessible.push(
+                      <Link
+                        key="update"
+                        to={`/leave-student/update/${cell.leave_code}`}
+                        title="แก้ไข"
+                      >
+                        <button type="button" className="btn btn-warning">
+                          <FontAwesomeIcon
+                            icon={faEdit}
+                            size="5s"
+                            color="white"
+                          />{" "}
+                          แก้ไข
+                        </button>
+                      </Link>
+                    );
+                  }
+
                   row_accessible.push(
                     <button
                       type="button"
@@ -142,7 +157,8 @@ export default function View() {
                         icon={faWindowClose}
                         size="5s"
                         color="white"
-                      />
+                      />{" "}
+                      ลบ
                     </button>
                   );
 
