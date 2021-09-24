@@ -41,7 +41,7 @@ export default function Detail() {
           {" "}
           รายชื่อ / Name list
           <Link
-            to={`/class-group/insert`}
+            to={`/class-group/adduser`}
             className="btn btn-success float-right"
           >
             <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มรายชื่อ

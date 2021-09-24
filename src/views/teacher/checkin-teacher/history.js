@@ -23,7 +23,7 @@ export default function History() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
     const qrcode_data = await qrcode_model.getQrcodeBy({
       keyword: code.params.code,
-      // owner: user_session.user_code,
+      owner: user_session.user_code,
     });
     setClassgroup(qrcode_data.data);
   }
@@ -100,7 +100,7 @@ export default function History() {
                 align: "center",
                 render: (cell) => {
                   const row_accessible = [];
-                  console.log("cell",cell.classgroup_code);
+                  console.log("cell", cell.classgroup_code);
                   row_accessible.push(
                     <Link
                       key="detail"

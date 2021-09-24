@@ -146,10 +146,10 @@ class Insert extends React.Component {
       });
 
       if (res.require) {
-        Swal.fire("Save success!!", "", "success");
+        Swal.fire("บันทึกเรียบร้อย", "", "success");
         this.props.history.push("/user");
       } else {
-        Swal.fire("Sorry, Someting worng !", "", "error");
+        Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
       }
     }
   }

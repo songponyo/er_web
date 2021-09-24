@@ -113,10 +113,10 @@ export default function Update() {
         adddate: time_controller.reformatToDate(new Date()),
       });
       if (query_result.require) {
-        Swal.fire("Save success!!", "", "success");
+        Swal.fire("บันทึกเรียบร้อย", "", "success");
         history.push("/checkin-teacher");
       } else {
-        Swal.fire("Sorry, Someting worng !", "", "error");
+        Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
       }
     }
   }

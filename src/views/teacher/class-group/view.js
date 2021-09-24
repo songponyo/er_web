@@ -29,8 +29,10 @@ export default function View() {
   }, []);
 
   async function _fetchData() {
-    // const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    const classgroup_data = await classgroup_model.getClassgroupBy({});
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    const classgroup_data = await classgroup_model.getClassgroupBy({
+      owner : user_session.user_code
+    });
     setClassgroup(classgroup_data.data);
   }
 
@@ -55,11 +57,11 @@ export default function View() {
           .then((res) => {
             if (res.require) {
               setShowLoading(false);
-              Swal.fire("Success Deleted!", "", "success");
+              Swal.fire("ลบรายการ เรียบร้อย", "", "success");
               window.location.reload();
             } else {
               setShowLoading(false);
-              Swal.fire("Sorry, Someting worng !", "", "error");
+              Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
             }
           });
       }

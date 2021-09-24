@@ -1,15 +1,8 @@
 import React, { Component, useEffect, useState } from "react";
-import { 
-  CCard,
-  CCardHeader,
-  CCardBody,
-} from "@coreui/react";
+import { CCard, CCardHeader, CCardBody } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faAddressBook, 
-  faQrcode, 
-} from "@fortawesome/free-solid-svg-icons";
+import { faAddressBook, faQrcode } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { Table, Loading } from "../../../component/revel-strap";
 import ClassgroupModel from "../../../models/ClassgroupModel";
@@ -24,30 +17,39 @@ export default function View() {
   }, []);
 
   async function _fetchData() {
-    // const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    const classgroup_data = await classgroup_model.getClassgroupBy({});
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    const classgroup_data = await classgroup_model.getClassgroupBy({
+      owner: user_session.user_code,
+    });
     setClassgroup(classgroup_data.data);
   }
 
   function _onDelete(data) {
     Swal.fire({
       title: "Are you sure ?",
-      text: "Confirm to delete " + data.classgroup_id + "   " + data.subject_fullname,
+      text:
+        "Confirm to delete " +
+        data.classgroup_id +
+        "   " +
+        data.subject_fullname,
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
         setShowLoading(true);
         classgroup_model
-          .deleteClassgroupByCode({ classgroup_code: data.classgroup_code, table_name: data.classgroup_table_score })
+          .deleteClassgroupByCode({
+            classgroup_code: data.classgroup_code,
+            table_name: data.classgroup_table_score,
+          })
           .then((res) => {
             if (res.require) {
               setShowLoading(false);
-              Swal.fire("Success Deleted!", "", "success");
+              Swal.fire("ลบรายการ เรียบร้อย", "", "success");
               window.location.reload();
             } else {
               setShowLoading(false);
-              Swal.fire("Sorry, Someting worng !", "", "error");
+              Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
             }
           });
       }
@@ -65,7 +67,7 @@ export default function View() {
         </CCardHeader>
         <CCardBody>
           <Table
-            showRowNo={true}
+            showRowNo={false}
             dataSource={classgroup}
             dataTotal={classgroup}
             rowKey=""
@@ -93,7 +95,7 @@ export default function View() {
                 ellipsis: true,
                 width: 150,
                 align: "center",
-              }, 
+              },
               {
                 title: "จัดการ",
                 dataIndex: "",
@@ -107,16 +109,16 @@ export default function View() {
                       to={`/checkin-teacher/qrcode/${cell.classgroup_code}`}
                       title="สร้างรายการเช็คชื่อ"
                     >
-                      <button type="button" className="btn btn-primary"> 
+                      <button type="button" className="btn btn-primary">
                         <FontAwesomeIcon
                           icon={faQrcode}
                           size="5s"
                           color="white"
-                        /> คิวร์อาร์โค้ด
+                        />{" "}
+                        คิวร์อาร์โค้ด
                       </button>
                     </Link>
                   );
-
 
                   row_accessible.push(
                     <Link
@@ -129,13 +131,12 @@ export default function View() {
                           icon={faAddressBook}
                           size="5s"
                           color="white"
-                        /> ประวัติเช็คชื่อ
+                        />{" "}
+                        ประวัติเช็คชื่อ
                       </button>
                     </Link>
                   );
 
-                 
- 
                   return row_accessible;
                 },
                 width: 120,

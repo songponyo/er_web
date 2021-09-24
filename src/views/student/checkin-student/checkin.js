@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Maps from "../../../controller/Maps";
 import {
   CCard,
   CCardBody,
@@ -85,7 +84,6 @@ export default function Checkin() {
     url.classID = room.classgroup_code;
     _checkSubmit(user_session.user_code, url);
   }
-console.log("qr_code",qrcode);
   async function _handleSubmit() {
     let status_in = "";
     checkin.time_stamp < checkin.time_out
@@ -98,8 +96,8 @@ console.log("qr_code",qrcode);
       checkin_status: status_in,
       user_code: user.user_code,
       qr_code: qrcode.qr_code,
-      longtititude: Lat,
-      latitude: Lot,
+      longitude: Lot,
+      latitude: Lat,
     });
     if (query_result.require) {
       if (checkin.time_stamp < checkin.time_out) {
@@ -129,7 +127,7 @@ console.log("qr_code",qrcode);
       Swal.fire("บันทึกไม่สำเร็จ", "", "error");
     }
   }
-
+  console.log("check", checkin);
   const _checkSubmit = async (user, qr) => {
     const query_result = await checkin_model.getCheckinBy({
       keyword: user,

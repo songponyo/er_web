@@ -53,11 +53,11 @@ export default function View() {
           .then((res) => {
             if (res.require) {
               setShowLoading(false);
-              Swal.fire("Success Deleted!", "", "success");
+              Swal.fire("ลบรายการ เรียบร้อย", "", "success");
               window.location.reload();
             } else {
               setShowLoading(false);
-              Swal.fire("Sorry, Someting worng !", "", "error");
+              Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
             }
           });
       }

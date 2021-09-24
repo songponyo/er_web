@@ -75,7 +75,7 @@ const TheHeader = (props) => {
       <CHeaderNav className="px-3">
         {/* <TheHeaderDropdownNotif /> */}
         {user.user_firstname + " " + user.user_lastname}
-        <TheHeaderDropdown />
+        <TheHeaderDropdown value={user} />
       </CHeaderNav>
 
       <CSubheader className="px-3 justify-content-between">

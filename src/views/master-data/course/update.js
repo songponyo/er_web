@@ -46,10 +46,10 @@ export default function Insert() {
       });
 
       if (query_result.require) {
-        Swal.fire("Save success!!", "", "success");
+        Swal.fire("บันทึกเรียบร้อย", "", "success");
         history.push("/course");
       } else {
-        Swal.fire("Sorry, Someting worng !", "", "error");
+        Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
       }
     }
   }

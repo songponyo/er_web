@@ -21,8 +21,10 @@ class Auth extends Component {
   };
 
   componentDidMount() {
-    this.handleAuthentication(); 
-  } 
+    this.handleAuthentication();
+  }
+
+  
   initiateLogin = (data) => {
     if (this.state.loading === false) {
       this.setState(
@@ -86,7 +88,7 @@ class Auth extends Component {
           user_username: login_token.user_username,
           user_password: login_token.user_password,
         });
-
+        
         this.setState(
           {
             loading: false,
@@ -144,7 +146,7 @@ class Auth extends Component {
 
   render() {
     const authProviderValue = {
-      ...this.state, 
+      ...this.state,
       initiateLogin: this.initiateLogin,
       handleAuthentication: this.handleAuthentication,
       logout: this.logout,

@@ -12,10 +12,7 @@ body {
 .c-sidebar-nav-icon {
   color: #5b5b5b !important;
 }
-.c-sidebar-nav-title {
-  color: #ffff !important;
-  background-color: #bc171d;
-}
+
 .head-font {
   color: #000000 !important;
   font-weight: 800;
@@ -112,19 +109,13 @@ body {
   padding: 0.375rem;
   margin: 0.3em;
 }
-.c-sidebar-nav-item :hover {
-  color: #ffff !important;
-  background-color: #dd6358 !important;
-}
+
 
 .card-footer {
   text-align: right !important;
 }
 
-.c-active {
-  color: #ffff !important;
-  background-color: #dd6358 !important;
-}
+
 .center-v {
   display: flex;
   justify-content: center;
@@ -143,6 +134,21 @@ body {
   color: white;
   background-color: #bc171d;
 }
+.c-active {
+  color: #ffff !important;
+  background-color: #dd5858 !important;
+}
+
+.c-sidebar-nav-title {
+  color: #ffff !important;
+  background-color: #bc171d;
+}
+
+.c-sidebar-nav-item :hover {
+  color: #ffff !important;
+  background-color: #dd6e6e !important;
+}
+
 .header-t-red {
   line-height: 44px;
   font-size: 20px;
@@ -281,3 +287,16 @@ body {
   opacity: 0.9;
 }
   
+.imag-circle{
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.imag-circle-header{
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+}

@@ -35,7 +35,7 @@ export default function View() {
   function _onDelete(data) {
     Swal.fire({
       title: "Are you sure ?",
-      text: "Confirm to delete " + data.classgroup_code,
+      text: "ยืนยันที่จะลบรายการนี้" + data.classgroup_code,
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
@@ -46,11 +46,11 @@ export default function View() {
           .then((res) => {
             if (res.require) {
               setShowLoading(false);
-              Swal.fire("Success Deleted!", "", "success");
+              Swal.fire("ลบรายการ เรียบร้อย", "", "success");
               window.location.reload();
             } else {
               setShowLoading(false);
-              Swal.fire("Sorry, Someting worng !", "", "error");
+              Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
             }
           });
       }

@@ -154,7 +154,7 @@ export default function Register() {
     <>
       <CContainer
         // className="font-body"
-        style={{ width: "30%", paddingTop: "20px" }}
+        style={{ width: "350px", paddingTop: "20px" }}
       >
         <CCard>
           <CCardBody>

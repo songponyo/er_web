@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import moment from "moment";
 import {
   CCard,
   CCardHeader,
@@ -12,9 +14,10 @@ import {
   CButton,
 } from "@coreui/react";
 import Swal from "sweetalert2";
-import { Select } from "../../../component/revel-strap";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { TimeController } from "../../../controller";
+import { Select } from "../../../component/revel-strap";
+
 import SubjectModel from "../../../models/SubjectModel";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import UserModel from "../../../models/UserModel";
@@ -24,46 +27,70 @@ const classgroup_model = new ClassgroupModel();
 const subject_model = new SubjectModel();
 const time_controller = new TimeController();
 
-export default function Update() {
+export default function Insert() {
   let history = useHistory();
-  let code = useRouteMatch("/all-class/update/:code");
-  const [user, setUser] = useState([]);
-  const [subject, setSubject] = useState([]);
   const [userselect, setUserselect] = useState([]);
+  const [subject, setSubject] = useState([]);
+  const [time, setTime] = useState({
+    time_start: "",
+    time_end: "",
+  });
   const [classroom, setClassroom] = useState({
     classgroup_code: "",
     classgroup_id: "",
+    classgroup_password: "",
     classgroup_number: "",
     subject_code: "",
     user_code: "",
+    classgroup_time_start: "",
+    classgroup_time_end: "",
+    user_fullname: "",
+    leave_maxcount: "",
+    max_score: "",
     addby: "",
   });
-
   useEffect(() => {
     fetchData();
   }, []);
-  async function fetchData() {
-    const class_group = await classgroup_model.getClassgroupByCode({
-      classgroup_code: code.params.code,
-    });
-    if (class_group.require === false) {
-      Swal.fire("ข้อผิดพลาดไม่สามารถโหลดข้อมูล !", "", "error");
-      history.push("/class-group");
-    } else if (class_group.data.length === 0) {
-      Swal.fire("ไม่พบรายการนี้ในระบบ !", "", "warning");
-      history.push("/classgroup-group");
-    } else {
-      let room = {};
-      room = class_group.data[0];
-      room.classgroup_time_start = time_controller.reformatToTime(
-        room.classgroup_time_start
-      );
-      room.classgroup_time_end = time_controller.reformatToTime(
-        room.classgroup_time_end
-      ); 
-      await setClassroom(room);
-    }
+ 
+  useEffect(() => {
+    let timer_start = moment(
+      `${moment().format("YYYY-MM-DD")} ${classroom.classgroup_time_start}`,
+      "YYYY-MM-DD HH:mm"
+    );
 
+    let timer_end = moment(
+      `${moment().format("YYYY-MM-DD")} ${classroom.classgroup_time_end}`,
+      "YYYY-MM-DD HH:mm"
+    );
+    let classrooma = {};
+    classrooma.time_start = timer_start._i;
+    classrooma.time_end = timer_end._i;
+    setTime(classrooma);
+  }, [classroom.classgroup_time_start, classroom.classgroup_time_end]);
+
+ 
+
+  async function fetchData() {
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`)); 
+    const date = new Date();
+    var code = "";
+    code =
+      "CG" +
+      date.getFullYear() +
+      (date.getMonth() + 1).toString().padStart(2, "0");
+
+    const class_data = await classgroup_model.getClassgroupMaxCode({
+      code: code,
+      digit: 4,
+    });
+    let classform = {};  
+    classform.classgroup_code = class_data.data;
+    classform.addby = user_session.user_code;
+    setClassroom(classform);
+        
+    
+ 
     const user_data = await user_model.getUserBy({
       user_position_code: "UP002",
     });
@@ -96,20 +123,25 @@ export default function Update() {
 
   async function _handleSubmit() {
     if (_checkSubmit()) {
-      let query_result = await classgroup_model.updateClassgroupBy({
+      let query_result = await classgroup_model.insertClassgroup({
         classgroup_code: classroom.classgroup_code,
         classgroup_id: classroom.classgroup_id,
+        classgroup_password: classroom.classgroup_password,
         classgroup_number: classroom.classgroup_number,
         subject_code: classroom.subject_code,
         user_code: classroom.user_code,
-        addby: classroom.user_code,
+        max_score: classroom.max_score,
+        leave_maxcount: classroom.leave_maxcount,
+        classgroup_time_start: time.time_start,
+        classgroup_time_end: time.time_end,
+        addby: classroom.addby,
         adddate: time_controller.reformatToDate(new Date()),
       });
       if (query_result.require) {
-        Swal.fire("บันทึกเรียบร้อย", "", "success");
+        Swal.fire("บันทึกเรียบร้อย", "", "success"); 
         history.push("/class-group");
       } else {
-        Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
+        Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error"); 
       }
     }
   }
@@ -118,14 +150,35 @@ export default function Update() {
     if (classroom.subject_code === "") {
       Swal.fire({
         title: "แจ้งเตือน!",
-        text: "Please Check Your subject_code ",
+        text: "โปรดตรวจสอบ รายวิชา",
+        icon: "warning",
+      });
+      return false;
+    } else if (classroom.classgroup_id === "") {
+      Swal.fire({
+        title: "แจ้งเตือน!",
+        text: "โปรดตรวจสอบ กลุ่มเรียน",
+        icon: "warning",
+      });
+      return false;
+    } else if (classroom.classgroup_password === "") {
+      Swal.fire({
+        title: "แจ้งเตือน!",
+        text: "โปรดตรวจสอบ รหัสผ่าน",
+        icon: "warning",
+      });
+      return false;
+    } else if (time.time_start >= time.time_end) {
+      Swal.fire({
+        title: "แจ้งเตือน!",
+        text: "โปรดตรวจสอบ เวลาการสอน",
         icon: "warning",
       });
       return false;
     } else if (classroom.user_code === "") {
       Swal.fire({
         title: "แจ้งเตือน!",
-        text: "Please Check Your user_code",
+        text: "โปรดตรวจสอบ ผู้รับผิดชอบ",
         icon: "warning",
       });
       return false;
@@ -136,9 +189,7 @@ export default function Update() {
 
   const _changeFrom = (e) => {
     const { value, name } = e.target;
-    let new_data = { ...classroom };
-    new_data[name] = value;
-    setClassroom(new_data);
+    setClassroom({ ...classroom, [name]: value });
   };
 
   return (
@@ -274,7 +325,7 @@ export default function Update() {
             </CCol>
           </CRow>
           <CRow>
-            <CCol md="3">
+            {/* <CCol md="3">
               <CFormGroup>
                 <CLabel>
                   คะแนนเก็บสูงสุด{" "}
@@ -290,7 +341,7 @@ export default function Update() {
                   max="100"
                 />
               </CFormGroup>
-            </CCol>
+            </CCol> */}
 
             <CCol md="3">
               <CFormGroup>
@@ -305,6 +356,7 @@ export default function Update() {
                   name="leave_maxcount"
                   value={classroom.leave_maxcount}
                   onChange={(e) => _changeFrom(e)}
+                  min="0"
                 />
               </CFormGroup>
             </CCol>
@@ -318,7 +370,7 @@ export default function Update() {
           >
             บันทึก
           </CButton>
-          <Link to="/all-class">
+          <Link to="/class-group">
             <CButton color="btn btn-danger">ย้อนกลับ</CButton>
           </Link>
         </CCardFooter>

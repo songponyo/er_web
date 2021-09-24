@@ -1,623 +1,411 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Col,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-  Row,
-} from "reactstrap";
-import { connect } from "react-redux";
+  CCard,
+  CCardHeader,
+  CCardBody,
+  CCardFooter,
+  CCol,
+  CRow,
+  CLabel,
+  CInput,
+  CButton,
+  CImg,
+  CFormGroup,
+} from "@coreui/react";
+
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 
 import { Select } from "../../../component/revel-strap";
 
-import GLOBAL from "../../../GLOBAL";
-
 import LicenseModel from "../../../models/LicenseModel";
 import UserModel from "../../../models/UserModel";
 import UserPositionModel from "../../../models/UserPositionModel";
-
-import { FileService } from "../../../utility";
+import { Uploadimage } from "../../../controller";
+import { useHistory, useRouteMatch } from "react-router-dom";
 
 const license_model = new LicenseModel();
 const user_model = new UserModel();
 const user_position_model = new UserPositionModel();
+const upload_contoller = new Uploadimage();
 
-const file_service = new FileService();
+export default function Insert() {
+  let history = useHistory();
+  const [user, setUser] = useState({
+    user_profile_image: {
+      src: "default.png",
+      file: null,
+      old: "",
+    },
+  });
+  const [postion, setPostion] = useState([]);
+  const [userstatus, setUserstatus] = useState([]);
+  const [prefix, setPrefix] = useState();
+  const [license_options, setLicense_options] = useState();
 
-class Insert extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showloading: true,
-      code_validate: {
-        value: "",
-        status: "",
-        class: "",
-        text: "",
-      },
-      username_validate: {
-        value: "",
-        status: "",
-        class: "",
-        text: "",
-      },
-      user_code: "",
-      license_code: "",
-      user_position_code: "",
-      user_prefix: "นาย",
-      user_firstname: "",
-      user_lastname: "",
-      user_tel: "",
-      user_email: "",
-      user_username: "",
-      user_password: "",
-      user_address: "",
-      user_zipcode: "",
-      user_profile_image: {
-        src: "default.png",
-        file: null,
-        old: "",
-      },
-      user_status: "Active",
-      license: [],
-      user_positions: [],
-      upload_path: "user/",
-    };
-  }
+  useEffect(() => {
+    _fetchData();
+  }, []);
 
-  async componentDidMount() {
+  async function _fetchData() {
     const date = new Date();
-    const max_code = await user_model.getUserMaxCode({
+    const last_code = await user_model.getUserMaxCode({
       code: "U" + date.getFullYear(),
       digit: 3,
     });
+    let user_info = {};
+    user_info.user_code = last_code.data;
+    user_info.user_profile_image = {
+      src: "default.png",
+      file: null,
+      old: "",
+    };
+    setUser(user_info);
 
-    const license = await license_model.getLicenseBy();
-    const user_positions = await user_position_model.getUserPositionBy();
-
-    this.setState({
-      showloading: false,
-      code_validate: {
-        value: max_code.data,
-        status: "VALID",
-        class: "",
-        text: "",
-      },
-      user_code: max_code.data,
-      user_positions: user_positions.data,
-      license: license.data,
-    });
-
-
-  }
-
-
-
-  async _handleSubmit(event) {
-    event.preventDefault();
-
-    if (this._checkSubmit()) {
-      let user_profile_image = "";
-
-      const res_upload = await file_service.uploadFile({
-        src: this.state.user_profile_image,
-        upload_path: this.state.upload_path,
-      });
- 
-      if (res_upload.require) {
-        user_profile_image = res_upload.data.file_name;
-      } 
-
-      const res = await user_model.insertUser({
-        user_code: this.state.user_code.trim(),
-        license_code: this.state.license_code,
-        user_position_code: this.state.user_position_code,
-        user_prefix: this.state.user_prefix,
-        user_firstname: this.state.user_firstname.trim(),
-        user_lastname: this.state.user_lastname.trim(),
-        user_tel: this.state.user_tel.trim(),
-        user_email: this.state.user_email.trim(),
-        user_address: this.state.user_address.trim(),
-        user_zipcode: this.state.user_zipcode.trim(),
-        user_username: this.state.user_username.trim(),
-        user_password: this.state.user_password.trim(),
-        user_profile_image: user_profile_image,
-        user_status: this.state.user_status,
-        addby: this.props.USER.user_code,
-      });
-
-        if (res.require) {
-          Swal.fire("Save success!!", "", "success");
-          this.props.history.push("/user");
-        } else {
-          Swal.fire("Sorry, Someting worng !", "", "error");
-        }
-    }
-  }
-
-  _checkSubmit() {
-    const user_password = this.state.user_password.trim();
-
-    if (this.state.code_validate.status !== "VALID") {
-      Swal.fire(this.state.code_validate.text);
-      return false;
-    } else if (this.state.username_validate.status !== "VALID") {
-      Swal.fire(this.state.username_validate.text);
-      return false;
-    } else if (this.state.license_code === "") {
-      Swal.fire("กรุณาระบุสิทธิ์การใช้ / Please input License");
-      return false;
-    } else if (this.state.user_position_code === "") {
-      Swal.fire("กรุณาระบุตำแหน่ง / Please input Position");
-      return false;
-    } else if (user_password.length < 6 || user_password.length > 20) {
-      Swal.fire("Password should be 6-20 characters");
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  async _checkCode() {
-    const code = this.state.user_code.trim();
-
-    if (code.length) {
-      if (this.state.code_validate.value !== code) {
-        const user = await user_model.getUserByCode({ user_code: code });
-
-        if (user.data.length) {
-          this.setState({
-            code_validate: {
-              value: code,
-              status: "INVALID",
-              class: "is-invalid",
-              text: "This code already exists.",
-            },
-          });
-        } else {
-          this.setState({
-            code_validate: {
-              value: code,
-              status: "VALID",
-              class: "is-valid",
-              text: "",
-            },
-          });
-        }
-      }
-    } else {
-      this.setState({
-        code_validate: { value: code, status: "", class: "", text: "" },
+    const position_data = await user_position_model.getUserPositionBy({});
+    let position_info = position_data.data;
+    let selecter_posti = [];
+    for (let i = 0; i < position_info.length; i++) {
+      selecter_posti.push({
+        value: position_info[i].user_position_code,
+        label: position_info[i].user_position_name,
       });
     }
-  }
+    setPostion(selecter_posti);
 
-  async _checkUsername() {
-    const username = this.state.user_username.trim();
-
-    if (this.state.username_validate.value !== username) {
-      if (username.length === 0) {
-        this.setState({
-          username_validate: {
-            value: username,
-            status: "INVALID",
-            class: "",
-            text: "Please input Username",
-          },
-        });
-      } else if (username.length < 5 || username.length > 20) {
-        this.setState({
-          username_validate: {
-            value: username,
-            status: "INVALID",
-            class: "is-invalid",
-            text: "Username should be 5-20 characters",
-          },
-        });
-      } else {
-        const user = await user_model.checkUsernameBy({
-          user_username: username,
-        });
-
-        if (user.data.length) {
-          this.setState({
-            username_validate: {
-              value: username,
-              status: "INVALID",
-              class: "is-invalid",
-              text: "This code already exists.",
-            },
-          });
-        } else {
-          this.setState({
-            username_validate: {
-              value: username,
-              status: "VALID",
-              class: "is-valid",
-              text: "",
-            },
-          });
-        }
-      }
-    }
-  }
-
-  _handleImageChange(img_name, e) {
-    if (e.target.files.length) {
-      let file = new File([e.target.files[0]], e.target.files[0].name, {
-        type: e.target.files[0].type,
+    const license_data = await license_model.getLicenseBy({});
+    let license_info = license_data.data;
+    let selecter_li = [];
+    for (let i = 0; i < license_info.length; i++) {
+      selecter_li.push({
+        value: license_info[i].license_code,
+        label: license_info[i].license_name,
       });
-
-      if (file !== undefined) {
-        let reader = new FileReader();
-
-        reader.onloadend = () => {
-          this.setState((state) => {
-            if (img_name === "user_profile_image") {
-              return {
-                user_profile_image: {
-                  src: reader.result,
-                  file: file,
-                  old: state.user_profile_image.old,
-                },
-              };
-            }
-          });
-        };
-        reader.readAsDataURL(file);
-      }
     }
-  }
+    setLicense_options(selecter_li);
 
-  render() { 
-    const license_options = this.state.license.map((item) => ({
-      value: item.license_code,
-      label: item.license_name,
-    }));
+    const user_status_options = [
+      { value: "Active", label: "ทำงาน" },
+      { value: "Inactive", label: "เลิกทำงาน" },
+    ];
+    setUserstatus(user_status_options);
 
     const user_prefix_options = [
       { value: "นาย", label: "นาย" },
       { value: "นาง", label: "นาง" },
       { value: "นางสาว", label: "นางสาว" },
     ];
+    setPrefix(user_prefix_options);
+  }
 
-    const user_status_options = [
-      { value: "Active", label: "ทำงาน" },
-      { value: "Inactive", label: "เลิกทำงาน" },
-    ];
+  const _changeFrom = (e) => {
+    const { value, name } = e.target;
+    setUser({ ...user, [name]: value });
+  };
 
-    const user_position_options = this.state.user_positions.map((item) => ({
-      value: item.user_position_code,
-      label: item.user_position_name,
-    }));
+  const _handleImageChange = (img_name, e) => {
+    if (e.target.files.length) {
+      let file = new File([e.target.files[0]], e.target.files[0].name, {
+        type: e.target.files[0].type,
+      });
+      if (file !== undefined) {
+        let reader = new FileReader();
+        reader.onloadend = () => {
+          let new_user = { ...user };
+          new_user[img_name] = {
+            src: reader.result,
+            file: file,
+            old: new_user[img_name].old,
+          };
+          setUser(new_user);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+  async function _handleSubmit() {
+    if (_checkSubmit()) {
+      let img = "";
 
-    return (
+      if (user.user_profile_image.file !== null) {
+        const res_upload = await upload_contoller.uploadFile({
+          src: user.user_profile_image,
+          upload_path: "users",
+        });
+        if (res_upload !== "") {
+          img = res_upload;
+        } else {
+          img = user.user_profile_image.old;
+        }
+      } else {
+        img = user.user_profile_image.old;
+      }
+
+      let query_result = await user_model.insertUser({
+        user_code: user.user_code,
+        user_position_code: user.user_position_code,
+        license_code: user.license_code,
+        user_prefix: user.user_prefix,
+        user_firstname: user.user_firstname,
+        user_lastname: user.user_lastname,
+        user_tel: user.user_tel,
+        user_address: user.user_address,
+        user_lineId: user.user_lineId,
+        user_email: user.user_email,
+        user_username: user.user_username,
+        user_password: user.user_password,
+        user_status: user.user_status,
+        user_zipcode: user.user_zipcode,
+        user_profile_image: img,
+      });
+
+      if (query_result.require) {
+        Swal.fire("บันทึกเรียบร้อย", "", "success");
+        history.push("/user");
+      } else {
+        Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
+      }
+    }
+  }
+
+  const _checkSubmit = () => {
+    if (user.user_profile_image === "") {
+      Swal.fire({
+        title: "แจ้งเตือน!",
+        text: "โปรดเช็คชื่อผู้ใช้ ",
+        icon: "warning",
+      });
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  return (
+    <>
       <div className="animated fadeIn">
-        <Card>
-          <CardHeader className="header-t-red">เพิ่มบัญชีผู้ใช้ / Add User</CardHeader>
-          <Form onSubmit={this._handleSubmit.bind(this)}>
-            <CardBody>
-              <Row>
-                <Col md="8">
-                  <Row> 
-                  <Col md="3">
-                      <FormGroup>
-                        <Label>
-                          รหัสประจำตัว{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>
-                        </Label>
-                        <Input
-                          type="text"
-                          id="user_uid"
-                          name="user_uid"
-                          value={this.state.user_uid}
-                          onChange={(e) =>
-                            this.setState({ user_uid: e.target.value })
-                          }
-                          required
-                        />
-                        <p className="text-muted">เลข 13 หลักไม่มี -</p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>
-                          คำนำหน้า{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>
-                        </Label>
-                        <Select
-                          options={user_prefix_options}
-                          value={this.state.user_prefix}
-                          onChange={(e) => this.setState({ user_prefix: e })}
-                        />
-                        <p className="text-muted">Example : นาย.</p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>
-                          ชื่อ{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>
-                        </Label>
-                        <Input
-                          type="text"
-                          id="user_firstname"
-                          name="user_firstname"
-                          value={this.state.user_firstname}
-                          onChange={(e) =>
-                            this.setState({ user_firstname: e.target.value })
-                          }
-                          required
-                        />
-                        <p className="text-muted">Example : วินัย.</p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>
-                          นามสกุล{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>
-                        </Label>
-                        <Input
-                          type="text"
-                          id="user_lastname"
-                          name="user_lastname"
-                          value={this.state.user_lastname}
-                          onChange={(e) =>
-                            this.setState({ user_lastname: e.target.value })
-                          }
-                          required
-                        />
-                        <p className="text-muted">Example : ชาญชัย.</p>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>อีเมล์ </Label>
-                        <Input
-                          type="email"
-                          id="user_email"
-                          name="user_email"
-                          value={this.state.user_email}
-                          onChange={(e) =>
-                            this.setState({ user_email: e.target.value })
-                          }
-                        />
-                        <p className="text-muted">
-                          Example : admin@arno.co.th.
-                        </p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>โทรศัพท์ </Label>
-                        <Input
-                          type="text"
-                          id="user_tel"
-                          name="user_tel"
-                          value={this.state.user_tel}
-                          onChange={(e) =>
-                            this.setState({ user_tel: e.target.value })
-                          }
-                        />
-                        <p className="text-muted">Example : 0610243003.</p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>
-                          Username{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>
-                        </Label>
-                        <Input
-                          type="text"
-                          id="user_username"
-                          name="user_username"
-                          value={this.state.user_username}
-                          className={this.state.username_validate.class}
-                          onChange={(e) =>
-                            this.setState({ user_username: e.target.value })
-                          }
-                          onBlur={() => this._checkUsername()}
-                          required
-                        />
-                        <p className="text-muted">Example : 0000000000-0</p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="3">
-                      <FormGroup>
-                        <Label>
-                          Password{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>
-                        </Label>
-                        <Input
-                          type="password"
-                          id="user_password"
-                          name="user_password"
-                          value={this.state.user_password}
-                          onChange={(e) =>
-                            this.setState({ user_password: e.target.value })
-                          }
-                          required
-                        />
-                        <p className="text-muted">Example : admin654d.</p>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="8">
-                      <FormGroup>
-                        <Label>
-                          ที่อยู่{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>{" "}
-                        </Label>
-                        <Input
-                          type="textarea"
-                          id="user_address"
-                          name="user_address"
-                          row={3}
-                          value={this.state.user_address}
-                          onChange={(e) =>
-                            this.setState({ user_address: e.target.value })
-                          }
-                        />
-                        <p className="text-muted">Example : 271/55.</p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="4">
-                      <FormGroup>
-                        <Label>
-                          เลขไปรษณีย์{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>{" "}
-                        </Label>
-                        <Input
-                          type="text"
-                          id="user_zipcode"
-                          name="user_zipcode"
-                          onChange={(e) =>
-                            this.setState({ user_zipcode: e.target.value })
-                          }
-                          value={this.state.user_zipcode}
-                        />
-                        <p className="text-muted">Example : 30000.</p>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="4">
-                      <FormGroup>
-                        <Label>
-                          ตำแหน่ง{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>{" "}
-                        </Label>
-                        <Select
-                          options={user_position_options}
-                          value={this.state.user_position_code}
-                          onChange={(e) =>
-                            this.setState({ user_position_code: e })
-                          }
-                        />
-                        <p className="text-muted">Example : ผู้ดูแลระบบ.</p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="4">
-                      <FormGroup>
-                        <Label>
-                          สิทธิ์การใช้งาน{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>{" "}
-                        </Label>
-                        <Select
-                          options={license_options}
-                          value={this.state.license_code}
-                          onChange={(e) => this.setState({ license_code: e })}
-                        />
-                        <p className="text-muted">
-                          Example : สิทธิ์การใช้งานที่ 1.
-                        </p>
-                      </FormGroup>
-                    </Col>
-                    <Col md="4">
-                      <FormGroup>
-                        <Label>
-                          สถานะ{" "}
-                          <font color="#F00">
-                            <b>*</b>
-                          </font>{" "}
-                        </Label>
-                        <Select
-                          options={user_status_options}
-                          value={this.state.user_status}
-                          onChange={(e) => this.setState({ user_status: e })}
-                        />
-                        <p className="text-muted">Example : ทำงาน.</p>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                </Col>
-                <Col md="4">
-                  <FormGroup>
-                    <Label>โปรไฟล์ </Label>
-                    <br></br>
-                    <div className="text-center">
-                      <img
-                        className="image-upload"
-                        style={{ maxWidth: 280 }}
-                        src={
-                          this.state.user_profile_image.src !== null
-                            ? this.state.user_profile_image.src
-                            : this.state.user_profile_image.old !== ""
-                              ? GLOBAL.BASE_SERVER.URL_IMG + this.state.user_profile_image.old
-                              : this.state.user_profile_image.src
-                        }
-                        alt="profile"
+        <CCard>
+          <CCardHeader className="header-t-red">
+            แก้ไขบัญชีผู้ใช้งาน
+          </CCardHeader>
+          <CCardBody>
+            <CRow>
+              <CCol md="8">
+                <CRow>
+                  <CCol md="3">
+                    <CLabel>
+                      ไอดีบัญชีผู้ใช้{" "}
+                      <font color="#F00">
+                        <b>*</b>
+                      </font>
+                    </CLabel>
+                    <CInput
+                      type="text"
+                      name="user_code"
+                      value={user.user_uid}
+                      onChange={(e) => _changeFrom(e)}
+                    />
+                  </CCol>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>
+                        คำนำหน้า{" "}
+                        <font color="#F00">
+                          <b>*</b>
+                        </font>
+                      </CLabel>
+                      <Select
+                        options={prefix}
+                        value={user.user_prefix}
+                        onChange={(e) => _changeFrom(e)}
                       />
-                    </div>
-                    <br />
-                    <Input
-                      type="file"
-                      accept="image/png, image/jpeg"
-                      className="form-control"
-                      onChange={(e) =>
-                        this._handleImageChange("user_profile_image", e)
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>
+                        ชื่อ{" "}
+                        <font color="#F00">
+                          <b>*</b>
+                        </font>
+                      </CLabel>
+                      <CInput
+                        type="text"
+                        id="user_firstname"
+                        name="user_firstname"
+                        value={user.user_firstname}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>
+                        นามสกุล{" "}
+                        <font color="#F00">
+                          <b>*</b>
+                        </font>
+                      </CLabel>
+                      <CInput
+                        type="text"
+                        id="user_lastname"
+                        name="user_lastname"
+                        value={user.user_lastname}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                </CRow>
+                <CRow>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>อีเมล์ </CLabel>
+                      <CInput
+                        type="email"
+                        id="user_email"
+                        name="user_email"
+                        value={user.user_email}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>เบอร์โทรศัพท์ </CLabel>
+                      <CInput
+                        type="text"
+                        id="user_tel"
+                        name="user_tel"
+                        value={user.user_tel}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                </CRow>
+                <CRow>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>ชื่อบัญชีผู้ใช้</CLabel>
+                      <CInput
+                        type="text"
+                        id="user_username"
+                        name="user_username"
+                        value={user.user_username}
+                        onChange={(e) => _changeFrom(e)} 
+                        required
+                      />
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="3">
+                    <CFormGroup>
+                      <CLabel>รหัสผ่าน</CLabel>
+                      <CInput
+                        type="password"
+                        id="user_password"
+                        name="user_password"
+                        value={user.user_password}
+                        onChange={(e) => _changeFrom(e)}
+                        required
+                      />
+                    </CFormGroup>
+                  </CCol>
+                </CRow>
+                <CRow>
+                  <CCol md="4">
+                    <CFormGroup>
+                      <CLabel>
+                        ตำแหน่ง{" "}
+                        <font color="#F00">
+                          <b>*</b>
+                        </font>{" "}
+                      </CLabel>
+                      <Select
+                        options={postion}
+                        value={user.user_position_code}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="4">
+                    <CFormGroup>
+                      <CLabel>
+                        สิทธิ์การใช้งาน{" "}
+                        <font color="#F00">
+                          <b>*</b>
+                        </font>{" "}
+                      </CLabel>
+                      <Select
+                        options={license_options}
+                        value={user.license_code}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                      <p className="text-muted"></p>
+                    </CFormGroup>
+                  </CCol>
+                  <CCol md="4">
+                    <CFormGroup>
+                      <CLabel>
+                        สถานะ{" "}
+                        <font color="#F00">
+                          <b>*</b>
+                        </font>{" "}
+                      </CLabel>
+                      <Select
+                        options={userstatus}
+                        value={user.user_status}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CFormGroup>
+                  </CCol>
+                </CRow>
+              </CCol>
+              <CCol md="4">
+                <CFormGroup>
+                  <CLabel>โปรไฟล์ </CLabel>
+                  <br></br>
+                  <div className="text-center">
+                    <CImg
+                      className="imag-circle"
+                      name="logo"
+                      // style={{ width: "350px" }}
+                      src={
+                        user.user_profile_image.file !== null
+                          ? user.user_profile_image.src
+                          : user.user_profile_image.old !== ""
+                          ? user.user_profile_image.old
+                          : user.user_profile_image.src
                       }
                     />
-                  </FormGroup>
-                </Col>
-              </Row>
-            </CardBody>
-            <CardFooter>
-              <Button type="submit" color="success">
-                Save
-              </Button>
-              <Button type="reset" color="danger">
-                {" "}
-                Reset
-              </Button>
-              <Link to="/user">
-                <Button type="button"> Back </Button>
-              </Link>
-            </CardFooter>
-          </Form>
-        </Card>
+                  </div>
+                  <CInput
+                    type="file"
+                    name="user_profile_image"
+                    style={{ border: "none" }}
+                    accept="image/png, image/jpeg"
+                    onChange={(e) =>
+                      _handleImageChange("user_profile_image", e)
+                    }
+                  />
+                </CFormGroup>
+              </CCol>
+            </CRow>
+          </CCardBody>
+          <CCardFooter>
+            <CButton
+              type="submit"
+              color="success"
+              onClick={() => _handleSubmit()}
+            >
+              บันทึก
+            </CButton>
+            <Link to="/user">
+              <CButton type="button" color="danger">
+                ย้อนกลับ{" "}
+              </CButton>
+            </Link>
+          </CCardFooter>
+        </CCard>
       </div>
-    );
-  }
+    </>
+  );
 }
-
-const mapStatetoProps = (state) => {
-  return {
-    _USER: state._USER,
-  };
-};
-
-export default connect(mapStatetoProps)(Insert);

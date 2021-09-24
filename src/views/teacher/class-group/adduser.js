@@ -14,13 +14,13 @@ import {
 
 import { Link, useHistory } from "react-router-dom";
 import Swal from "sweetalert2";
-import UserModel from "../../models/UserModel";
-import { Uploadimage } from "../../controller";
+import UserModel from "../../../models/UserModel";
+import { Uploadimage } from "../../../controller";
 
 const upload_contoller = new Uploadimage();
 const user_model = new UserModel();
 
-export default function View() {
+export default function Adduser() {
   let history = useHistory();
   const [user, setUser] = useState({
     user_profile_image: {
@@ -70,7 +70,7 @@ export default function View() {
       }
     }
   };
-  
+
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let img = "";
@@ -138,9 +138,7 @@ export default function View() {
     <>
       <div>
         <CCard>
-          <CCardHeader className="header-t-red">
-            ข้อมูลส่วนตัว / Profile
-          </CCardHeader>
+          <CCardHeader className="header-t-red">เพิ่มรายชื่อ</CCardHeader>
           <CCardBody>
             <CRow>
               <CCol md="6">
@@ -153,7 +151,7 @@ export default function View() {
                       type="text"
                       name="user_uid "
                       value={user.user_uid}
-                      disabled
+                      onchange={(e) => _changeFrom(e)}
                     />
                   </CCol>
                 </CRow>
@@ -167,7 +165,7 @@ export default function View() {
                       type="text"
                       name="user_firstname"
                       value={user.user_firstname}
-                      disabled
+                      onchange={(e) => _changeFrom(e)}
                     />
                   </CCol>
                 </CRow>
@@ -181,78 +179,11 @@ export default function View() {
                       type="text"
                       name="user_lastname"
                       value={user.user_lastname}
-                      disabled
+                      onchange={(e) => _changeFrom(e)}
                     />
                   </CCol>
                 </CRow>
                 <br />
-                <CRow>
-                  <CCol md="3">
-                    <CLabel>อีเมลล์</CLabel>
-                  </CCol>
-                  <CCol md="7">
-                    <CInput
-                      type="text"
-                      name="user_email"
-                      value={user.user_email}
-                      onChange={(e) => _changeFrom(e)}
-                    />
-                  </CCol>
-                </CRow>
-                <br />
-                <CRow>
-                  <CCol md="3">
-                    <CLabel>เบอร์โทรศัพท์</CLabel>
-                  </CCol>
-                  <CCol md="7">
-                    <CInput
-                      type="text"
-                      name="user_tel"
-                      value={user.user_tel}
-                      onChange={(e) => _changeFrom(e)}
-                    />
-                  </CCol>
-                </CRow>
-                <br />
-                <CRow>
-                  <CCol md="3">
-                    <CLabel>ไอดีไลน์</CLabel>
-                  </CCol>
-                  <CCol md="7">
-                    <CInput
-                      type="text"
-                      name="user_lineId"
-                      value={user.user_lineId}
-                      onChange={(e) => _changeFrom(e)}
-                    />
-                  </CCol>
-                </CRow>
-                <br />
-              </CCol>
-              <CCol md="3">
-                <CLabel>อัพโหลดภาพ </CLabel>
-                <br />
-                <CImg
-                  className="imag-circle"
-                  name="logo"
-                  // style={{ width: "350px" }}
-                  src={
-                    user.user_profile_image.file !== null
-                      ? user.user_profile_image.src
-                      : user.user_profile_image.old !== ""
-                      ? user.user_profile_image.old
-                      : user.user_profile_image.src
-                  }
-                />
-                <br />
-                <br />
-                <CInput
-                  type="file"
-                  name="user_profile_image"
-                  style={{ border: "none" }}
-                  accept="image/png, image/jpeg"
-                  onChange={(e) => _handleImageChange("user_profile_image", e)}
-                />
               </CCol>
             </CRow>
           </CCardBody>
@@ -264,7 +195,7 @@ export default function View() {
             >
               บันทึก
             </CButton>
-            <Link to="/">
+            <Link to="/class-group">
               <CButton color="danger">ย้อนกลับ</CButton>
             </Link>
           </CCardFooter>

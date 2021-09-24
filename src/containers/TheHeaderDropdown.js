@@ -1,29 +1,27 @@
-import React from 'react'
+import React, { useEffect } from "react";
 import {
   CBadge,
   CDropdown,
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
-  CImg
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
+  CImg,
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
 
-import { AuthConsumer, } from '../role-accress/authContext'
+import { AuthConsumer } from "../role-accress/authContext";
 
-const TheHeaderDropdown = () => {
+const TheHeaderDropdown = (props) => {
+  let user = props.value;
+  console.log("user", user.user_profile_image);
   return (
     <AuthConsumer>
       {({ logout }) => (
-        <CDropdown
-          inNav
-          className="c-header-nav-items mx-2"
-          direction="down"
-        >
+        <CDropdown inNav className="c-header-nav-items mx-2" direction="down">
           <CDropdownToggle className="c-header-nav-link" caret={false}>
             <div className="c-avatar">
-              <CImg
-                src={'default.png'}
+              <CImg 
+                src={user == "" ? "default.png" : user.user_profile_image}
                 className="c-avatar-img"
                 alt="admin@bootstrapmaster.com"
               />
@@ -37,18 +35,21 @@ const TheHeaderDropdown = () => {
               className="text-center"
             >
               <strong>Account</strong>
-            </CDropdownItem> 
-            <CDropdownItem >
+            </CDropdownItem>
+            {/* image-account */}
+            {/* <CDropdownItem >
               <CIcon name="cil-user" className="mfe-2" />Profile
-            </CDropdownItem> 
+            </CDropdownItem>  */}
             <CDropdownItem divider />
             <CDropdownItem onClick={() => logout()}>
-              <CIcon name="cil-lock-locked" className="mfe-2" />Logout</CDropdownItem>
+              <CIcon name="cil-lock-locked" className="mfe-2" />
+              Logout
+            </CDropdownItem>
           </CDropdownMenu>
         </CDropdown>
       )}
     </AuthConsumer>
-  )
-}
+  );
+};
 
-export default TheHeaderDropdown
+export default TheHeaderDropdown;

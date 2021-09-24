@@ -9,6 +9,7 @@ import {
 import { Link, useRouteMatch } from "react-router-dom";
 // import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import moment from "moment";
 import {
   faEdit,
   // faCheck,
@@ -34,6 +35,7 @@ export default function History() {
 
     const checkin_data = await qrcode_model.getQrcodeBy({
       keyword: code.params.code,
+      // owner: user_session.user_code
     });
 
     setCheckin(checkin_data.data);

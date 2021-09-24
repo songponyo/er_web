@@ -13,6 +13,7 @@ import {
   CInput,
   CButton,
   CImg,
+  CTextarea,
 } from "@coreui/react";
 
 import Swal from "sweetalert2";
@@ -103,8 +104,8 @@ export default function Insert() {
       });
       if (res_upload !== "") {
         img = res_upload;
-      } else { 
-        alert("fault")
+      } else {
+        alert("fault");
       }
       let query_result = await leave_model.insertLeaveBy({
         leave_image: img,
@@ -276,7 +277,15 @@ export default function Insert() {
                     <CFormGroup>
                       <CLabel>เหตุผลการลา</CLabel>
                       <br />
-                      <textarea
+                      {/* <textarea
+                        style={{ padding: "1%" }}
+                        name="leave_reason"
+                        value={leave.leave_reason}
+                        rows="5"
+                        cols="70"
+                        onChange={(e) => _changeFrom(e)}
+                      /> */}
+                      <CTextarea
                         style={{ padding: "1%" }}
                         name="leave_reason"
                         value={leave.leave_reason}
@@ -288,12 +297,12 @@ export default function Insert() {
                   </CCol>
                 </CRow>
               </CCol>
-              <CCol md="6">
+              <CCol md="5">
                 <CLabel>อัพโหลดภาพ </CLabel>
                 <br />
                 <CImg
                   name="logo"
-                  style={{ width: "350px", alignSelf: "center" }}
+                  style={{ width: "100%", alignSelf: "center" }}
                   src={leave.leave_image.src}
                   alt="Logo"
                 />

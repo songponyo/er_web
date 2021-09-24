@@ -91,8 +91,7 @@ export default function Qrcode() {
         "YYYY-MM-DD HH:mm"
       )
         .add(`${checkin.qr_timeout}`, "minutes")
-        .format("YYYY-MM-DD HH:mm");
-
+        .format("YYYY-MM-DD HH:mm"); 
       let query_result = await qrcode_model.insertQrcode({
         classgroup_code: checkin.classgroup_code,
         qr_code: checkin.qr_code,

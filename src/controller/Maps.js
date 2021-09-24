@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Map, GoogleApiWrapper, Marker } from "google-maps-react"; 
+import { Map, GoogleApiWrapper, Marker } from "google-maps-react";
 
-const Maps = (props) => { 
+const Maps = (props) => {
   const mapStyles = {
     position: "relative",
     width: "100%",
@@ -12,31 +12,31 @@ const Maps = (props) => {
 
   useEffect(() => {
     getLocation();
-  }, []); 
+  }, []);
 
   function getLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
+    let location = {};
+    location = props.value[0];
+    location.lot = location.latitude;
+    location.lat = location.longitude;
+    showPosition(location);
+    // if (navigator.geolocation) {
+    //   navigator.geolocation.getCurrentPosition(showPosition);
+    //   console.log("navigator", navigator);
+    // } else {
+    //   alert("Geolocation is not supported by this browser.");
+    // }
   }
   function showPosition(position) {
-    var lat = position.coords.latitude;
-    var lng = position.coords.longitude;
+    // var lat = position.coords.latitude;
+    // var lng = position.coords.longitude;
+    var lat = position.latitude;
+    var lng = position.longitude;
     setLat(lat);
     setLot(lng);
   }
-
-  function Mapsvalue() {
-    var lat = position.coords.latitude;
-    var lng = position.coords.longitude; 
-    let position = {}
-    position.longitude = lat
-    position.latitude = lng
-    return position
-  }
-
+console.log("Lat",Lat)
+console.log("Lot",Lot);
   return (
     <div>
       <Map

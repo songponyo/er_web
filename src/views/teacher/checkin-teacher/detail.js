@@ -15,16 +15,15 @@ const checkin_model = new CheckinModel();
 
 export default function Detail() {
   let code = useRouteMatch("/checkin-teacher/detail/:code");
-  const [classgroup, setClassgroup] = useState([]);
-  const [mapModalVisible, setMapModalVisible] = useState(false);
-  const [fullscreen, setFullscreen] = useState(true);
+  const [classgroup, setClassgroup] = useState([]); 
   const [show, setShow] = useState(false);
+ 
 
   useEffect(() => {
     fetchData();
   }, []);
   async function fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    // const user_session = await JSON.parse(localStorage.getItem(`session-user`));
     let code_form = code.params.code;
     var n = code_form.split("-");
     const qrcode_data = await checkin_model.getCheckinByCode({
@@ -35,14 +34,14 @@ export default function Detail() {
     setClassgroup(qrcode_data.data);
   }
 
-  async function _handleSubmit() {}
+  function showmodal() {
+    
+    setShow(true)
+    
+  }
 
-  const _changeFrom = (e) => {
-    const { value, name } = e.target;
-    let new_data = { ...classgroup };
-    new_data[name] = value;
-    setClassgroup(new_data);
-  };
+   
+  
 
   return (
     <>
@@ -116,7 +115,7 @@ export default function Detail() {
                       type="button"
                       className="btn btn-success"
                       // onClick={showModal}
-                      onClick={() => setShow(true)}
+                      onClick={() => showmodal()}
                     >
                       <FontAwesomeIcon icon={faMap} size="5s" color="white" />{" "}
                       แผนที่
@@ -134,13 +133,13 @@ export default function Detail() {
         show={show}
         onHide={() => setShow(false)}
         dialogClassName="modal-90w"
-        aria-labelledby="example-custom-modal-styling-title" 
+        aria-labelledby="example-custom-modal-styling-title"
       >
         <Modal.Header closeButton>
           <Modal.Title>จุดเช็คอิน</Modal.Title>
-        </Modal.Header> 
+        </Modal.Header>
         <div>
-          <Maps />
+          <Maps value={classgroup} />
         </div>
       </Modal>
     </>
