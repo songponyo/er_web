@@ -113,13 +113,6 @@ const accessMenu = ({PERMISSIONS}) => {
 
     masters.push({
         _tag: "CSidebarNavItem",
-        name: "ผู้ใช้งานระบบ",
-        to: "/user",
-        icon: <i className="c-sidebar-nav-icon fa fa-user" />,
-        exact: false,
-    }) 
-    masters.push({
-        _tag: "CSidebarNavItem",
         name: "ข้อมูลส่วนตัว",
         to: "/profile",
         icon: <i className="c-sidebar-nav-icon fa fa-user" />,
@@ -127,8 +120,22 @@ const accessMenu = ({PERMISSIONS}) => {
     })
     masters.push({
         _tag: "CSidebarNavItem",
+        name: "ผู้ใช้งานระบบ",
+        to: "/user",
+        icon: <i className="c-sidebar-nav-icon fa fa-user" />,
+        exact: false,
+    }) 
+    masters.push({
+        _tag: "CSidebarNavItem",
+        name: "คำนำหน้า",
+        to: "/prefix",
+        icon: <i className="c-sidebar-nav-icon fa fa-user" />,
+        exact: false,
+    }) 
+    masters.push({
+        _tag: "CSidebarNavItem",
         name: "รายวิชา",
-        to: "/course",
+        to: "/subject",
         icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
         exact: false,
     }) 

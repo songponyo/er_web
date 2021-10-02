@@ -12,6 +12,8 @@ import {
   CLabel,
   CInput,
   CButton,
+  CInputGroupText,
+  CInputGroup,
 } from "@coreui/react";
 import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
@@ -49,10 +51,14 @@ export default function Insert() {
     max_score: "",
     addby: "",
   });
+  const [topics, setTopics] = useState([
+    { id: 1, name: "", title: "", score: 0, classgroup_code: "" },
+  ]);
+
   useEffect(() => {
     fetchData();
   }, []);
- 
+
   useEffect(() => {
     let timer_start = moment(
       `${moment().format("YYYY-MM-DD")} ${classroom.classgroup_time_start}`,
@@ -69,10 +75,8 @@ export default function Insert() {
     setTime(classrooma);
   }, [classroom.classgroup_time_start, classroom.classgroup_time_end]);
 
- 
-
   async function fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`)); 
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
     const date = new Date();
     var code = "";
     code =
@@ -84,13 +88,21 @@ export default function Insert() {
       code: code,
       digit: 4,
     });
-    let classform = {};  
+    let classform = {};
     classform.classgroup_code = class_data.data;
     classform.addby = user_session.user_code;
     setClassroom(classform);
-        
-    
- 
+    let arr_form = [
+      {
+        id: 1,
+        name: "",
+        title: "",
+        score: 0,
+        classgroup_code: class_data.data,
+      },
+    ];
+    setTopics(arr_form);
+
     const user_data = await user_model.getUserBy({
       user_position_code: "UP002",
     });
@@ -138,10 +150,10 @@ export default function Insert() {
         adddate: time_controller.reformatToDate(new Date()),
       });
       if (query_result.require) {
-        Swal.fire("บันทึกเรียบร้อย", "", "success"); 
+        Swal.fire("บันทึกเรียบร้อย", "", "success");
         history.push("/class-group");
       } else {
-        Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error"); 
+        Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
       }
     }
   }
@@ -190,6 +202,39 @@ export default function Insert() {
   const _changeFrom = (e) => {
     const { value, name } = e.target;
     setClassroom({ ...classroom, [name]: value });
+  };
+
+  const ChangeArray = (e, index) => {
+    // console.log("index: " + index);
+    // console.log("property name: " + e.target.name);
+    const proper = e.target.name;
+    let newArr = [...topics];
+    if (proper === "score") {
+      let sum = parseInt(e.target.value);
+      newArr[index][proper] = sum || 0;
+      setTopics(newArr);
+    } else {
+      newArr[index][proper] = e.target.value; // replace e.target.value with whatever you want to change it to
+      setTopics(newArr);
+    }
+  };
+
+  const AddArray = () => {
+    let addAr = { ...topics };
+    let newArr = {
+      id: topics.length + 1,
+      name: "",
+      title: "",
+      score: 0,
+      classgroup_code: classroom.classgroup_code,
+    };
+    addAr[topics.length] = newArr;
+    setTopics((topics) => [...topics, newArr]);
+  };
+
+  const handleRemoveItem = () => {
+    let id = topics.length;
+    setTopics(topics.filter((item) => item.id !== id));
   };
 
   return (
@@ -325,24 +370,6 @@ export default function Insert() {
             </CCol>
           </CRow>
           <CRow>
-            {/* <CCol md="3">
-              <CFormGroup>
-                <CLabel>
-                  คะแนนเก็บสูงสุด{" "}
-                  <font color="#F00">
-                    <b>*</b>
-                  </font>
-                </CLabel>
-                <CInput
-                  type="number"
-                  name="max_score"
-                  value={classroom.max_score}
-                  onChange={(e) => _changeFrom(e)}
-                  max="100"
-                />
-              </CFormGroup>
-            </CCol> */}
-
             <CCol md="3">
               <CFormGroup>
                 <CLabel>
@@ -361,7 +388,55 @@ export default function Insert() {
               </CFormGroup>
             </CCol>
           </CRow>
+          <CRow>
+            <CCol sm="2">
+              <CButton color="primary" onClick={() => AddArray()}>
+                เพิ่มช่องคะแนน
+              </CButton>
+            </CCol>
+            <CCol>
+              <CButton color="danger" onClick={() => handleRemoveItem()}>
+                ลบรายการ
+              </CButton>
+            </CCol>
+          </CRow>
+          <br />
+          {topics.map((data, index) => {
+            // console.log("index",index)
+            // console.log("user",user[index]["name"])
+            return (
+              <>
+                <CRow>
+                  <CCol>
+                    <CInputGroup className="mb-4">
+                      <CInputGroupText id="basic-addon1">
+                        ชื่อตาราง
+                      </CInputGroupText>
+                      <CInput
+                        type="text"
+                        placeholder={data.title}
+                        value={data.title}
+                        name="title"
+                        onChange={(e) => ChangeArray(e, index)}
+                      />{" "}
+                      <CInputGroupText id="basic-addon1">คะแนน</CInputGroupText>
+                      <CInput
+                        type="number"
+                        min="0"
+                        placeholder={data.score}
+                        value={data.score}
+                        name="score"
+                        onChange={(e) => ChangeArray(e, index)}
+                      />
+                    </CInputGroup>
+                  </CCol>
+                </CRow>
+              </>
+            );
+          })}
+          <br />
         </CCardBody>
+
         <CCardFooter>
           <CButton
             type="submit"

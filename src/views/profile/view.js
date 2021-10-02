@@ -229,13 +229,12 @@ export default function View() {
                 </CRow>
                 <br />
               </CCol>
-              <CCol md="3">
+              <CCol md="6" align="center">
                 <CLabel>อัพโหลดภาพ </CLabel>
                 <br />
                 <CImg
                   className="imag-circle"
-                  name="logo"
-                  // style={{ width: "350px" }}
+                  name="logo" 
                   src={
                     user.user_profile_image.file !== null
                       ? user.user_profile_image.src

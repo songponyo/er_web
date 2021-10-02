@@ -109,7 +109,7 @@ export default function Adduser() {
 
       if (query_result.require) {
         Swal.fire("บันทึกเรียบร้อย", "", "success");
-        history.push("/profile");
+        history.push("/class-group");
       } else {
         Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
       }

@@ -1,29 +1,21 @@
 import React from "react";
 const user = React.lazy(() => import("./views/master-data/user"));
-const user_position = React.lazy(() =>
-  import("./views/master-data/user-position")
-);
-const course = React.lazy(() => import("./views/master-data/course"));
-const user_register = React.lazy(() =>
-  import("./views/master-data/user-register")
-);
+const user_position = React.lazy(() => import("./views/master-data/user-position"));
+const subject = React.lazy(() => import("./views/master-data/subject"));
+const user_register = React.lazy(() =>import("./views/master-data/user-register"));
 const all_class = React.lazy(() => import("./views/master-data/all-class"));
+const prefix = React.lazy(() => import("./views/master-data/prefix"));
+
 
 const leave_form = React.lazy(() => import("./views/teacher/leave-form"));
 const class_group = React.lazy(() => import("./views/teacher/class-group"));
-const checkin_teacher = React.lazy(() =>
-  import("./views/teacher/checkin-teacher")
-);
+const checkin_teacher = React.lazy(() =>import("./views/teacher/checkin-teacher"));
 
-const course_student = React.lazy(() =>
-  import("./views/student/course-student")
-);
+const course_student = React.lazy(() =>import("./views/student/course-student"));
 const class_student = React.lazy(() => import("./views/student/class-student"));
 const leave_student = React.lazy(() => import("./views/student/leave-student"));
 const profile = React.lazy(() => import("./views/profile"));
-const checkin_student = React.lazy(() =>
-  import("./views/student/checkin-student")
-);
+const checkin_student = React.lazy(() =>import("./views/student/checkin-student"));
 
 const routes = [
   { path: "/user", name: "User", permission_name: "user", component: user },
@@ -46,10 +38,10 @@ const routes = [
     component: class_group,
   },
   {
-    path: "/course",
-    name: "Course",
-    permission_name: "course",
-    component: course,
+    path: "/subject",
+    name: "Subject",
+    permission_name: "subject",
+    component: subject,
   },
   {
     path: "/class-student",
@@ -98,6 +90,12 @@ const routes = [
     name: "all-class",
     permission_name: "all-class",
     component: all_class,
+  },
+  {
+    path: "/prefix",
+    name: "prefix",
+    permission_name: "prefix",
+    component: prefix,
   },
   { path: "/", exact: true, name: "Home" },
 ];

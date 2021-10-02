@@ -13,16 +13,21 @@ import { AuthConsumer } from "../role-accress/authContext";
 
 const TheHeaderDropdown = (props) => {
   let user = props.value;
-  console.log("user", user.user_profile_image);
   return (
     <AuthConsumer>
       {({ logout }) => (
         <CDropdown inNav className="c-header-nav-items mx-2" direction="down">
           <CDropdownToggle className="c-header-nav-link" caret={false}>
             <div className="c-avatar">
-              <CImg 
+              <CImg
                 src={user == "" ? "default.png" : user.user_profile_image}
                 className="c-avatar-img"
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                }} 
                 alt="admin@bootstrapmaster.com"
               />
             </div>

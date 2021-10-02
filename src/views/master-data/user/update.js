@@ -206,7 +206,7 @@ export default function Update() {
                       readOnly
                     />
                   </CCol>
-                  <CCol md="3">
+                  <CCol md="2">
                     <CFormGroup>
                       <CLabel>
                         คำนำหน้า{" "}
@@ -257,7 +257,7 @@ export default function Update() {
                   </CCol>
                 </CRow>
                 <CRow>
-                  <CCol md="3">
+                  <CCol md="5">
                     <CFormGroup>
                       <CLabel>อีเมล์ </CLabel>
                       <CInput
@@ -269,7 +269,7 @@ export default function Update() {
                       />
                     </CFormGroup>
                   </CCol>
-                  <CCol md="3">
+                  <CCol md="4">
                     <CFormGroup>
                       <CLabel>เบอร์โทรศัพท์ </CLabel>
                       <CInput

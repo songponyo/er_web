@@ -2,10 +2,9 @@ import React from 'react'
 import { HashRouter, Route, Switch } from 'react-router-dom'
 
 const View = React.lazy(() => import('./view'))
-const Insert = React.lazy(() => import('./insert'))
-const Update = React.lazy(() => import('./update'))
+const Insert = React.lazy(() => import('./insert')) 
 
-class Course extends React.Component {
+class Prefix extends React.Component {
   render() {
     const { permission_add, permission_edit } = this.props.SESSION.PERMISSION;
 
@@ -15,16 +14,11 @@ class Course extends React.Component {
           <Switch>
             <Route
               exact
-              path="/course/insert"
+              path="/prefix/insert"
               render={(props) => <Insert {...props} />}
-            />
+            /> 
             <Route
-              exact
-              path="/course/update/:code"
-              render={(props) => <Update {...props} />}
-            />
-            <Route
-              path="/course"
+              path="/prefix"
               render={(props) => <View {...props} {...this.props.SESSION} />}
             />
           </Switch>
@@ -33,4 +27,4 @@ class Course extends React.Component {
     );
   }
 }
-export default Course
+export default Prefix

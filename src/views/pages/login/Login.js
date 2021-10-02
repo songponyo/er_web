@@ -30,7 +30,7 @@ const Login = () => {
                     <div className="p-3 border bg-white">
                       <CRow>
                         <CCol md={6}>
-                          <img src="cpe.png" width="100%" height="100%" />
+                          <img src="cpe.png" width="350px" height="300px" />
                         </CCol>
 
                         <CCol md={5}>
@@ -91,7 +91,7 @@ const Login = () => {
                         </CCol>
                       </CRow>
                     </div>
-                  </CCol> 
+                  </CCol>
                 </CRow>
               </Form>
             </CContainer>
