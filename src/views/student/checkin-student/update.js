@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import GoogleMapReact from "google-map-react";
-import moment from "moment";
+import GoogleMapReact from "google-map-react"; 
 import {
   CCard,
   CCardBody,

@@ -12,11 +12,11 @@ import {
   CContainer,
 } from "@coreui/react";
 import Swal from "sweetalert2";
-import { useHistory, useRouteMatch } from "react-router-dom";
-import moment from "moment";
+import { useHistory, useRouteMatch } from "react-router-dom"; 
 import { TimeController } from "../../../controller";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import QrcodeModel from "../../../models/QrcodeModel";
+import dayjs from "dayjs";
 
 const qrcode_model = new QrcodeModel();
 const time_controller = new TimeController();
@@ -85,13 +85,11 @@ export default function Qrcode() {
   }
 
   async function _handleSubmit(url) {
-    if (_checkSubmit()) {
-      let time_out = moment(
-        `${moment().format("YYYY-MM-DD")} ${checkin.time_start}`,
-        "YYYY-MM-DD HH:mm"
-      )
-        .add(`${checkin.qr_timeout}`, "minutes")
-        .format("YYYY-MM-DD HH:mm"); 
+    if (_checkSubmit()) { 
+      let out = checkin.qr_timeout;
+      let day = dayjs().format("YYYY-MM-DD ") + checkin.time_start; 
+      let time_out = dayjs(day).add(out, "minute").format("YYYY-MM-DD HH:mm"); 
+
       let query_result = await qrcode_model.insertQrcode({
         classgroup_code: checkin.classgroup_code,
         qr_code: checkin.qr_code,

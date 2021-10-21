@@ -1,9 +1,16 @@
 import { BaseModel } from './MainModel'
 
 export default class ScoreModel extends BaseModel { 
-  async getScoreMaxCode(data) {
+  async getScoreLastCode(data) {
     return this.authFetch({
-      url: 'score/getScoreMaxCode',
+      url: 'score/getScoreLastCode',
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+  async checkScoreDuplicatBy(data) {
+    return this.authFetch({
+      url: 'score/checkScoreDuplicatBy',
       method: 'POST',
       body: JSON.stringify(data),
     })
@@ -12,6 +19,22 @@ export default class ScoreModel extends BaseModel {
   async getScoreBy(data) { 
     return this.authFetch({
       url: 'score/getScoreBy',
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getScoreByUser(data) { 
+    return this.authFetch({
+      url: 'score/getScoreByUser',
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getScoreByGroup(data) { 
+    return this.authFetch({
+      url: 'score/getScoreByGroup',
       method: 'POST',
       body: JSON.stringify(data),
     })

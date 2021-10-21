@@ -21,19 +21,20 @@ export default function History() {
   }, []);
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+
     const qrcode_data = await qrcode_model.getQrcodeBy({
       keyword: code.params.code,
-      owner: user_session.user_code,
+      // owner: user_session.user_code,
     });
     setClassgroup(qrcode_data.data);
   }
 
   async function _handleSubmit() {}
 
-  const _changeFrom = (e) => {
-    const { value, name } = e.target;
-    setClassgroup({ ...classgroup, [name]: value });
-  };
+  // const _changeFrom = (e) => {
+  //   const { value, name } = e.target;
+  //   setClassgroup({ ...classgroup, [name]: value });
+  // };
 
   return (
     <>

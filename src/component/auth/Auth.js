@@ -136,7 +136,7 @@ class Auth extends Component {
   logout() {
     try {
       localStorage.clear();
-      window.location.reload();
+      window.location.replace('');
     } catch (e) {
       console.log("logout ", e);
     }

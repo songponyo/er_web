@@ -72,7 +72,7 @@ export default class ExcelPage extends Component {
   }
 
   fileHandler = (fileList) => {
-    console.log("fileList", fileList);
+    // console.log("fileList", fileList);
     let fileObj = fileList;
     if (!fileObj) {
       this.setState({
@@ -129,9 +129,10 @@ export default class ExcelPage extends Component {
   };
 
   handleSubmit = async () => {
+    console.log("this.props.data",this.props.data);
     const query_result = await score_model.insertScore({
-      table_name: this.props.data.classgroup_table_score,
-      row: this.state.rows,
+      table_name: this.props.data.tablename,
+      excel_row: this.state.rows,
       user_status: "Not active",
     });
     // console.log("query_result", query_result);
@@ -142,8 +143,7 @@ export default class ExcelPage extends Component {
       },
       () => {
         if (query_result.require) {
-          Swal.fire({ title: "บันทึกข้อมูลสำเร็จ !", icon: "success" });
-          // this.props.history.push("/class-group/");
+          Swal.fire({ title: "บันทึกข้อมูลสำเร็จ !", icon: "success" }); 
         } else {
           Swal.fire({ title: "เกิดข้อผิดพลาด !", icon: "error" });
           // window.location.reload();
@@ -164,6 +164,7 @@ export default class ExcelPage extends Component {
         cell: EditableCell,
       },
     };
+
     const columns = this.state.columns.map((col) => {
       if (!col.editable) {
         return col;
@@ -179,6 +180,9 @@ export default class ExcelPage extends Component {
         }),
       };
     });
+
+
+    
     return (
       <>
         <Row gutter={16}>
@@ -189,19 +193,9 @@ export default class ExcelPage extends Component {
           >
             {this.state.rows.length > 0 && (
               <>
-                <center>
-                  {/* <Button
-                  onClick={this.handleAdd}
-                  // size="large"
-                  type="info"
-                  style={{ marginBottom: 16 }}
-                >
-                  <Icon type="plus" />
-                  เพิ่มรายชื่อ
-                </Button>{" "} */}
+                <center> 
                   <Button
-                    onClick={this.handleSubmit}
-                    // size="large"
+                    onClick={this.handleSubmit} 
                     type="primary"
                     style={{ marginBottom: 16, marginLeft: 10 }}
                   >

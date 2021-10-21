@@ -10,8 +10,7 @@ import {
   CInput,
   CButton,
   CImg,
-} from "@coreui/react";
-
+} from "@coreui/react"; 
 import { Link, useHistory } from "react-router-dom";
 import Swal from "sweetalert2";
 import UserModel from "../../models/UserModel";

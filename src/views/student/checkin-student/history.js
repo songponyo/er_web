@@ -8,18 +8,16 @@ import {
 } from "@coreui/react";
 import { Link, useRouteMatch } from "react-router-dom";
 // import Swal from "sweetalert2";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import moment from "moment";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; 
 import {
   faEdit,
   // faCheck,
   // faWindowClose,
 } from "@fortawesome/free-solid-svg-icons";
-import { Table } from "../../../component/revel-strap";
-import { TimeController } from "../../../controller";
+import { Table } from "../../../component/revel-strap"; 
 import QrcodeModel from "../../../models/QrcodeModel";
+import dayjs from "dayjs"; 
 
-const time_controller = new TimeController();
 const qrcode_model = new QrcodeModel();
 
 export default function History() {
@@ -65,7 +63,7 @@ export default function History() {
                 dataIndex: "qr_timeout",
                 render: (cell) => {
                   if (cell != null) {
-                    let time = time_controller.reformatToTime(cell);
+                    let time = dayjs(cell).format('HH:mm');
                     return time;
                   } else {
                     return (
@@ -82,7 +80,7 @@ export default function History() {
                 dataIndex: "checkin_time",
                 render: (cell) => {
                   if (cell != null) {
-                    let time = time_controller.reformatToTime(cell);
+                    let time = dayjs(cell).format('HH:mm');
                     return time;
                   } else {
                     return (

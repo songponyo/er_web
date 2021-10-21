@@ -149,22 +149,22 @@ export default function View() {
                     </Link>
                   );
 
-                  row_accessible.push(
-                    <Link
-                      key="excel"
-                      to={`/class-group/excel/${cell.classgroup_code}`}
-                      title="แก้ไขรายการ"
-                    >
-                      <button type="button" className="btn btn-success">
-                        <FontAwesomeIcon
-                          icon={faEdit}
-                          size="5s"
-                          color="white"
-                        />{" "}
-                        Excel
-                      </button>
-                    </Link>
-                  );
+                  // row_accessible.push(
+                  //   <Link
+                  //     key="excel"
+                  //     to={`/class-group/excel/${cell.classgroup_code}`}
+                  //     title="แก้ไขรายการ"
+                  //   >
+                  //     <button type="button" className="btn btn-success">
+                  //       <FontAwesomeIcon
+                  //         icon={faEdit}
+                  //         size="5s"
+                  //         color="white"
+                  //       />{" "}
+                  //       Excel
+                  //     </button>
+                  //   </Link>
+                  // );
 
                   row_accessible.push(
                     <Link

@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { CCard, CCardHeader, CCardBody } from "@coreui/react";
 import { faMap } from "@fortawesome/free-solid-svg-icons";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { useRouteMatch } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Table } from "../../../component/revel-strap";
-import { TimeController } from "../../../controller";
 import CheckinModel from "../../../models/CheckinModel";
 // import { Modal } from "antd";
 import Modal from "react-bootstrap/Modal";
 import Maps from "../../../controller/Maps";
+import dayjs from "dayjs";
 
-const time_controller = new TimeController();
 const checkin_model = new CheckinModel();
 
 export default function Detail() {
   let code = useRouteMatch("/checkin-teacher/detail/:code");
-  const [classgroup, setClassgroup] = useState([]); 
+  const [classgroup, setClassgroup] = useState([]);
   const [show, setShow] = useState(false);
- 
 
   useEffect(() => {
     fetchData();
@@ -35,13 +33,8 @@ export default function Detail() {
   }
 
   function showmodal() {
-    
-    setShow(true)
-    
+    setShow(true);
   }
-
-   
-  
 
   return (
     <>
@@ -76,7 +69,7 @@ export default function Detail() {
                 title: "เวลาเข้าเรียน",
                 dataIndex: "checkin_time",
                 render: (cell) => {
-                  let time = time_controller.reformatToTime(cell);
+                  let time = dayjs(cell).format("HH:mm");
                   return time;
                 },
                 filterAble: true,

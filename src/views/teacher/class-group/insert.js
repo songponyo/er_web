@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import moment from "moment";
+import { Link } from "react-router-dom"; 
+import dayjs from "dayjs";
 import {
   CCard,
   CCardHeader,
@@ -11,15 +11,13 @@ import {
   CFormGroup,
   CLabel,
   CInput,
-  CButton,
-  CInputGroupText,
-  CInputGroup,
+  CButton, 
 } from "@coreui/react";
+import { Table } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
-import { TimeController } from "../../../controller";
 import { Select } from "../../../component/revel-strap";
-
+import TopicModel from "../../../models/TopicModel";
 import SubjectModel from "../../../models/SubjectModel";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import UserModel from "../../../models/UserModel";
@@ -27,7 +25,7 @@ import UserModel from "../../../models/UserModel";
 const user_model = new UserModel();
 const classgroup_model = new ClassgroupModel();
 const subject_model = new SubjectModel();
-const time_controller = new TimeController();
+const topic_model = new TopicModel();
 
 export default function Insert() {
   let history = useHistory();
@@ -52,31 +50,49 @@ export default function Insert() {
     addby: "",
   });
   const [topics, setTopics] = useState([
-    { id: 1, name: "", title: "", score: 0, classgroup_code: "" },
+    { id: 1, topic_name: "", max_score: 0, classgroup_code: "" },
   ]);
+  const [sum, setSum] = useState();
 
   useEffect(() => {
     fetchData();
   }, []);
 
   useEffect(() => {
-    let timer_start = moment(
-      `${moment().format("YYYY-MM-DD")} ${classroom.classgroup_time_start}`,
-      "YYYY-MM-DD HH:mm"
-    );
+    let timer_start =
+      dayjs().format("YYYY-MM-DD ") + classroom.classgroup_time_start;
+    let timer_end =
+      dayjs().format("YYYY-MM-DD ") + classroom.classgroup_time_end;
+    // let timer_start = moment(
+    //   `${moment().format("YYYY-MM-DD")} ${classroom.classgroup_time_start}`,
+    //   "YYYY-MM-DD HH:mm"
+    // );
+    // console.log("timer_start",timer_start._i);
+    // console.log("timer_start", typeof timer_start);
 
-    let timer_end = moment(
-      `${moment().format("YYYY-MM-DD")} ${classroom.classgroup_time_end}`,
-      "YYYY-MM-DD HH:mm"
-    );
+    // let timer_end = moment(
+    //   `${moment().format("YYYY-MM-DD")} ${classroom.classgroup_time_end}`,
+    //   "YYYY-MM-DD HH:mm"
+    // );
     let classrooma = {};
-    classrooma.time_start = timer_start._i;
-    classrooma.time_end = timer_end._i;
+    classrooma.time_start = timer_start;
+    classrooma.time_end = timer_end;
     setTime(classrooma);
   }, [classroom.classgroup_time_start, classroom.classgroup_time_end]);
 
+  useEffect(() => {
+    const score_result = topics
+      .map((item) => item.max_score)
+      .reduce((prev, curr) => prev + (curr || 0), 0);
+
+    setSum(score_result);
+  }, [topics]);
+
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+
+    const topic_data = await topic_model.getTopicByLastCode({});
+
     const date = new Date();
     var code = "";
     code =
@@ -94,10 +110,10 @@ export default function Insert() {
     setClassroom(classform);
     let arr_form = [
       {
-        id: 1,
-        name: "",
-        title: "",
-        score: 0,
+        topic_code: topic_data.data,
+        topic_column: "0",
+        topic_name: "",
+        max_score: 0,
         classgroup_code: class_data.data,
       },
     ];
@@ -132,7 +148,7 @@ export default function Insert() {
     }
     setSubject(select_subject);
   }
-
+ 
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let query_result = await classgroup_model.insertClassgroup({
@@ -142,12 +158,11 @@ export default function Insert() {
         classgroup_number: classroom.classgroup_number,
         subject_code: classroom.subject_code,
         user_code: classroom.user_code,
-        max_score: classroom.max_score,
-        leave_maxcount: classroom.leave_maxcount,
         classgroup_time_start: time.time_start,
         classgroup_time_end: time.time_end,
         addby: classroom.addby,
-        adddate: time_controller.reformatToDate(new Date()),
+        adddate: dayjs().format("YYYY-MM-DD H:mm:ss"),
+        topics_row: topics,
       });
       if (query_result.require) {
         Swal.fire("บันทึกเรียบร้อย", "", "success");
@@ -205,36 +220,49 @@ export default function Insert() {
   };
 
   const ChangeArray = (e, index) => {
-    // console.log("index: " + index);
-    // console.log("property name: " + e.target.name);
     const proper = e.target.name;
     let newArr = [...topics];
-    if (proper === "score") {
+    if (proper === "max_score") {
       let sum = parseInt(e.target.value);
-      newArr[index][proper] = sum || 0;
+      newArr[index][proper] = sum || "";
       setTopics(newArr);
     } else {
-      newArr[index][proper] = e.target.value; // replace e.target.value with whatever you want to change it to
+      newArr[index][proper] = e.target.value;
       setTopics(newArr);
     }
   };
 
   const AddArray = () => {
-    let addAr = { ...topics };
+    let topic = { ...topics };
+    let index_arr = topics[parseInt(topics.length - 1)];
+
+    let last_code = index_arr.topic_code;
+    let column = (parseInt(index_arr.topic_column) + 1).toString();
+
+    let str = last_code.substr(2, 5);
+    let max_id = parseInt(str) + 1;
+    let max_str = max_id.toString().padStart(3, "0");
+    let res = "TP".concat(max_str);
+
     let newArr = {
-      id: topics.length + 1,
-      name: "",
-      title: "",
-      score: 0,
+      topic_code: res,
+      topic_column: column,
+      topic_name: "",
+      max_score: 0,
       classgroup_code: classroom.classgroup_code,
     };
-    addAr[topics.length] = newArr;
+    topic[topics.length] = newArr;
+
     setTopics((topics) => [...topics, newArr]);
   };
 
   const handleRemoveItem = () => {
-    let id = topics.length;
-    setTopics(topics.filter((item) => item.id !== id));
+    if (topics.length === 1) {
+      alert("ไม่อนุญาติให้ทำการลบรายการทั้งหมด");
+    } else {
+      let topic_code = topics[parseInt(topics.length - 1)].topic_code;
+      setTopics(topics.filter((item) => item.topic_code !== topic_code));
+    }
   };
 
   return (
@@ -244,6 +272,7 @@ export default function Insert() {
           กลุ่มเรียน / Class group
         </CCardHeader>
         <CCardBody>
+          {/* แบบฟอร์ม */}
           <CRow>
             <CCol md="3">
               <CLabel>
@@ -316,6 +345,7 @@ export default function Insert() {
               </CFormGroup>
             </CCol>
           </CRow>
+
           <CRow>
             <CCol md="3">
               <CFormGroup>
@@ -369,7 +399,8 @@ export default function Insert() {
               </CFormGroup>
             </CCol>
           </CRow>
-          <CRow>
+
+          {/* <CRow>
             <CCol md="3">
               <CFormGroup>
                 <CLabel>
@@ -387,56 +418,90 @@ export default function Insert() {
                 />
               </CFormGroup>
             </CCol>
-          </CRow>
+          </CRow> */}
+
+          {/* ตารางคะแนน */}
           <CRow>
-            <CCol sm="2">
-              <CButton color="primary" onClick={() => AddArray()}>
+            <CCol sm="12">
+              <CButton
+                color="primary"
+                style={{ width: "120px" }}
+                onClick={() => AddArray()}
+              >
                 เพิ่มช่องคะแนน
               </CButton>
-            </CCol>
-            <CCol>
-              <CButton color="danger" onClick={() => handleRemoveItem()}>
+              <CButton
+                color="danger"
+                style={{ width: "120px" }}
+                onClick={() => handleRemoveItem()}
+              >
                 ลบรายการ
               </CButton>
             </CCol>
           </CRow>
           <br />
-          {topics.map((data, index) => {
-            // console.log("index",index)
-            // console.log("user",user[index]["name"])
-            return (
-              <>
-                <CRow>
-                  <CCol>
-                    <CInputGroup className="mb-4">
-                      <CInputGroupText id="basic-addon1">
-                        ชื่อตาราง
-                      </CInputGroupText>
-                      <CInput
-                        type="text"
-                        placeholder={data.title}
-                        value={data.title}
-                        name="title"
-                        onChange={(e) => ChangeArray(e, index)}
-                      />{" "}
-                      <CInputGroupText id="basic-addon1">คะแนน</CInputGroupText>
-                      <CInput
-                        type="number"
-                        min="0"
-                        placeholder={data.score}
-                        value={data.score}
-                        name="score"
-                        onChange={(e) => ChangeArray(e, index)}
-                      />
-                    </CInputGroup>
-                  </CCol>
-                </CRow>
-              </>
-            );
-          })}
-          <br />
-        </CCardBody>
 
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>ชื่อตารางคะแนน</th>
+                <th>คะแนนเต็ม</th>
+              </tr>
+            </thead>
+            <tbody>
+              {topics.map((data, index) => {
+         
+                return (
+                  <>
+                    <tr>
+                      <td>
+                        <CInput
+                          type="text"
+                          placeholder="ชื่อหัวตารางคะแนน"
+                          value={data.topic_name}
+                          name="topic_name"
+                          onChange={(e) => ChangeArray(e, index)}
+                        />
+                      </td>
+                      <td>
+                        <CInput
+                          type="number"
+                          min="0"
+                          placeholder="0"
+                          value={data.max_score}
+                          name="max_score"
+                          onChange={(e) => ChangeArray(e, index)}
+                        />
+                      </td>
+                    </tr>
+                  </>
+                );
+              })}
+            </tbody>
+
+            <thead>
+              <tr>
+                <th>คะแนนทั้งหมด</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <CInput
+                    type="number"
+                    min="0"
+                    placeholder={0}
+                    value={sum}
+                    name="score"
+                    disabled
+                  />
+                </td>
+              </tr>
+            </tbody>
+
+            <br />
+          </Table>
+        </CCardBody>
         <CCardFooter>
           <CButton
             type="submit"

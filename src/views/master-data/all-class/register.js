@@ -1,14 +1,7 @@
-import React, { useState, useEffect } from "react";
-import GLOBAL from "../../../GLOBAL";
-import ExcelPage from "../../../component/excelPage";
-
+import React, { useState, useEffect } from "react"; 
 import {
-  CCard,
-  CCardText,
-  CCardBody,
-  CCardTitle,
-  CImg,
-  CFormGroup,
+  CCard, 
+  CCardBody, 
   CContainer,
   CCol,
   CRow,
@@ -17,29 +10,18 @@ import {
   CButton,
   CCardFooter,
 } from "@coreui/react";
-import Swal from "sweetalert2";
-import { Select } from "../../../component/revel-strap";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit,
-  faCheck,
-  faWindowClose,
-} from "@fortawesome/free-solid-svg-icons";
-import { Table, Loading } from "../../../component/revel-strap";
+import Swal from "sweetalert2"; 
+import { Link, useHistory, useRouteMatch } from "react-router-dom"; 
 import { TimeController } from "../../../controller";
 import SubjectModel from "../../../models/SubjectModel";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import UserModel from "../../../models/UserModel";
-
-const user_model = new UserModel();
-const classgroup_model = new ClassgroupModel();
-const subject_model = new SubjectModel();
+ 
+const classgroup_model = new ClassgroupModel(); 
 const time_controller = new TimeController();
 
 export default function Register() {
-  let history = useHistory();
-  const [showloading, setShowLoading] = useState(true);
+  let history = useHistory(); 
   let code = useRouteMatch("/course-student/register/:code");
   const [user, setUser] = useState([]);
   const [class_validate, setClass_validate] = useState({});
