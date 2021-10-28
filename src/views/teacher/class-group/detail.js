@@ -14,7 +14,7 @@ import {
 } from "@coreui/react";
 import { useRouteMatch } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash, faUserMinus } from "@fortawesome/free-solid-svg-icons";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import ScoreModel from "../../../models/ScoreModel";
 import TopicModel from "../../../models/TopicModel";
@@ -44,53 +44,39 @@ export default function Detail() {
   // ]);
   const [topics, setTopics] = useState([]);
   const [score, setScore] = useState([]);
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState({ data: [], score_user: [] });
   useEffect(() => {
     fetchData();
   }, []);
- 
+
   useEffect(() => {
-   
     if (classgroup.length !== 0) {
       let arr_score = [];
-      let obj_score = {};
+      let comp = [];
+      let arr_sc = [];
+      classgroup.map((data, idx) => {
+        arr_score.push({
+          user_uid: data.user_uid,
+          user_full_name: data.user_full_name,
+        });
 
-      classgroup.map((data) => {
-        obj_score.user_full_name = data.user_full_name;
-        obj_score.user_uid = data.user_uid;
-        let scored = score.filter(
-          (scores) => scores.user_uid === data.user_uid
-        );
-        setFiles(obj_score);
-        // console.log("scored",scored);
+        let sc = score
+          .filter((scores) => scores.user_uid === data.user_uid)
+          .map((tc) => {
+            // console.log("gg");
+            return tc.score_value;
+          });
+        // console.log("sc",sc);
+        // comp[idx] = { ...arr_score[idx], ...sc };
+        arr_sc[idx] = sc;
+        // console.log("arr_sc", arr_sc);
+        comp[idx] = { ...arr_score[idx] };
       });
 
-      // console.log("obj_score", obj_score);
-    }
-    // let result_score = classgroup.map((data, idx) => {
-    //   obj_score.user_uid = data.user_uid;
-    //   obj_score.user_full_name = data.user_full_name;
-    // });
-    // arr_score[0] = obj_score;
-    // {
-    //   score
-    //     .filter((scores) => scores.user_uid === data.user_uid)
-    //     .map((topic_score) => {
-    //       return <td>{topic_score.score_value}</td>;
-    //     });
-    // }
+      setFiles({ data: comp, score_user: arr_sc });
 
-    let custs = [];
-    for (let i = 0; i <= 25; i++) {
-      custs.push({
-        firstName: `first${i}`,
-        lastName: `last${i}`,
-        email: `abc${i}@gmail.com`,
-        address: `000${i} street city, ST`,
-        zipcode: `0000${i}`,
-      });
+      // console.log("arr_score", comp);
     }
-    setFiles({ files, customers: custs });
   }, [score]);
 
   async function fetchData() {
@@ -129,45 +115,49 @@ export default function Detail() {
     //     key: "score_" + n,
     // };
   }
+
   const exportToCSV = () => {
     let Heading = [["รหัสประจำตัว", "ชื่อ-นามสกุล"]];
-    let Afhead = topics.map((data) => {
-      return Heading[0].push(data.topic_name + "(" + data.max_score + ")");
+    topics.map((data) => {
+      Heading[0].push(data.topic_name + "(" + data.max_score + ")");
     });
-    console.log("Heading", Heading);
-    // //Had to create a new workbook and then add the header
-    // const wb = XLSX.utils.book_new();
-    // const ws = XLSX.utils.json_to_sheet([]);
-    // XLSX.utils.sheet_add_aoa(ws, Heading);
+    //Had to create a new workbook and then add the header
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet([]);
 
-    // //Starting in the second row to avoid overriding and skipping headers
-    // XLSX.utils.sheet_add_json(ws, files, {
-    //   origin: "A2",
-    //   skipHeader: true,
-    // });
+    XLSX.utils.sheet_add_aoa(ws, Heading);
 
-    // XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    //Starting in the second row to avoid overriding and skipping headers
+    XLSX.utils.sheet_add_json(ws, files.data, {
+      origin: "A2",
+      skipHeader: true,
+    });
 
-    // XLSX.writeFile(wb, "filename.xlsx");
+    XLSX.utils.sheet_add_json(ws, files.score_user, {
+      origin: "C2",
+      skipHeader: true,
+    });
+
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+    XLSX.writeFile(wb, "filename.xlsx");
   };
-
-
-  const CustomerRow = (customer, index) => {
+  // console.log("let i in tc", files.data);
+  const CustomerRow = (data) => {
     return (
-      <tr key={index} className="even">
-        <td> {index + 1} </td>
-        <td>{customer.firstName}</td>
-        <td>{customer.lastName}</td>
-        <td>{customer.email}</td>
-        <td>{customer.address}</td>
-        <td>{customer.zipcode}</td>
+      <tr>
+        <td>{data.user_uid}</td>
+        <td>{data.user_full_name}</td>
+        {score
+          .filter((scores) => scores.user_uid === data.user_uid)
+          .map((topic_score) => {
+            return <td>{topic_score.score_value}</td>;
+          })}
       </tr>
     );
-  }; 
-  const CustomerTable = score.map((cust, index) =>
-    CustomerRow(cust, index)
-  );
-
+  };
+  const CustomerTable = files.data.map((us) => CustomerRow(us));
+  console.log();
   return (
     <>
       <CCard>
@@ -194,8 +184,8 @@ export default function Detail() {
                 <>
                   <tr>
                     <th>รหัสประจำตัว</th>
-                    <th>ชื่อ</th>
-                    {topics.map((data, index) => {
+                    <th>ชื่อ - นามสกุล</th>
+                    {topics.map((data) => {
                       return (
                         <>
                           <th style={{ textAlign: "center" }}>
@@ -246,6 +236,13 @@ export default function Detail() {
                           แก้ไข
                         </button>
                       </Link>
+                      {/* <button type="button" className="btn btn-danger">
+                        <FontAwesomeIcon
+                          icon={faTrash}
+                          size="5s"
+                          color="white"
+                        />  ลบ
+                      </button> */}
                     </td>
                   </tr>
                 );
@@ -295,7 +292,6 @@ export default function Detail() {
                 return (
                   <>
                     <th style={{ textAlign: "center" }}>
-                      {" "}
                       {data.topic_name} ({data.max_score})
                     </th>
                   </>
@@ -318,7 +314,6 @@ export default function Detail() {
                 </tr>
               );
             })} */}
-            //{" "}
           </tbody>
           <tbody></tbody>
         </Table>
