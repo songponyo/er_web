@@ -1,27 +1,19 @@
-import React, { Component, useEffect, useState } from "react";
-import {
-  CContainer,
-  CRow,
-  CCol,
+import React, {useEffect, useState } from "react";
+import { 
   CCard,
   CCardHeader,
   CCardBody,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit,
-  faCheck,
-  faWindowClose,
+import { 
   faInfoCircle,
-} from "@fortawesome/free-solid-svg-icons";
-import Swal from "sweetalert2";
-import { Table, Loading } from "../../../component/revel-strap";
+} from "@fortawesome/free-solid-svg-icons"; 
+import { Table} from "../../../component/revel-strap";
 import LeaveModel from "../../../models/LeaveModel";
 const leave_model = new LeaveModel();
 
-export default function View() {
-  const [showloading, setShowLoading] = useState(true);
+export default function View() { 
   const [leave, setLeave] = useState([]);
 
   useEffect(() => {

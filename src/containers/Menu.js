@@ -13,7 +13,7 @@ const accessMenu = ({PERMISSIONS}) => {
         name: "กลุ่มเรียน",
         to: "/class-group",
         icon: <i className="c-sidebar-nav-icon fa fa-file-text-o" />,
-        exact: false,
+        exact: true,
         // badge: {
         //     color: 'danger',
         //     text: 10,
@@ -156,7 +156,7 @@ const accessMenu = ({PERMISSIONS}) => {
 
     //===========================================================================================================================//
 
-    if (students.length  && PERMISSIONS == 0) {
+    if (students.length  && PERMISSIONS === 0) {
         navigations.push(
             {
                 _tag: "CSidebarNavTitle",
@@ -166,7 +166,7 @@ const accessMenu = ({PERMISSIONS}) => {
         )
     }
 
-    if (teacher.length  && PERMISSIONS == 1) {
+    if (teacher.length  && PERMISSIONS === 1) {
         navigations.push(
             {
                 _tag: "CSidebarNavTitle",
@@ -176,7 +176,7 @@ const accessMenu = ({PERMISSIONS}) => {
         )
     }
     
-    if (masters.length && PERMISSIONS == 2) {
+    if (masters.length && PERMISSIONS === 2) {
         navigations.push(
             {
                 _tag: "CSidebarNavTitle",

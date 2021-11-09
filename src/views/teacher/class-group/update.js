@@ -55,8 +55,64 @@ export default function Update() {
   const [sum, setSum] = useState();
 
   useEffect(() => {
+    async function fetchData() {
+      const class_group = await classgroup_model.getClassgroupByCode({
+        classgroup_code: code.params.code,
+      });
+      if (class_group.require === false) {
+        Swal.fire("ข้อผิดพลาดไม่สามารถโหลดข้อมูล !", "", "error");
+        history.push("/class-group");
+      } else if (class_group.data.length === 0) {
+        Swal.fire("ไม่พบรายการนี้ในระบบ !", "", "warning");
+        history.push("/classgroup-group");
+      } else {
+        let room = {};
+        room = class_group.data[0];
+        room.classgroup_time_start = dayjs(room.classgroup_time_start).format(
+          "HH:mm"
+        );
+        room.classgroup_time_end = dayjs(room.classgroup_time_end).format(
+          "HH:mm"
+        );
+        await setClassroom(room);
+      }
+  
+      const user_data = await user_model.getUserBy({
+        user_position_code: "UP002",
+      });
+  
+      let user_form = user_data.data;
+      let select_user = [];
+      for (let i = 0; i < user_form.length; i++) {
+        select_user.push({
+          value: user_form[i].user_code,
+          label: user_form[i].user_full_name,
+        });
+      }
+      setUserselect(select_user);
+  
+      const subject_data = await subject_model.getSubjectBy({});
+      let subject_form = subject_data.data;
+      let select_subject = [];
+      for (let i = 0; i < subject_form.length; i++) {
+        select_subject.push({
+          value: subject_form[i].subject_code,
+          label:
+            "[ " +
+            subject_form[i].subject_code +
+            " ] " +
+            subject_form[i].subject_name_th,
+        });
+      }
+      setSubject(select_subject);
+  
+      const topic_data = await topic_model.getTopicByClassCode({
+        classgroup_code: code.params.code,
+      });
+      setTopics(topic_data.data);
+    }
     fetchData();
-  }, []);
+  }, [code,history]);
 
   useEffect(() => {
     const score_result = topics
@@ -66,62 +122,7 @@ export default function Update() {
     setSum(score_result);
   }, [topics]);
 
-  async function fetchData() {
-    const class_group = await classgroup_model.getClassgroupByCode({
-      classgroup_code: code.params.code,
-    });
-    if (class_group.require === false) {
-      Swal.fire("ข้อผิดพลาดไม่สามารถโหลดข้อมูล !", "", "error");
-      history.push("/class-group");
-    } else if (class_group.data.length === 0) {
-      Swal.fire("ไม่พบรายการนี้ในระบบ !", "", "warning");
-      history.push("/classgroup-group");
-    } else {
-      let room = {};
-      room = class_group.data[0];
-      room.classgroup_time_start = dayjs(room.classgroup_time_start).format(
-        "HH:mm"
-      );
-      room.classgroup_time_end = dayjs(room.classgroup_time_end).format(
-        "HH:mm"
-      );
-      await setClassroom(room);
-    }
-
-    const user_data = await user_model.getUserBy({
-      user_position_code: "UP002",
-    });
-
-    let user_form = user_data.data;
-    let select_user = [];
-    for (let i = 0; i < user_form.length; i++) {
-      select_user.push({
-        value: user_form[i].user_code,
-        label: user_form[i].user_full_name,
-      });
-    }
-    setUserselect(select_user);
-
-    const subject_data = await subject_model.getSubjectBy({});
-    let subject_form = subject_data.data;
-    let select_subject = [];
-    for (let i = 0; i < subject_form.length; i++) {
-      select_subject.push({
-        value: subject_form[i].subject_code,
-        label:
-          "[ " +
-          subject_form[i].subject_code +
-          " ] " +
-          subject_form[i].subject_name_th,
-      });
-    }
-    setSubject(select_subject);
-
-    const topic_data = await topic_model.getTopicByClassCode({
-      classgroup_code: code.params.code,
-    });
-    setTopics(topic_data.data);
-  }
+  
 
   async function _handleSubmit() { 
     if (_checkSubmit()) {

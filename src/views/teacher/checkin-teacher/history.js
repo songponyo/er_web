@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CCard, CCardHeader, CCardBody } from "@coreui/react";
-import { faAddressBook, faQrcode } from "@fortawesome/free-solid-svg-icons";
+import { faAddressBook } from "@fortawesome/free-solid-svg-icons";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Table } from "../../../component/revel-strap";
@@ -11,8 +11,7 @@ import { TimeController } from "../../../controller";
 const qrcode_model = new QrcodeModel();
 const time_controller = new TimeController();
 
-export default function History() {
-  let history = useHistory();
+export default function History() { 
   let code = useRouteMatch("/checkin-teacher/history/:code");
   const [classgroup, setClassgroup] = useState([]);
 
@@ -100,8 +99,8 @@ export default function History() {
                 dataIndex: "",
                 align: "center",
                 render: (cell) => {
-                  const row_accessible = [];
-                  console.log("cell", cell.classgroup_code);
+                  const row_accessible = []; 
+                  console.log(cell);
                   row_accessible.push(
                     <Link
                       key="detail"

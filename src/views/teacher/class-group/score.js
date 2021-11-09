@@ -14,15 +14,14 @@ import {
 } from "@coreui/react";
 import Swal from "sweetalert2";
 
-import { useHistory, useRouteMatch } from "react-router-dom";
+import {useRouteMatch } from "react-router-dom";
 import ScoreModel from "../../../models/ScoreModel";
 import TopicModel from "../../../models/TopicModel";
 
 const topic_model = new TopicModel();
 const score_model = new ScoreModel();
 
-export default function Score() {
-  let history = useHistory();
+export default function Score() { 
   let code = useRouteMatch("/class-group/score/:code");
   const [user_score, setUser_score] = useState({
     user_firstname: "",
@@ -79,8 +78,7 @@ export default function Score() {
     const score_data = await score_model.getScoreByUser({
       user_uid: n[0],
       classgroup_code: cg,
-    });
-    console.log("score_data", score_data);
+    }); 
     // let last = score_last.data.replace("SC", "");
 
     // let topic_info = topic_data.data;
@@ -106,7 +104,7 @@ export default function Score() {
     
     let query_result = await score_model.updateScoreBy({
       user_uid: user_score.user_uid,
-      row: topics,
+      score_row: topics,
     });
     if (query_result.require) {
       Swal.fire("บันทึกเรียบร้อย", "", "success");

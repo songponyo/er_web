@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import GLOBAL from "../../../GLOBAL";
+import React, { useState, useEffect } from "react"; 
 import { Link } from "react-router-dom";
 import {
   CCard,
@@ -13,9 +12,7 @@ import {
   CInput,
   CButton,
   CImg,
-} from "@coreui/react";
-import { connect } from "react-redux";
-
+} from "@coreui/react";  
 import Swal from "sweetalert2";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { TimeController } from "../../../controller";
@@ -52,26 +49,27 @@ export default function Detail() {
   });
 
   useEffect(() => {
+    async function fetchData() {
+      const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+      setUser(user_session);
+  
+      const leave_data = await leave_model.getLeaveByCode({
+        leave_code: code.params.code,
+      });
+      let leave_form = {};
+      leave_form = leave_data.data[0];
+      leave_form.leave_image = {
+        src: "default.png",
+        file: null,
+        old: leave_data.data[0].leave_image,
+      };
+  
+      setLeave(leave_form);
+    }
     fetchData();
-  }, []);
+  }, [code]);
 
-  async function fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    setUser(user_session);
-
-    const leave_data = await leave_model.getLeaveByCode({
-      leave_code: code.params.code,
-    });
-    let leave_form = {};
-    leave_form = leave_data.data[0];
-    leave_form.leave_image = {
-      src: "default.png",
-      file: null,
-      old: leave_data.data[0].leave_image,
-    };
-
-    setLeave(leave_form);
-  }
+ 
   async function _handleSubmit() {
     if (_checkSubmit()) { 
       let query_result = await leave_model.updateLeaveBy({ 
@@ -178,7 +176,7 @@ export default function Detail() {
                       <CLabel>ประเภทการลา</CLabel>
                       <CInput
                         value={
-                          leave.leave_type == "on_leave" ? "ลากิจ" : "ลาป่วย"
+                          leave.leave_type === "on_leave" ? "ลากิจ" : "ลาป่วย"
                         }
                         name="leave_type"
                         readOnly
@@ -255,7 +253,7 @@ export default function Detail() {
                   </tbody>
                 </CCol>
 
-                {leave.leave_approve == "NotAccept" ? (
+                {leave.leave_approve === "NotAccept" ? (
                   <CCol md="12">
                     <br />
                     <CLabel>เหตุผลที่ไม่อนุญาติ</CLabel>

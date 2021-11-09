@@ -6,9 +6,8 @@ import {
   CCardHeader,
   CCardBody,
 } from "@coreui/react";
-import { Link } from "react-router-dom"; 
-import Swal from "sweetalert2";
-import { Table, Loading } from "../../../component/revel-strap";
+import { Link } from "react-router-dom";  
+import { Table } from "../../../component/revel-strap";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 const classgroup_model = new ClassgroupModel();
 

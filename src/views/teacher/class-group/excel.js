@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from "react";
-// import ExcelPage from "../../../component/excelPage";
-// import ExcelPage from "../../../component/excelPaget";
+import React, { useState, useEffect } from "react"; 
 import { ExcelRenderer } from "react-excel-renderer";
 import "antd/dist/antd.css";
 import { Table, Upload, Button } from "antd";
@@ -50,8 +48,36 @@ export default function Update() {
   ]);
 
   useEffect(() => {
+    async function fetchData() {
+      const topic_data = await topic_model.getTopicByClassCode({
+        classgroup_code: code.params.code,
+      });
+  
+      const class_group = await classgroup_model.getClassgroupByCode({
+        classgroup_code: code.params.code,
+      });
+  
+      if (class_group.require === false) {
+        Swal.fire("ข้อผิดพลาดไม่สามารถโหลดข้อมูล !", "", "error");
+        history.push("/class-group");
+      } else if (class_group.data.length === 0) {
+        Swal.fire("ไม่พบรายการนี้ในระบบ !", "", "warning");
+        history.push("/class-group");
+      } else {
+        let topics_info = {};
+        topics_info.topic = topic_data.data;
+        topics_info.tablename = class_group.data[0].classgroup_table_score;
+        setTopics(topics_info);
+      }
+  
+      const score_last = await score_model.getScoreLastCode({});
+      let score_info = {};
+      score_info.code = score_last.data;
+      score_info.last_code = 0;
+      setScore(score_info);
+    }
     fetchData();
-  }, []);
+  }, [code,history]);
 
   useEffect(() => {
     if (row.rows.length !== 0) {
@@ -59,34 +85,7 @@ export default function Update() {
     }
   }, [row]);
 
-  async function fetchData() {
-    const topic_data = await topic_model.getTopicByClassCode({
-      classgroup_code: code.params.code,
-    });
-
-    const class_group = await classgroup_model.getClassgroupByCode({
-      classgroup_code: code.params.code,
-    });
-
-    if (class_group.require === false) {
-      Swal.fire("ข้อผิดพลาดไม่สามารถโหลดข้อมูล !", "", "error");
-      history.push("/class-group");
-    } else if (class_group.data.length === 0) {
-      Swal.fire("ไม่พบรายการนี้ในระบบ !", "", "warning");
-      history.push("/class-group");
-    } else {
-      let topics_info = {};
-      topics_info.topic = topic_data.data;
-      topics_info.tablename = class_group.data[0].classgroup_table_score;
-      setTopics(topics_info);
-    }
-
-    const score_last = await score_model.getScoreLastCode({});
-    let score_info = {};
-    score_info.code = score_last.data;
-    score_info.last_code = 0;
-    setScore(score_info);
-  }
+  
 
   const fileHandler = (fileList) => {
     let newRows = [];
@@ -124,7 +123,8 @@ export default function Update() {
                 user_lastname: row[2],
               });
             } catch {
-              window.location.reload();
+              // console.log("row",row);
+              // window.location.reload();
             }
           }
         });
@@ -218,7 +218,7 @@ export default function Update() {
           </CRow>
         </CCardBody>
         <CCardFooter>
-          {row.rows.length != 0 ? (
+          {row.rows.length !== 0 ? (
             <>
               <CButton color="btn btn-primary" onClick={() => handleSubmit()}>
                 บันทึกข้อมูล

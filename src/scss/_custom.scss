@@ -133,10 +133,13 @@ body {
   padding-top: 10px;
   color: white;
   background-color: #bc171d;
+  // background-color: #096dd9;
 }
 .c-active {
   color: #ffff !important;
-  background-color: #dd5858 !important;
+  // background-color: #dd5858 !important;
+  background-color: #888888 !important;
+  
 }
 
 .c-sidebar-nav-title {
@@ -146,7 +149,8 @@ body {
 
 .c-sidebar-nav-item :hover {
   color: #ffff !important;
-  background-color: #dd6e6e !important;
+  // background-color: #dd6e6e !important;
+  background-color: #bababa !important;
 }
 
 .header-t-red {

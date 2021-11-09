@@ -15,15 +15,7 @@ export default class ClassgroupModel extends BaseModel {
       method: 'POST',
       body: JSON.stringify(data),
     })
-  }
-  
-  async getClassgroupByNamelist(data) {
-    return this.authFetch({
-      url: 'classgroup/getClassgroupByNamelist',
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
+  } 
 
   async getClassgroupByMycourse(data) {
     return this.authFetch({

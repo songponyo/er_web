@@ -1,40 +1,32 @@
-import React, { Component, useEffect, useState } from "react";
-import {
-  CContainer,
-  CRow,
-  CCol,
-  CCard,
-  CCardHeader,
-  CCardBody,
-} from "@coreui/react";
+import React, { useEffect, useState } from "react";
+import { CCard, CCardHeader, CCardBody } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEdit,
-  faCheck,
   faWindowClose,
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
-import { Table, Loading } from "../../../component/revel-strap";
+import { Table } from "../../../component/revel-strap";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 const classgroup_model = new ClassgroupModel();
 
 export default function View() {
-  const [showloading, setShowLoading] = useState(true);
   const [classgroup, setClassgroup] = useState([]);
 
   useEffect(() => {
+    async function _fetchData() {
+      const user_session = await JSON.parse(
+        localStorage.getItem(`session-user`)
+      );
+      const classgroup_data = await classgroup_model.getClassgroupBy({
+        owner: user_session.user_code,
+      });
+      setClassgroup(classgroup_data.data);
+    }
     _fetchData();
   }, []);
-
-  async function _fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-    const classgroup_data = await classgroup_model.getClassgroupBy({
-      owner : user_session.user_code
-    });
-    setClassgroup(classgroup_data.data);
-  }
 
   function _onDelete(data) {
     Swal.fire({
@@ -48,7 +40,6 @@ export default function View() {
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        setShowLoading(true);
         classgroup_model
           .deleteClassgroupByCode({
             classgroup_code: data.classgroup_code,
@@ -56,11 +47,9 @@ export default function View() {
           })
           .then((res) => {
             if (res.require) {
-              setShowLoading(false);
               Swal.fire("ลบรายการ เรียบร้อย", "", "success");
               window.location.reload();
             } else {
-              setShowLoading(false);
               Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
             }
           });
@@ -72,7 +61,7 @@ export default function View() {
     <div>
       <CCard>
         <CCardHeader className="header-t-red">
-          กลุ่มเรียน / Class group
+          กลุ่มเรียน
           <Link
             to={`/class-group/grouplist`}
             className="btn btn-success float-right"

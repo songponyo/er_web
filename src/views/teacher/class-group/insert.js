@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import dayjs from "dayjs";
+import { Switch } from "antd";
 import {
   CCard,
   CCardHeader,
@@ -11,7 +12,7 @@ import {
   CFormGroup,
   CLabel,
   CInput,
-  CButton, 
+  CButton,
 } from "@coreui/react";
 import { Table } from "react-bootstrap";
 import Swal from "sweetalert2";
@@ -53,6 +54,7 @@ export default function Insert() {
     { id: 1, topic_name: "", max_score: 0, classgroup_code: "" },
   ]);
   const [sum, setSum] = useState();
+  const [leaveswitch, setLeaveswitch] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -148,7 +150,7 @@ export default function Insert() {
     }
     setSubject(select_subject);
   }
- 
+
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let query_result = await classgroup_model.insertClassgroup({
@@ -400,25 +402,39 @@ export default function Insert() {
             </CCol>
           </CRow>
 
-          {/* <CRow>
+          <CRow>
             <CCol md="3">
               <CFormGroup>
+                <Switch
+                  checked={leaveswitch}
+                  size="middle"
+                  checkedChildren="เปิด"
+                  unCheckedChildren="ปิด"
+                  onChange={() => {
+                    setLeaveswitch(!leaveswitch);
+                  }}
+                />
+                {"   "}
                 <CLabel>
                   จำนวนครั้งที่สามารถขาดได้{" "}
                   <font color="#F00">
                     <b>*</b>
                   </font>
                 </CLabel>
-                <CInput
-                  type="number"
-                  name="leave_maxcount"
-                  value={classroom.leave_maxcount}
-                  onChange={(e) => _changeFrom(e)}
-                  min="0"
-                />
+
+                {leaveswitch === true ? (
+                  <CInput
+                    type="number"
+                    name="leave_maxcount"
+                    placeholder="0"
+                    value={classroom.leave_maxcount}
+                    onChange={(e) => _changeFrom(e)}
+                    min="0"
+                  />
+                ) : null}
               </CFormGroup>
             </CCol>
-          </CRow> */}
+          </CRow>
 
           {/* ตารางคะแนน */}
           <CRow>
@@ -450,7 +466,6 @@ export default function Insert() {
             </thead>
             <tbody>
               {topics.map((data, index) => {
-         
                 return (
                   <>
                     <tr>

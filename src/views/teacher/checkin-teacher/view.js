@@ -1,15 +1,14 @@
-import React, { Component, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { CCard, CCardHeader, CCardBody } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAddressBook, faQrcode } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
-import { Table, Loading } from "../../../component/revel-strap";
+import { Table, } from "../../../component/revel-strap";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 const classgroup_model = new ClassgroupModel();
 
-export default function View() {
-  const [showloading, setShowLoading] = useState(true);
+export default function View() { 
   const [classgroup, setClassgroup] = useState([]);
 
   useEffect(() => {
@@ -24,37 +23,34 @@ export default function View() {
     setClassgroup(classgroup_data.data);
   }
 
-  function _onDelete(data) {
-    Swal.fire({
-      title: "Are you sure ?",
-      text:
-        "Confirm to delete " +
-        data.classgroup_id +
-        "   " +
-        data.subject_fullname,
-      icon: "warning",
-      showCancelButton: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setShowLoading(true);
-        classgroup_model
-          .deleteClassgroupByCode({
-            classgroup_code: data.classgroup_code,
-            table_name: data.classgroup_table_score,
-          })
-          .then((res) => {
-            if (res.require) {
-              setShowLoading(false);
-              Swal.fire("ลบรายการ เรียบร้อย", "", "success");
-              window.location.reload();
-            } else {
-              setShowLoading(false);
-              Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
-            }
-          });
-      }
-    });
-  }
+  // function _onDelete(data) {
+  //   Swal.fire({
+  //     title: "Are you sure ?",
+  //     text:
+  //       "Confirm to delete " +
+  //       data.classgroup_id +
+  //       "   " +
+  //       data.subject_fullname,
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //   }).then((result) => {
+  //     if (result.isConfirmed) { 
+  //       classgroup_model
+  //         .deleteClassgroupByCode({
+  //           classgroup_code: data.classgroup_code,
+  //           table_name: data.classgroup_table_score,
+  //         })
+  //         .then((res) => {
+  //           if (res.require) { 
+  //             Swal.fire("ลบรายการ เรียบร้อย", "", "success");
+  //             window.location.reload();
+  //           } else { 
+  //             Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
+  //           }
+  //         });
+  //     }
+  //   });
+  // }
 
   return (
     <div>

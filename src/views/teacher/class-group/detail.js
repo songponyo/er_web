@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import * as FileSaver from "file-saver";
+import React, { useState, useEffect } from "react"; 
 import * as XLSX from "xlsx";
-import { Table, Button } from "react-bootstrap";
-
+import { Table } from "react-bootstrap";
+import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import {
   CCard,
@@ -14,7 +13,11 @@ import {
 } from "@coreui/react";
 import { useRouteMatch } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash, faUserMinus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEdit,
+  faTrash,
+  faUserMinus,
+} from "@fortawesome/free-solid-svg-icons";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import ScoreModel from "../../../models/ScoreModel";
 import TopicModel from "../../../models/TopicModel";
@@ -157,7 +160,35 @@ export default function Detail() {
     );
   };
   const CustomerTable = files.data.map((us) => CustomerRow(us));
-  console.log();
+
+
+  function _onDelete(data) {
+    Swal.fire({
+      title: "ยืนยัน",
+      text:
+        "ต้องการลบรายการนี้ใช่หรือไม่",
+      icon: "warning",
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {  
+        score_model
+          .deleteScoreByCode({
+            user_uid: data,
+            table_name:  classgroup.table_name,
+            classgroup_code: code.params.code 
+          })
+          .then((res) => {
+            if (res.require) { 
+              Swal.fire("ลบรายการ เรียบร้อย", "", "success");
+              window.location.reload();
+            } else { 
+              Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
+            }
+          });
+      }
+    });
+  } 
+
   return (
     <>
       <CCard>
@@ -170,12 +201,12 @@ export default function Detail() {
             <i className="fa fa-plus" aria-hidden="true"></i> นำเข้ารายชื่อด้วย
             Excel
           </Link>
-          <Link
+          {/* <Link
             to={`/class-group/adduser`}
             className="btn btn-success float-right"
           >
             <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มรายชื่อ
-          </Link>
+          </Link> */}
         </CCardHeader>
         <CCardBody>
           <Table striped bordered hover responsive>
@@ -235,7 +266,19 @@ export default function Detail() {
                           />
                           แก้ไข
                         </button>
-                      </Link>
+                      </Link> 
+                        <CButton
+                          type="button"
+                          className="btn btn-danger"
+                          onClick={() => _onDelete(data.user_uid)}
+                        >
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            size="5s"
+                            color="white"
+                          />
+                          {"  "}ลบรายการ
+                        </CButton> 
                       {/* <button type="button" className="btn btn-danger">
                         <FontAwesomeIcon
                           icon={faTrash}
@@ -264,6 +307,9 @@ export default function Detail() {
           /> */}
         </CCardBody>
         <CCardFooter>
+          <CButton color="success" onClick={() => exportToCSV()}>
+            Export .CSV
+          </CButton>
           <Link to={`/class-group`}>
             <CButton type="button" color="danger">
               {" "}
@@ -272,17 +318,13 @@ export default function Detail() {
           </Link>
         </CCardFooter>
       </CCard>
+    </>
+  );
+}
 
-      <div>
+{
+  /* <div>
         <h1>ตัวอย่าง ตาราง Excel สำหรับนำออก</h1>
-        <div className="row">
-          <div className="col-md-4 center">
-            <Button variant="success" onClick={() => exportToCSV()}>
-              Export .CSV
-            </Button>
-          </div>
-          <br />
-        </div>
         <Table striped bordered hover>
           <thead className="bgvi">
             <tr>
@@ -300,24 +342,9 @@ export default function Detail() {
             </tr>
           </thead>
           <tbody>
-            {CustomerTable}
-            {/* {classgroup.map((data, index) => {
-              return (
-                <tr>
-                  <td>{data.user_uid}</td>
-                  <td>{data.user_full_name}</td>
-                  {score
-                    .filter((scores) => scores.user_uid === data.user_uid)
-                    .map((topic_score) => {
-                      return <td>{topic_score.score_value}</td>;
-                    })}
-                </tr>
-              );
-            })} */}
+            {CustomerTable} 
           </tbody>
           <tbody></tbody>
         </Table>
-      </div>
-    </>
-  );
+      </div> */
 }

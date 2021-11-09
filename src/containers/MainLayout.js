@@ -7,9 +7,7 @@ import {
   TheHeader
 } from './index'
 
-const MainLayout = () => {
-
-
+const MainLayout = () => { 
   function set(e) {
     console.log(e);
   }

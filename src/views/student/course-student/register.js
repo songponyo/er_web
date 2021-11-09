@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
-import GLOBAL from "../../../GLOBAL";
-import ExcelPage from "../../../component/excelPage";
-
 import {
   CCard,
-  CCardText,
   CCardBody,
-  CCardTitle,
-  CImg,
-  CFormGroup,
   CContainer,
   CCol,
   CRow,
@@ -17,39 +10,52 @@ import {
   CButton,
   CCardFooter,
 } from "@coreui/react";
+import dayjs from "dayjs";
 import Swal from "sweetalert2";
-import { Select } from "../../../component/revel-strap";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit,
-  faCheck,
-  faWindowClose,
-} from "@fortawesome/free-solid-svg-icons";
-import { Table, Loading } from "../../../component/revel-strap";
-import { TimeController } from "../../../controller";
-import SubjectModel from "../../../models/SubjectModel";
+import { Link, useHistory, useRouteMatch } from "react-router-dom"; 
 import ClassgroupModel from "../../../models/ClassgroupModel";
-import UserModel from "../../../models/UserModel";
+import TopicModel from "../../../models/TopicModel";
+import ScoreModel from "../../../models/ScoreModel";
 
-const user_model = new UserModel();
-const classgroup_model = new ClassgroupModel();
-const subject_model = new SubjectModel();
-const time_controller = new TimeController();
+
+const score_model = new ScoreModel();
+const topic_model = new TopicModel();
+const classgroup_model = new ClassgroupModel(); 
 
 export default function Register() {
   let history = useHistory();
-  const [showloading, setShowLoading] = useState(true);
   let code = useRouteMatch("/course-student/register/:code");
   const [user, setUser] = useState([]);
   const [class_validate, setClass_validate] = useState({});
   const [classroom, setClassroom] = useState({
     class_password: "",
   });
+  const [topics, setTopics] = useState({ topic: [], tablename: "" });
+  const [score, setScore] = useState({});
+  const [top_row, setTop_row] = useState([]);
 
   useEffect(() => {
-    fetchData();
+    const checkuser = async () => {
+      const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+      const check_member = await classgroup_model.getClassgroupByMycourse({
+        user_uid : user_session.user_uid
+      })
+      if(check_member.data.length !== 0){
+        Swal.fire("ท่านเป็นสมาชิกอยู่แล้ว", "", "info");
+        history.push("/course-student"); 
+      }else{
+      fetchData();
+      } 
+    }
+    checkuser()
+    
   }, []);
+
+  useEffect(() => {
+    if (topics.topic.length !== 0) {
+      AddTopics();
+    }
+  }, [topics]);
 
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
@@ -70,7 +76,43 @@ export default function Register() {
       text: "โปรดใส่รหัสผ่าน",
     };
     setClass_validate(password_validate);
+
+    const score_last = await score_model.getScoreLastCode({});
+    setScore(score_last.data);
+
+    const topic_data = await topic_model.getTopicByClassCode({
+      classgroup_code: code.params.code,
+    });
+    let topics_info = {};
+    topics_info.topic = topic_data.data;
+    topics_info.tablename = class_group.data[0].classgroup_table_score;
+    setTopics(topics_info);
   }
+
+  const AddTopics = async () => {
+    let topic_arr = [];
+    let sum = 0;
+    let last = score.replace("SC", "");
+    let last_score = parseInt(last) - 1;
+
+    topics.topic.map((topic) => {
+      sum = sum + 1;
+      let result = sum + last_score;
+      let max_code = "SC" + result.toString().padStart(3, "0");
+      topic_arr.push({
+        classgroup_code: topic.classgroup_code,
+        max_score: topic.max_score,
+        score_value: 0,
+        topic_code: topic.topic_code,
+        topic_name: topic.topic_name,
+        score_code: max_code,
+        user_uid: user.user_uid,
+      });
+    }); 
+    setTop_row(topic_arr);
+    return true;
+  };
+
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let query_result = await classgroup_model.registerClass({
@@ -82,7 +124,8 @@ export default function Register() {
         user_code: user.user_code,
         user_status: "Active",
         table_name: classroom.classgroup_table_score,
-        adddate: time_controller.reformatToDate(new Date()),
+        adddate: dayjs(new Date()).format("DD-MM-YYYY"),
+        score_row: top_row,
       });
       if (query_result.require) {
         Swal.fire("สมัครเสร็จสิ้น", "", "success");
@@ -92,6 +135,7 @@ export default function Register() {
       }
     }
   }
+
   const _checkSubmit = () => {
     if (classroom.classgroup_password != classroom.class_password) {
       Swal.fire({

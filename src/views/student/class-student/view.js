@@ -17,7 +17,7 @@ export default function View() {
   async function _fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
     const classgroup_data = await classgroup_model.getClassgroupByMycourse({
-      user_code: user_session.user_code,
+      user_uid: user_session.user_uid,
     });
     setClassgroup(classgroup_data.data); 
   }
@@ -90,10 +90,11 @@ export default function View() {
                 align: "center",
                 render: (cell) => {
                   const row_accessible = [];
+                  console.log("cell",cell);
                   row_accessible.push(
                     <Link
                       key="detail"
-                      to={`/class-student/detail/${cell.classgroup_table_score}`}
+                      to={`/class-student/detail/${cell.user_uid}-${cell.classgroup_table_score}`}
                       title="แก้ไขรายการ"
                     >
                       <button type="button" className="btn btn-primary">

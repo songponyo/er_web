@@ -1,29 +1,20 @@
-import React, { Component, useEffect, useState } from "react";
-import GLOBAL from "../../../GLOBAL";
-import {
-  CContainer,
-  CRow,
-  CCol,
+import React, {  useEffect, useState } from "react"; 
+import { 
   CCard,
   CCardHeader,
   CCardBody,
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit,
-  faCheck,
-  faWindowClose,
-  faCoffee,
+import { 
   faAddressCard
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
-import { Table, Loading } from "../../../component/revel-strap";
+import { Table } from "../../../component/revel-strap";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 const classgroup_model = new ClassgroupModel();
 
-export default function View() {
-  const [showloading, setShowLoading] = useState(true);
+export default function View() { 
   const [classgroup, setClassgroup] = useState([]);
 
   useEffect(() => {
@@ -42,17 +33,14 @@ export default function View() {
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
-      if (result.isConfirmed) {
-        setShowLoading(true);
+      if (result.isConfirmed) { 
         classgroup_model
           .deleteClassgroupByCode({ classgroup_code: data.classgroup_code })
           .then((res) => {
-            if (res.require) {
-              setShowLoading(false);
+            if (res.require) { 
               Swal.fire("ลบรายการ เรียบร้อย", "", "success");
               window.location.reload();
-            } else {
-              setShowLoading(false);
+            } else { 
               Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
             }
           });

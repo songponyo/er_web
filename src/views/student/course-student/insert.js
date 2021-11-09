@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import GLOBAL from "../../../GLOBAL";
+import React, { useState, useEffect } from "react"; 
 import { Link } from "react-router-dom";
 import {
   CCard,
@@ -31,8 +30,7 @@ const time_controller = new TimeController();
 export default function Insert() {
   let history = useHistory();
   const [user, setUser] = useState([]);
-  const [subject, setSubject] = useState([]);
-  const [classgroup, setClassgroup] = useState([])
+  const [subject, setSubject] = useState([]); 
   const [classroom, setClassroom] = useState({
     classgroup_code: "",
     classgroup_id: "",
