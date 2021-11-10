@@ -7,6 +7,8 @@ import {
   faWindowClose,
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
+import { Card } from "antd";
+ 
 import Swal from "sweetalert2";
 import { Table } from "../../../component/revel-strap";
 import ClassgroupModel from "../../../models/ClassgroupModel";
@@ -14,7 +16,7 @@ const classgroup_model = new ClassgroupModel();
 
 export default function View() {
   const [classgroup, setClassgroup] = useState([]);
-
+  const { Meta } = Card;
   useEffect(() => {
     async function _fetchData() {
       const user_session = await JSON.parse(
@@ -58,7 +60,7 @@ export default function View() {
   }
 
   return (
-    <div>
+    <div> 
       <CCard>
         <CCardHeader className="header-t-red">
           กลุ่มเรียน

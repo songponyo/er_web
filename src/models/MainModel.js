@@ -47,8 +47,7 @@ class MainModel {
 export class BaseModel extends MainModel {
   async directFetch(data) {
     return await this.directEndpointFetch(GLOBAL.BASE_SERVER.URL + data.url, data)
-  }
-
+  } 
   async authFetch(data) {
     return await this.authEndpointFetch(GLOBAL.BASE_SERVER.URL + data.url, data)
   }

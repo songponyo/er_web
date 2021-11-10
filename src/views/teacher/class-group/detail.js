@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
+import News from "../class-group/news";
 import * as XLSX from "xlsx";
-import { Table } from "react-bootstrap";
+import { Card, Table } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import {
@@ -13,11 +14,7 @@ import {
 } from "@coreui/react";
 import { useRouteMatch } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit,
-  faTrash,
-  faUserMinus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import ScoreModel from "../../../models/ScoreModel";
 import TopicModel from "../../../models/TopicModel";
@@ -29,22 +26,6 @@ const classgroup_model = new ClassgroupModel();
 export default function Detail() {
   let code = useRouteMatch("/class-group/detail/:code");
   const [classgroup, setClassgroup] = useState([]);
-  // const [columns, setColumns] = useState([
-  //   {
-  //     title: "รหัสนักศึกษา",
-  //     width: 30,
-  //     dataIndex: "user_uid",
-  //     key: "user_uid",
-  //     fixed: "left",
-  //   },
-  //   {
-  //     title: "ชื่อ",
-  //     width: 30,
-  //     dataIndex: "user_full_name",
-  //     key: "user_full_name",
-  //     fixed: "left",
-  //   },
-  // ]);
   const [topics, setTopics] = useState([]);
   const [score, setScore] = useState([]);
   const [files, setFiles] = useState({ data: [], score_user: [] });
@@ -161,39 +142,37 @@ export default function Detail() {
   };
   const CustomerTable = files.data.map((us) => CustomerRow(us));
 
-
   function _onDelete(data) {
     Swal.fire({
       title: "ยืนยัน",
-      text:
-        "ต้องการลบรายการนี้ใช่หรือไม่",
+      text: "ต้องการลบรายการนี้ใช่หรือไม่",
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
-      if (result.isConfirmed) {  
+      if (result.isConfirmed) {
         score_model
           .deleteScoreByCode({
             user_uid: data,
-            table_name:  classgroup.table_name,
-            classgroup_code: code.params.code 
+            table_name: classgroup.table_name,
+            classgroup_code: code.params.code,
           })
           .then((res) => {
-            if (res.require) { 
+            if (res.require) {
               Swal.fire("ลบรายการ เรียบร้อย", "", "success");
               window.location.reload();
-            } else { 
+            } else {
               Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
             }
           });
       }
     });
-  } 
+  }
 
   return (
     <>
       <CCard>
         <CCardHeader className="header-t-red">
-          รายชื่อ / Name list
+          รายชื่อ  
           <Link
             to={`/class-group/excel/${code.params.code}`}
             className="btn btn-success float-right"
@@ -266,19 +245,19 @@ export default function Detail() {
                           />
                           แก้ไข
                         </button>
-                      </Link> 
-                        <CButton
-                          type="button"
-                          className="btn btn-danger"
-                          onClick={() => _onDelete(data.user_uid)}
-                        >
-                          <FontAwesomeIcon
-                            icon={faTrash}
-                            size="5s"
-                            color="white"
-                          />
-                          {"  "}ลบรายการ
-                        </CButton> 
+                      </Link>
+                      <CButton
+                        type="button"
+                        className="btn btn-danger"
+                        onClick={() => _onDelete(data.user_uid)}
+                      >
+                        <FontAwesomeIcon
+                          icon={faTrash}
+                          size="5s"
+                          color="white"
+                        />
+                        {"  "}ลบรายการ
+                      </CButton>
                       {/* <button type="button" className="btn btn-danger">
                         <FontAwesomeIcon
                           icon={faTrash}
@@ -318,33 +297,7 @@ export default function Detail() {
           </Link>
         </CCardFooter>
       </CCard>
+      <News />
     </>
   );
-}
-
-{
-  /* <div>
-        <h1>ตัวอย่าง ตาราง Excel สำหรับนำออก</h1>
-        <Table striped bordered hover>
-          <thead className="bgvi">
-            <tr>
-              <th>รหัสประจำตัว</th>
-              <th>ชื่อ</th>
-              {topics.map((data, index) => {
-                return (
-                  <>
-                    <th style={{ textAlign: "center" }}>
-                      {data.topic_name} ({data.max_score})
-                    </th>
-                  </>
-                );
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {CustomerTable} 
-          </tbody>
-          <tbody></tbody>
-        </Table>
-      </div> */
 }
