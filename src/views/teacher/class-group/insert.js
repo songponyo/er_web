@@ -65,17 +65,7 @@ export default function Insert() {
       dayjs().format("YYYY-MM-DD ") + classroom.classgroup_time_start;
     let timer_end =
       dayjs().format("YYYY-MM-DD ") + classroom.classgroup_time_end;
-    // let timer_start = moment(
-    //   `${moment().format("YYYY-MM-DD")} ${classroom.classgroup_time_start}`,
-    //   "YYYY-MM-DD HH:mm"
-    // );
-    // console.log("timer_start",timer_start._i);
-    // console.log("timer_start", typeof timer_start);
 
-    // let timer_end = moment(
-    //   `${moment().format("YYYY-MM-DD")} ${classroom.classgroup_time_end}`,
-    //   "YYYY-MM-DD HH:mm"
-    // );
     let classrooma = {};
     classrooma.time_start = timer_start;
     classrooma.time_end = timer_end;
@@ -405,7 +395,7 @@ export default function Insert() {
           <CRow>
             <CCol md="3">
               <CFormGroup>
-                <Switch
+                {/* <Switch
                   checked={leaveswitch}
                   size="middle"
                   checkedChildren="เปิด"
@@ -413,7 +403,7 @@ export default function Insert() {
                   onChange={() => {
                     setLeaveswitch(!leaveswitch);
                   }}
-                />
+                /> */}
                 {"   "}
                 <CLabel>
                   จำนวนครั้งที่สามารถขาดได้{" "}
@@ -422,16 +412,16 @@ export default function Insert() {
                   </font>
                 </CLabel>
 
-                {leaveswitch === true ? (
-                  <CInput
-                    type="number"
-                    name="leave_maxcount"
-                    placeholder="0"
-                    value={classroom.leave_maxcount}
-                    onChange={(e) => _changeFrom(e)}
-                    min="0"
-                  />
-                ) : null}
+                {/* {leaveswitch === true ? ( */}
+                <CInput
+                  type="number"
+                  name="leave_maxcount"
+                  placeholder="0"
+                  value={classroom.leave_maxcount}
+                  onChange={(e) => _changeFrom(e)}
+                  min="0"
+                />
+                {/* ) : null} */}
               </CFormGroup>
             </CCol>
           </CRow>
@@ -493,10 +483,10 @@ export default function Insert() {
                 );
               })}
             </tbody>
-
+            <br />
             <thead>
               <tr>
-                <th>คะแนนทั้งหมด</th>
+                <th colspan="2">คะแนนทั้งหมด</th>
               </tr>
             </thead>
             <tbody>
@@ -513,8 +503,6 @@ export default function Insert() {
                 </td>
               </tr>
             </tbody>
-
-            <br />
           </Table>
         </CCardBody>
         <CCardFooter>

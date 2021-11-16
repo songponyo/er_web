@@ -32,9 +32,9 @@ export default function View() {
 
   function _onDelete(data) {
     Swal.fire({
-      title: "Are you sure ?",
+      title: "คุณต้องการลบรายการนี้",
       text:
-        "Confirm to delete " +
+        "โปรดยืนยันการกระทำ" +
         data.classgroup_id +
         "   " +
         data.subject_fullname,
@@ -140,22 +140,25 @@ export default function View() {
                     </Link>
                   );
 
-                  // row_accessible.push(
-                  //   <Link
-                  //     key="excel"
-                  //     to={`/class-group/excel/${cell.classgroup_code}`}
-                  //     title="แก้ไขรายการ"
-                  //   >
-                  //     <button type="button" className="btn btn-success">
-                  //       <FontAwesomeIcon
-                  //         icon={faEdit}
-                  //         size="5s"
-                  //         color="white"
-                  //       />{" "}
-                  //       Excel
-                  //     </button>
-                  //   </Link>
-                  // );
+                  
+                  row_accessible.push(
+                    <Link
+                      key="news"
+                      to={`/class-group/news/${cell.classgroup_code}`}
+                      title="แก้ไขรายการ"
+                    >
+                      <button type="button" className="btn btn-success">
+                        <FontAwesomeIcon
+                          icon={faSearch}
+                          size="5s"
+                          color="white"
+                        />{" "}
+                        กระดานข่าว
+                      </button>
+                    </Link>
+                  );
+
+          
 
                   row_accessible.push(
                     <Link

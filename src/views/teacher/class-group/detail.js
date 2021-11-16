@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import News from "../class-group/news";
+import { Empty } from "antd";
 import * as XLSX from "xlsx";
-import { Card, Table } from "react-bootstrap";
+import {Table } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import {
@@ -10,7 +10,6 @@ import {
   CCardBody,
   CCardFooter,
   CButton,
-  CImg,
 } from "@coreui/react";
 import { useRouteMatch } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -172,7 +171,7 @@ export default function Detail() {
     <>
       <CCard>
         <CCardHeader className="header-t-red">
-          รายชื่อ  
+          รายชื่อ
           <Link
             to={`/class-group/excel/${code.params.code}`}
             className="btn btn-success float-right"
@@ -212,11 +211,7 @@ export default function Detail() {
                 </>
               ) : (
                 <>
-                  <center>
-                    <tr>
-                      <CImg src="https://i.pinimg.com/originals/49/e5/8d/49e58d5922019b8ec4642a2e2b9291c2.png" />
-                    </tr>
-                  </center>
+                  <Empty /> 
                 </>
               )}
             </thead>
@@ -296,8 +291,7 @@ export default function Detail() {
             </CButton>
           </Link>
         </CCardFooter>
-      </CCard>
-      <News />
+      </CCard> 
     </>
   );
 }

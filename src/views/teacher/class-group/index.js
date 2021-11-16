@@ -9,6 +9,7 @@ const Excel = React.lazy(() => import('./excel'))
 const Detail = React.lazy(() => import('./detail'))
 const Score = React.lazy(() => import('./score'))
 const Adduser = React.lazy(() => import('./adduser'))
+const News = React.lazy(() => import('./news'))
 
 
 class Classgroup extends Component {
@@ -24,6 +25,7 @@ class Classgroup extends Component {
             <Route exact path="/class-group/detail/:code" render={props => <Detail {...props} {...this.props.SESSION}/>}  />
             <Route exact path="/class-group/excel/:code" render={props => <Excel {...props} {...this.props.SESSION}/>}  />
             <Route exact path="/class-group/score/:code" render={props => <Score {...props} {...this.props.SESSION}/>}  />
+            <Route exact path="/class-group/news/:code" render={props => <News {...props} {...this.props.SESSION}/>}  />
             <Route path="/class-group" render={props => <View {...props} {...this.props.SESSION} />} />
           </Switch>
         </React.Suspense>
