@@ -11,17 +11,17 @@ import {
   CButton,
   CFormText,
   CForm,
+  CImg,
 } from "@coreui/react";
 import dayjs from "dayjs";
 import "dayjs/locale/th";
 import Swal from "sweetalert2";
 import { FloatingLabel, Form } from "react-bootstrap";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 import {
   DatePicker,
   Space,
   Switch,
-  Spin,
   Menu,
   Dropdown,
   Calendar,
@@ -30,29 +30,36 @@ import {
 import { DownOutlined } from "@ant-design/icons";
 
 import NewsModel from "../../../models/NewsModel";
+import ClassgroupModel from "../../../models/ClassgroupModel";
+// import LineModel from "../../../models/LineModel";
 
 const news_model = new NewsModel();
+const classgroup_model = new ClassgroupModel();
+// const line_model = new LineModel();
 
 export default function News() {
   let code = useRouteMatch("/class-group/news/:code");
   const [news, setNews] = useState({
+    news_head: "",
     news_code: "",
     news_detail: "",
-    news_notify: "",
+    news_notice_day: "",
+    news_time: "",
     news_image: "",
     classgroup_code: "",
     adddate: "",
     addby: "",
   });
+  const [classgroup, setClassgroup] = useState([]);
   const [Checkdate, setCheckdate] = useState(false);
   const [feednews, setFeednews] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [checkupdate, setCheckupdate] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
-    fetchData();
     fetchFeedData();
+    fetchData(); 
+    setIsLoading(true);
   }, []);
   // console.log("news", news);
   async function fetchData() {
@@ -73,7 +80,14 @@ export default function News() {
       classgroup_code: code.params.code,
     });
     setFeednews(news_feed.data);
-    setIsLoading(false);
+
+    const classgroup_data = await classgroup_model.getClassgroupByCode({
+      classgroup_code: code.params.code,
+    });
+    let class_obj = {};
+    class_obj.subject_name = classgroup_data.data[0].subject_fullname;
+    class_obj.class_own = classgroup_data.data[0].user_fullname; 
+    setClassgroup(class_obj)
   }
 
   const _changeFrom = (e) => {
@@ -83,14 +97,17 @@ export default function News() {
 
   async function _handleSubmit() {
     if (_checkSubmit()) {
+      console.log("news", news);
       let query_result = await news_model.insertNews({
         news_code: news.news_code,
         news_detail: news.news_detail,
-        news_notify: news.news_notify,
+        news_notice_day: news.news_notice_day,
         news_image: news.news_image,
         classgroup_code: news.classgroup_code,
         adddate: news.adddate,
         addby: news.addby,
+        subject_name: classgroup.subject_name,
+        class_own : classgroup.class_own
       });
       if (query_result.require) {
         Swal.fire("บันทึกเรียบร้อย", "", "success");
@@ -195,9 +212,6 @@ export default function News() {
           { type: "warning", content: "This is warning event" },
           { type: "success", content: "This is very long usual event。。...." },
           { type: "error", content: "This is error event 1." },
-          { type: "error", content: "This is error event 2." },
-          { type: "error", content: "This is error event 3." },
-          { type: "error", content: "This is error event 4." },
         ];
         break;
       default:
@@ -234,11 +248,24 @@ export default function News() {
     ) : null;
   }
 
+  // const _handleSubmitLine = async () => {
+  //   let query_result = await line_model.notifyredirect({
+  //     news_code: news.news_code,
+  //   });
+  //   if (query_result.require) {
+  //     Swal.fire("บันทึกเรียบร้อย", "", "success");
+  //     // window.location.reload();
+  //     // history.push("/leave-student");
+  //   } else {
+  //     Swal.fire("ขออภัย มีอย่างอย่างผิดพลาด!", "", "error");
+  //   }
+  // };
+
   return (
     <div align="center">
-      {isLoading ? (
-        <div className="spin-load">
-          <Spin size="large" />
+      {!isLoading ? (
+        <div>
+          <CImg src="https://cdn.dribbble.com/users/108183/screenshots/4543219/loader_backinout.gif" />
         </div>
       ) : (
         <>
@@ -287,9 +314,11 @@ export default function News() {
                                   onChange={(e) =>
                                     setNews({
                                       ...news,
-                                      news_notify: dayjs(e._d).format(
-                                        "YYYY-MM-DD H:mm:ss"
+                                      news_notice_day: dayjs(e._d).format(
+                                        "DD-MM-YYYY"
                                       ),
+                                      // news_time: dayjs(e._d)
+                                      //   .format("H:mm:ss"),
                                     })
                                   }
                                 />
@@ -373,10 +402,13 @@ export default function News() {
               </CCard>
             </CCol>
             <CCol>
-              <Calendar
-                dateCellRender={dateCellRender}
-                monthCellRender={monthCellRender}
-              />
+              <div style={{ borderRadius: "2px" }}>
+                <Calendar
+                  fullscreen={true}
+                  dateCellRender={dateCellRender}
+                  monthCellRender={monthCellRender}
+                />
+              </div>
             </CCol>
           </CRow>
         </>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Empty } from "antd";
 import * as XLSX from "xlsx";
-import {Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import {
@@ -10,6 +10,7 @@ import {
   CCardBody,
   CCardFooter,
   CButton,
+  CImg,
 } from "@coreui/react";
 import { useRouteMatch } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -28,6 +29,8 @@ export default function Detail() {
   const [topics, setTopics] = useState([]);
   const [score, setScore] = useState([]);
   const [files, setFiles] = useState({ data: [], score_user: [] });
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -88,6 +91,7 @@ export default function Detail() {
 
     setScore(score_user.data);
 
+    setIsLoading(true);
     // let column = [...columns];
     // for (let i = 0; i < topic_data.data.length; i++) {
     //   let n = i + 1;
@@ -168,103 +172,99 @@ export default function Detail() {
   }
 
   return (
-    <>
-      <CCard>
-        <CCardHeader className="header-t-red">
-          รายชื่อ
-          <Link
-            to={`/class-group/excel/${code.params.code}`}
-            className="btn btn-success float-right"
-          >
-            <i className="fa fa-plus" aria-hidden="true"></i> นำเข้ารายชื่อด้วย
-            Excel
-          </Link>
-          {/* <Link
+    <div align="center">
+      {!isLoading ? (
+        <>
+          <CImg src="https://cdn.dribbble.com/users/108183/screenshots/4543219/loader_backinout.gif" />
+        </>
+      ) : (
+        <CCard>
+          <CCardHeader className="header-t-red">
+            รายชื่อ
+            <Link
+              to={`/class-group/excel/${code.params.code}`}
+              className="btn btn-success float-right"
+            >
+              <i className="fa fa-plus" aria-hidden="true"></i>{" "}
+              นำเข้ารายชื่อด้วย Excel
+            </Link>
+            {/* <Link
             to={`/class-group/adduser`}
             className="btn btn-success float-right"
           >
             <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มรายชื่อ
           </Link> */}
-        </CCardHeader>
-        <CCardBody>
-          <Table striped bordered hover responsive>
-            <thead>
-              {classgroup.length !== 0 ? (
-                <>
-                  <tr>
-                    <th>รหัสประจำตัว</th>
-                    <th>ชื่อ - นามสกุล</th>
-                    {topics.map((data) => {
-                      return (
-                        <>
-                          <th style={{ textAlign: "center" }}>
-                            {" "}
-                            {data.topic_name} ({data.max_score})
-                          </th>
-                        </>
-                      );
-                    })}
-                    <th>
-                      <center>จัดการ </center>
-                    </th>
-                  </tr>
-                </>
-              ) : (
-                <>
-                  <Empty /> 
-                </>
-              )}
-            </thead>
-            <tbody>
-              {classgroup.map((data, index) => {
-                return (
-                  <tr>
-                    <td>{data.user_uid}</td>
-                    <td>{data.user_full_name}</td>
-                    {score
-                      .filter((scores) => scores.user_uid === data.user_uid)
-                      .map((topic_score) => {
-                        return <td>{topic_score.score_value}</td>;
-                      })}
-                    <td style={{ textAlign: "center" }}>
-                      <Link
-                        key="score"
-                        to={`/class-group/score/${data.user_uid}-${classgroup.table_name}`}
-                        title="แก้ไขรายการ"
-                      >
-                        <button type="button" className="btn btn-primary">
+          </CCardHeader>
+          <CCardBody>
+            <Table striped bordered hover responsive>
+              <thead>
+                <tr>
+                  <th class=" tp-first-col">รหัสประจำตัว</th>
+                  <th class=" tp-second-col">ชื่อ - นามสกุล</th>
+                  {topics.map((data) => {
+                    return (
+                      <>
+                        <th style={{ textAlign: "center" }}> 
+                          {data.topic_name} ({data.max_score})
+                        </th>
+                      </>
+                    );
+                  })}
+                  <th style={{ width: "220px" }}>
+                    <center>จัดการ </center>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {classgroup.map((data, index) => {
+                  return (
+                    <tr>
+                      <td>{data.user_uid}</td>
+                      <td>{data.user_full_name}</td>
+                      {score
+                        .filter((scores) => scores.user_uid === data.user_uid)
+                        .map((topic_score) => {
+                          return <td>{topic_score.score_value}</td>;
+                        })}
+                      <td style={{ textAlign: "center" }}>
+                        <Link
+                          key="score"
+                          to={`/class-group/score/${data.user_uid}-${classgroup.table_name}`}
+                          title="แก้ไขรายการ"
+                        >
+                          <button type="button" className="btn btn-primary">
+                            <FontAwesomeIcon
+                              icon={faEdit}
+                              size="5s"
+                              color="white"
+                            />
+                            แก้ไข
+                          </button>
+                        </Link>
+                        <CButton
+                          type="button"
+                          className="btn btn-danger"
+                          onClick={() => _onDelete(data.user_uid)}
+                        >
                           <FontAwesomeIcon
-                            icon={faEdit}
+                            icon={faTrash}
                             size="5s"
                             color="white"
                           />
-                          แก้ไข
-                        </button>
-                      </Link>
-                      <CButton
-                        type="button"
-                        className="btn btn-danger"
-                        onClick={() => _onDelete(data.user_uid)}
-                      >
-                        <FontAwesomeIcon
-                          icon={faTrash}
-                          size="5s"
-                          color="white"
-                        />
-                        {"  "}ลบรายการ
-                      </CButton>
-                      {/* <button type="button" className="btn btn-danger">
+                          {"  "}ลบรายการ
+                        </CButton>
+                        {/* <button type="button" className="btn btn-danger">
                         <FontAwesomeIcon
                           icon={faTrash}
                           size="5s"
                           color="white"
                         />  ลบ
                       </button> */}
-                    </td>
-                  </tr>
-                );
-              })}
-              {/* {classgroup.map((data, index) => {
+                      </td>
+                    </tr>
+                  );
+                })}
+                {/* {classgroup.map((data, index) => {
                 return (
                   <tr>
                     <td>{data.user_uid}</td>
@@ -272,26 +272,27 @@ export default function Detail() {
                   </tr>
                 );
               })} */}
-            </tbody>
-          </Table>
-          {/* <Table
+              </tbody>
+            </Table>
+            {/* <Table
             dataSource={classgroup}
             scroll={{ x: 1500, y: 450 }}
             columns={columns}
           /> */}
-        </CCardBody>
-        <CCardFooter>
-          <CButton color="success" onClick={() => exportToCSV()}>
-            Export .CSV
-          </CButton>
-          <Link to={`/class-group`}>
-            <CButton type="button" color="danger">
-              {" "}
-              ย้อนกลับ{" "}
+          </CCardBody>
+          <CCardFooter>
+            <CButton color="success" onClick={() => exportToCSV()}>
+              Export .CSV
             </CButton>
-          </Link>
-        </CCardFooter>
-      </CCard> 
-    </>
+            <Link to={`/class-group`}>
+              <CButton type="button" color="danger">
+                {" "}
+                ย้อนกลับ{" "}
+              </CButton>
+            </Link>
+          </CCardFooter>
+        </CCard>
+      )}
+    </div>
   );
 }

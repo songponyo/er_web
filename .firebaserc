@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "elearnning-323808"
-  }
+    "default": "elearnning-b40d1",
+    "mamon": "elearnning-b40d1"
+  },
+  "targets": {}
 }

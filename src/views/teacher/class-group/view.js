@@ -6,8 +6,7 @@ import {
   faEdit,
   faWindowClose,
   faSearch,
-} from "@fortawesome/free-solid-svg-icons";
-import { Card } from "antd";
+} from "@fortawesome/free-solid-svg-icons"; 
  
 import Swal from "sweetalert2";
 import { Table } from "../../../component/revel-strap";
@@ -15,8 +14,7 @@ import ClassgroupModel from "../../../models/ClassgroupModel";
 const classgroup_model = new ClassgroupModel();
 
 export default function View() {
-  const [classgroup, setClassgroup] = useState([]);
-  const { Meta } = Card;
+  const [classgroup, setClassgroup] = useState([]); 
   useEffect(() => {
     async function _fetchData() {
       const user_session = await JSON.parse(

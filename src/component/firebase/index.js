@@ -1,15 +1,14 @@
 import firebase from "firebase";
 import "firebase/storage";
 
-// Your web app's Firebase configuration
-var firebaseConfig = {
-  apiKey: "AIzaSyDyTUdDcKCq67cuR-nOkX0GdkJzdO3EIGc",
-  authDomain: "elearnning-323808.firebaseapp.com",
-  projectId: "elearnning-323808",
-  storageBucket: "elearnning-323808.appspot.com",
-  messagingSenderId: "1061786570855",
-  appId: "1:1061786570855:web:0c72100dddceb9853604c2",
-  measurementId: "G-161XE43FYJ"
+// Your web app's Firebase configuration 
+const firebaseConfig = {
+  apiKey: "AIzaSyA8nJBch1cm7SXHMIZzT7HD28HYV1UwPAo",
+  authDomain: "elearnning-b40d1.firebaseapp.com",
+  projectId: "elearnning-b40d1",
+  storageBucket: "elearnning-b40d1.appspot.com",
+  messagingSenderId: "430908378378",
+  appId: "1:430908378378:web:bcbd0eb9c90064028a3ef3"
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);

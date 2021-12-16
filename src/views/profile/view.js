@@ -10,7 +10,7 @@ import {
   CInput,
   CButton,
   CImg,
-} from "@coreui/react"; 
+} from "@coreui/react";
 import { Link, useHistory } from "react-router-dom";
 import Swal from "sweetalert2";
 import UserModel from "../../models/UserModel";
@@ -21,6 +21,7 @@ const user_model = new UserModel();
 
 export default function View() {
   let history = useHistory();
+  const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState({
     user_profile_image: {
       src: "default.png",
@@ -31,6 +32,7 @@ export default function View() {
 
   useEffect(() => {
     _fetchData();
+   
   }, []);
 
   async function _fetchData() {
@@ -47,6 +49,7 @@ export default function View() {
       old: user_session.user_profile_image,
     };
     setUser(user_info);
+    setIsLoading(true);
   }
 
   const _handleImageChange = (img_name, e) => {
@@ -69,7 +72,7 @@ export default function View() {
       }
     }
   };
-  
+
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let img = "";
@@ -134,8 +137,12 @@ export default function View() {
   };
 
   return (
-    <>
-      <div>
+    <div>
+      {!isLoading ? (
+        <div>
+          <CImg src="https://cdn.dribbble.com/users/108183/screenshots/4543219/loader_backinout.gif" />
+        </div>
+      ) : (
         <CCard>
           <CCardHeader className="header-t-red">
             ข้อมูลส่วนตัว / Profile
@@ -233,7 +240,7 @@ export default function View() {
                 <br />
                 <CImg
                   className="imag-circle"
-                  name="logo" 
+                  name="logo"
                   src={
                     user.user_profile_image.file !== null
                       ? user.user_profile_image.src
@@ -267,7 +274,7 @@ export default function View() {
             </Link>
           </CCardFooter>
         </CCard>
-      </div>
-    </>
+      )}
+    </div>
   );
 }
