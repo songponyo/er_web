@@ -27,7 +27,7 @@ export default function View() {
   async function _fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
     const classgroup_data = await classgroup_model.getClassgroupByMycourse({
-      user_code: user_session.user_code
+      user_uid: user_session.user_uid
     });
     setClassgroup(classgroup_data.data);
   }

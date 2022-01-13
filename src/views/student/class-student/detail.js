@@ -113,32 +113,32 @@ export default function Detail() {
     }
   }
 
-  const ChangeArray = (e, index) => {
-    const proper = e.target.name;
-    let newArr = [...topics];
-    if (proper === "score_value") {
-      let max_score = newArr[index]["max_score"]; 
-      let sum = parseInt(e.target.value);
-      if (max_score < sum) {
-        Swal.fire(
-          "คุณใส่คะแนนมากเกินคะแนนเต็ม",
-          "คะแนนสูงสุดคือ  " + max_score,
-          "warning"
-        ).then((result) => {
-          if (result.isConfirmed) {
-            newArr[index][proper] = 0;
-            setTopics(newArr);
-          }
-        });
-      } else {
-        newArr[index][proper] = sum || "";
-        setTopics(newArr);
-      }
-    } else {
-      newArr[index][proper] = e.target.value;
-      setTopics(newArr);
-    }
-  };
+  // const ChangeArray = (e, index) => {
+  //   const proper = e.target.name;
+  //   let newArr = [...topics];
+  //   if (proper === "score_value") {
+  //     let max_score = newArr[index]["max_score"]; 
+  //     let sum = parseInt(e.target.value);
+  //     if (max_score < sum) {
+  //       Swal.fire(
+  //         "คุณใส่คะแนนมากเกินคะแนนเต็ม",
+  //         "คะแนนสูงสุดคือ  " + max_score,
+  //         "warning"
+  //       ).then((result) => {
+  //         if (result.isConfirmed) {
+  //           newArr[index][proper] = 0;
+  //           setTopics(newArr);
+  //         }
+  //       });
+  //     } else {
+  //       newArr[index][proper] = sum || "";
+  //       setTopics(newArr);
+  //     }
+  //   } else {
+  //     newArr[index][proper] = e.target.value;
+  //     setTopics(newArr);
+  //   }
+  // };
 
   return (
     <div className="animated fadeIn">
@@ -198,7 +198,8 @@ export default function Detail() {
                       placeholder="0"
                       value={data.score_value}
                       name="score_value"
-                      onChange={(e) => ChangeArray(e, index)}
+                      // onChange={(e) => ChangeArray(e, index)}
+                      readOnly
                     />
                   </CCol>
                 </>
@@ -213,14 +214,14 @@ export default function Detail() {
           </CRow>
         </CCardBody>
         <CCardFooter>
-          <CButton
+          {/* <CButton
             type="submit"
             color="success"
             onClick={() => _handleSubmit()}
           >
             บันทึก
-          </CButton>
-          <Link to={`/class-group/detail/${classgroup.classgroup_code}`}>
+          </CButton> */}
+          <Link to={`/class-student`}>
             <CButton type="button" color="danger">
               {" "}
               ย้อนกลับ{" "}

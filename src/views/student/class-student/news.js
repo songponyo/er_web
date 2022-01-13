@@ -31,14 +31,14 @@ import { DownOutlined } from "@ant-design/icons";
 
 import NewsModel from "../../../models/NewsModel";
 import ClassgroupModel from "../../../models/ClassgroupModel";
-import LineModel from "../../../models/LineModel";
+// import LineModel from "../../../models/LineModel";
 
 const news_model = new NewsModel();
 const classgroup_model = new ClassgroupModel();
-const line_model = new LineModel();
+// const line_model = new LineModel();
 
 export default function News() {
-  let code = useRouteMatch("/class-group/news/:code");
+  let code = useRouteMatch("/class-student/news/:code");
   const [news, setNews] = useState({
     news_head: "",
     news_code: "",
@@ -55,8 +55,6 @@ export default function News() {
   const [feednews, setFeednews] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [checkupdate, setCheckupdate] = useState(false);
-
-  console.log("Checkdate", Checkdate);
 
   useEffect(() => {
     fetchFeedData();
@@ -99,49 +97,24 @@ export default function News() {
 
   async function _handleSubmit() {
     if (_checkSubmit()) {
-      if (!Checkdate) {
-        let query_result = await news_model.insertNews({
-          news_code: news.news_code,
-          news_detail: news.news_detail,
-          news_notice_day: news.news_notice_day,
-          news_image: news.news_image,
-          classgroup_code: news.classgroup_code,
-          adddate: news.adddate,
-          addby: news.addby,
-          subject_name: classgroup.subject_name,
-          class_own: classgroup.class_own,
-        });
-
-        if (query_result.require) {
-          Swal.fire("บันทึกเรียบร้อย", "", "success");
-          window.location.reload();
-          // history.push("/leave-student");
-        } else {
-          Swal.fire("ขออภัย มีอย่างอย่างผิดพลาด!", "", "error");
-          window.location.reload();
-        }
+      console.log("news", news);
+      let query_result = await news_model.insertNews({
+        news_code: news.news_code,
+        news_detail: news.news_detail,
+        news_notice_day: news.news_notice_day,
+        news_image: news.news_image,
+        classgroup_code: news.classgroup_code,
+        adddate: news.adddate,
+        addby: news.addby,
+        subject_name: classgroup.subject_name,
+        class_own: classgroup.class_own,
+      });
+      if (query_result.require) {
+        Swal.fire("บันทึกเรียบร้อย", "", "success");
+        window.location.reload();
+        // history.push("/leave-student");
       } else {
-        let query_result = await line_model.notifyredirect({
-          news_code: news.news_code,
-          news_detail: news.news_detail,
-          news_notice_day: news.news_notice_day,
-          news_image: news.news_image,
-          classgroup_code: news.classgroup_code,
-          messege: news.news_detail,
-          adddate: news.adddate,
-          addby: news.addby,
-          subject_name: classgroup.subject_name,
-          class_own: classgroup.class_own,
-        });
-
-        if (query_result.require) {
-          Swal.fire("บันทึกเรียบร้อย", "", "success");
-          window.location.reload();
-          // history.push("/leave-student");
-        } else {
-          Swal.fire("ขออภัย มีอย่างอย่างผิดพลาด!", "", "error");
-          window.location.reload();
-        }
+        Swal.fire("ขออภัย มีอย่างอย่างผิดพลาด!", "", "error");
       }
     }
   }
@@ -298,84 +271,7 @@ export default function News() {
         <>
           <CRow>
             <CCol xl="8">
-              <CCard style={{ width: "100%" }}>
-                <CCardHeader style={{ fontSize: "20px" }}>
-                  กระดานข่าว
-                </CCardHeader>
-                <CCardBody align="left">
-                  <CRow>
-                    <CCol>
-                      <FloatingLabel
-                        controlId="floatingInput"
-                        label="สิ่งที่ต้องการเผยแพร่"
-                        className="mb-3"
-                      >
-                        <Form.Control
-                          type="text"
-                          name="news_detail"
-                          value={news.news_detail}
-                          onChange={(e) => _changeFrom(e)}
-                        />
-                      </FloatingLabel>
-                    </CCol>
-                  </CRow>
-                  <CRow>
-                    <CCol>
-                      <CForm className="row g-3">
-                        <CCol xs="auto">
-                          <Switch
-                            defaultUnChecked
-                            checkedChildren="นักหมาย"
-                            unCheckedChildren="ไม่นัดหมาย"
-                            onChange={() => {
-                              setCheckdate(!Checkdate);
-                            }}
-                          />{" "}
-                        </CCol>
-                        <CCol>
-                          {Checkdate ? (
-                            <>
-                              <Space direction="vertical">
-                                <DatePicker
-                                  format={"DD/MM/YYYY"}
-                                  onChange={(e) =>
-                                    setNews({
-                                      ...news,
-                                      news_notice_day: dayjs(e._d).format(
-                                        "DD-MM-YYYY"
-                                      ),
-                                      // news_time: dayjs(e._d)
-                                      //   .format("H:mm:ss"),
-                                    })
-                                  }
-                                />
-                              </Space>
-                            </>
-                          ) : null}
-                        </CCol>
-                      </CForm>
-                    </CCol>
-                  </CRow>
-                </CCardBody>
-                <CCardFooter>
-                  {!checkupdate ? (
-                    <CButton color="success" onClick={() => _handleSubmit()}>
-                      เผยแพร่
-                    </CButton>
-                  ) : (
-                    <CButton color="success" onClick={() => _handleUpdate()}>
-                      บันทึกการแก้ไข
-                    </CButton>
-                  )}
-
-                  <Link to={`/class-group`}>
-                    <CButton type="button" color="danger">
-                      {" "}
-                      ย้อนกลับ{" "}
-                    </CButton>
-                  </Link>
-                </CCardFooter>
-              </CCard>
+               
               <CCard style={{ width: "100%", fontSize: "20px" }}>
                 <CCardHeader>ฟีดข่าว</CCardHeader>
                 <CCardBody>

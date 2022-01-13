@@ -52,5 +52,5 @@ console.log("Lot",Lot);
 };
 
 export default GoogleApiWrapper({
-  apiKey: "AIzaSyDyTUdDcKCq67cuR-nOkX0GdkJzdO3EIGc",
+  apiKey: "AIzaSyDTxDVlPoZCN2X3tBHaqGJSJolOSOGQYOM",
 })(Maps);

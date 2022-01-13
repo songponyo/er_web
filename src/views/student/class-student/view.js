@@ -2,14 +2,14 @@ import React, { Component, useEffect, useState } from "react";
 import { CCard, CCardHeader, CCardBody } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faSearch } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { Table } from "../../../component/revel-strap";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 const classgroup_model = new ClassgroupModel();
 
 export default function View() {
-  const [classgroup, setClassgroup] = useState([]); 
+  const [classgroup, setClassgroup] = useState([]);
   useEffect(() => {
     _fetchData();
   }, []);
@@ -19,7 +19,7 @@ export default function View() {
     const classgroup_data = await classgroup_model.getClassgroupByMycourse({
       user_uid: user_session.user_uid,
     });
-    setClassgroup(classgroup_data.data); 
+    setClassgroup(classgroup_data.data);
   }
 
   function _onDelete(data) {
@@ -29,14 +29,14 @@ export default function View() {
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
-      if (result.isConfirmed) { 
+      if (result.isConfirmed) {
         classgroup_model
           .deleteClassgroupByCode({ classgroup_code: data.classgroup_code })
           .then((res) => {
-            if (res.require) { 
+            if (res.require) {
               Swal.fire("ลบรายการ เรียบร้อย", "", "success");
               window.location.reload();
-            } else { 
+            } else {
               Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
             }
           });
@@ -90,7 +90,24 @@ export default function View() {
                 align: "center",
                 render: (cell) => {
                   const row_accessible = [];
-                  console.log("cell",cell);
+
+                  row_accessible.push(
+                    <Link
+                      key="news"
+                      to={`/class-student/news/${cell.classgroup_code}`}
+                      title="แก้ไขรายการ"
+                    >
+                      <button type="button" className="btn btn-success">
+                        <FontAwesomeIcon
+                          icon={faSearch}
+                          size="5s"
+                          color="white"
+                        />{" "}
+                        กระดานข่าว
+                      </button>
+                    </Link>
+                  );
+
                   row_accessible.push(
                     <Link
                       key="detail"
@@ -102,23 +119,12 @@ export default function View() {
                           icon={faCheck}
                           size="5s"
                           color="white"
-                        /> ข้อมูล
+                        />{" "}
+                        ข้อมูล
                       </button>
                     </Link>
                   );
-                  // row_accessible.push(
-                  //   <button
-                  //     type="button"
-                  //     className={"btn btn-danger"}
-                  //     onClick={() => _onDelete(cell)}
-                  //   >
-                  //     <FontAwesomeIcon
-                  //       icon={faWindowClose}
-                  //       size="5s"
-                  //       color="white"
-                  //     />
-                  //   </button>
-                  // );
+          
 
                   return row_accessible;
                 },

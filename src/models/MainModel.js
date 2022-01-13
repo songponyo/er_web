@@ -50,37 +50,7 @@ class MainModel {
     }
 
     return response;
-  }
-
-  // async authLineEndpointFetch(endpoint, data) { 
-  //   const response = await fetch(endpoint, {
-  //     method: data.method,
-  //     headers: {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json",
-  //       ...GLOBAL.ACCESS_TOKEN,
-  //       ...GLOBAL.ACCESS_LINE_TOKEN,
-  //     }, 
-  //     body: data.body,
-  //   })
-  //     .then((response) =>
-  //       response.json().then((responseJson) => {
-  //         return responseJson;
-  //       })
-  //     )
-  //     .catch((error) => {
-  //       return { require: false, data: [], err: error };
-  //     });
-
-  //   if (response.unauthorized) {
-  //     console.log("unauthorized", response.error);
-
-  //     localStorage.clear();
-  //     window.location.reload();
-  //   }
-
-  //   return response;
-  // }
+  } 
 }
 
 export class BaseModel extends MainModel {

@@ -9,8 +9,7 @@ class Profile extends Component {
     return (
       <HashRouter>
         <React.Suspense>
-          <Switch>
-         
+          <Switch> 
             <Route path="/profile" render={props => <View {...props} {...this.props.SESSION} />} />
           </Switch>
         </React.Suspense>

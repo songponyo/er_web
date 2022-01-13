@@ -32,7 +32,6 @@ export default function View() {
 
   useEffect(() => {
     _fetchData();
-   
   }, []);
 
   async function _fetchData() {
@@ -112,6 +111,7 @@ export default function View() {
       if (query_result.require) {
         Swal.fire("บันทึกเรียบร้อย", "", "success");
         history.push("/profile");
+        window.location.reload();
       } else {
         Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
       }
