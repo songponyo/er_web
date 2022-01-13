@@ -20,11 +20,10 @@ const TheHeaderDropdown = (props) => {
           <CDropdownToggle className="c-header-nav-link" caret={false}>
             <div className="c-avatar">
               <CImg
-                src={user == "" ? "default.png" : user.user_profile_image}
-                className="c-avatar-img"
+                src={user == "" ? "default.png" : user.user_profile_image}  
                 style={{
-                  width: "50px",
-                  height: "50px",
+                  width: "40px",
+                  height: "37px",
                   objectFit: "cover",
                   borderRadius: "50%",
                 }} 

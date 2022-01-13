@@ -81,6 +81,14 @@ export default class UserModel extends BaseModel {
     })
   }
 
+  async unregister(data) {
+    return this.authFetch({
+      url: 'user/unregister',
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   async deleteUserByCode(data) {
     return this.authFetch({
       url: 'user/deleteUserByCode',

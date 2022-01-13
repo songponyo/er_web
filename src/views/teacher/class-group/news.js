@@ -56,14 +56,12 @@ export default function News() {
   const [isLoading, setIsLoading] = useState(false);
   const [checkupdate, setCheckupdate] = useState(false);
 
-  console.log("Checkdate", Checkdate);
-
   useEffect(() => {
     fetchFeedData();
     fetchData();
     setIsLoading(true);
   }, []);
-  // console.log("news", news);
+
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
 
@@ -115,7 +113,6 @@ export default function News() {
         if (query_result.require) {
           Swal.fire("บันทึกเรียบร้อย", "", "success");
           window.location.reload();
-          // history.push("/leave-student");
         } else {
           Swal.fire("ขออภัย มีอย่างอย่างผิดพลาด!", "", "error");
           window.location.reload();
@@ -218,31 +215,23 @@ export default function News() {
     setNews(data);
   };
 
-  function getListData(value) {
-    let listData;
-    switch (value.date()) {
-      case 8:
+  function onPanelChange(value, mode) {
+    // console.log(value, mode);
+  }
+
+  function getListData(value) { 
+    let listData;  
+    switch (value.date()) { 
+      case 5:
         listData = [
           { type: "warning", content: "This is warning event." },
-          { type: "success", content: "This is usual event." },
+          // { type: "success", content: "This is usual event." },
+          // { type: "error", content: "This is error event." },
         ];
         break;
-      case 10:
-        listData = [
-          { type: "warning", content: "This is warning event." },
-          { type: "success", content: "This is usual event." },
-          { type: "error", content: "This is error event." },
-        ];
-        break;
-      case 15:
-        listData = [
-          { type: "warning", content: "This is warning event" },
-          { type: "success", content: "This is very long usual event。。...." },
-          { type: "error", content: "This is error event 1." },
-        ];
-        break;
-      default:
+      default: 
     }
+   
     return listData || [];
   }
 
@@ -252,42 +241,16 @@ export default function News() {
       <ul className="events">
         {listData.map((item) => (
           <li key={item.content}>
-            <Badge status={item.type} text={item.content} />
+            <Badge
+              status={item.type}
+              // text={item.content}
+            />
           </li>
         ))}
       </ul>
     );
   }
-
-  function getMonthData(value) {
-    if (value.month() === 8) {
-      return 1394;
-    }
-  }
-
-  function monthCellRender(value) {
-    const num = getMonthData(value);
-    return num ? (
-      <div className="notes-month">
-        <section>{num}</section>
-        <span>Backlog number</span>
-      </div>
-    ) : null;
-  }
-
-  // const _handleSubmitLine = async () => {
-  //   let query_result = await line_model.notifyredirect({
-  //     news_code: news.news_code,
-  //   });
-  //   if (query_result.require) {
-  //     Swal.fire("บันทึกเรียบร้อย", "", "success");
-  //     // window.location.reload();
-  //     // history.push("/leave-student");
-  //   } else {
-  //     Swal.fire("ขออภัย มีอย่างอย่างผิดพลาด!", "", "error");
-  //   }
-  // };
-
+ 
   return (
     <div align="center">
       {!isLoading ? (
@@ -376,6 +339,7 @@ export default function News() {
                   </Link>
                 </CCardFooter>
               </CCard>
+
               <CCard style={{ width: "100%", fontSize: "20px" }}>
                 <CCardHeader>ฟีดข่าว</CCardHeader>
                 <CCardBody>
@@ -428,18 +392,15 @@ export default function News() {
                 </CCardBody>
               </CCard>
             </CCol>
+
             <CCol>
-              <CRow>
-                <CCol>
-                  <div className="site-calendar-demo-card">
-                    <Calendar
-                      fullscreen={true}
-                      dateCellRender={dateCellRender}
-                      monthCellRender={monthCellRender}
-                    />
-                  </div>
-                </CCol>
-              </CRow>
+              <div className="site-calendar-demo-card">
+                <Calendar
+                  fullscreen={false}
+                  // onPanelChange={onPanelChange}
+                  dateCellRender={dateCellRender} 
+                />
+              </div>
             </CCol>
           </CRow>
         </>

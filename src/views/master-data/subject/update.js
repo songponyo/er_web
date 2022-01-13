@@ -18,7 +18,7 @@ const subject_model = new SubjectModel();
 
 export default function Insert() {
   let history = useHistory();
-  let code = useRouteMatch("/course/update/:code"); 
+  let code = useRouteMatch("/subject/update/:code"); 
   const [subject, setSubject] = useState({
     subject_code: "",
     subject_name: "",

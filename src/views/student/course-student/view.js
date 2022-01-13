@@ -86,7 +86,7 @@ export default function View() {
                 align: "center",
               },
               {
-                title: "#",
+                title: "เมนู",
                 dataIndex: "",
                 align: "center",
                 render: (cell) => {

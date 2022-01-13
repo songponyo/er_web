@@ -139,8 +139,7 @@ export default function Update() {
     let new_data = { ...classroom };
     new_data[name] = value;
     setClassroom(new_data);
-  };
-
+  }; 
   return (
     <>
       <CCard>
@@ -273,7 +272,7 @@ export default function Update() {
               </CFormGroup>
             </CCol>
           </CRow>
-          <CRow>
+          {/* <CRow>
             <CCol md="3">
               <CFormGroup>
                 <CLabel>
@@ -308,7 +307,7 @@ export default function Update() {
                 />
               </CFormGroup>
             </CCol>
-          </CRow>
+          </CRow> */}
         </CCardBody>
         <CCardFooter>
           <CButton

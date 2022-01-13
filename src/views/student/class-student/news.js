@@ -295,21 +295,7 @@ export default function News() {
                                   </CFormText>
                                 </CFormGroup>
                               </CForm>
-                            </CCol>
-                            <CCol align="right" style={{ fontSize: "10px" }}>
-                              <Dropdown
-                                overlay={menu(data)}
-                                trigger={["click"]}
-                              >
-                                <a
-                                  className="ant-dropdown-link"
-                                  onClick={(e) => e.preventDefault()}
-                                >
-                                  แก้ไข
-                                  <DownOutlined />
-                                </a>
-                              </Dropdown>
-                            </CCol>
+                            </CCol> 
                           </CRow>
                           <CRow>
                             <CCol>{data.news_detail}</CCol>

@@ -23,11 +23,13 @@ import UserModel from "../../../models/UserModel";
 import UserPositionModel from "../../../models/UserPositionModel";
 import { Uploadimage } from "../../../controller";
 import { useHistory, useRouteMatch } from "react-router-dom";
+import PrefixModel from "../../../models/PrefixModel";
 
 const license_model = new LicenseModel();
 const user_model = new UserModel();
 const user_position_model = new UserPositionModel();
 const upload_contoller = new Uploadimage();
+const prefix_model = new PrefixModel();
 
 export default function Update() {
   let history = useHistory();
@@ -39,7 +41,6 @@ export default function Update() {
       old: "",
     },
   });
-  const [userselect, setUserselect] = useState([]);
   const [postion, setPostion] = useState([]);
   const [userstatus, setUserstatus] = useState([]);
   const [prefix, setPrefix] = useState();
@@ -50,17 +51,32 @@ export default function Update() {
   }, []);
 
   async function _fetchData() {
+    const prefix_data = await prefix_model.getPrefixBy({});
+    let prefix_info = prefix_data.data;
+    let select_pre = [];
+    for (let i = 0; i < prefix_info.length; i++) {
+      select_pre.push({
+        value: prefix_info[i].prefix_code.toString(),
+        label: prefix_info[i].prefix_name,
+      });
+    }
+    setPrefix(select_pre);
+
     const user_data = await user_model.getUserByCode({
       user_code: code.params.code,
     });
 
     let user_info = {};
-    user_info = user_data.data[0];
+    user_info = user_data.data[0];  
+    // user_info.prefix_label = select_pre.find( res => {return res.user_prefix === user_info.value})
     user_info.user_profile_image = {
       src: "default.png",
       file: null,
-      old: user_info.user_profile_image,
-    };
+      old: user_data.data[0].user_profile_image,
+    }; 
+ 
+
+
     setUser(user_info);
 
     const position_data = await user_position_model.getUserPositionBy({});
@@ -90,13 +106,6 @@ export default function Update() {
       { value: "Inactive", label: "เลิกทำงาน" },
     ];
     setUserstatus(user_status_options);
-
-    const user_prefix_options = [
-      { value: "นาย", label: "นาย" },
-      { value: "นาง", label: "นาง" },
-      { value: "นางสาว", label: "นางสาว" },
-    ];
-    setPrefix(user_prefix_options);
   }
 
   const _changeFrom = (e) => {
@@ -180,7 +189,7 @@ export default function Update() {
     } else {
       return true;
     }
-  };
+  }; 
   return (
     <>
       <div className="animated fadeIn">
@@ -201,12 +210,12 @@ export default function Update() {
                     </CLabel>
                     <CInput
                       type="text"
-                      name="user_code"
+                      name="user_uid"
                       value={user.user_uid}
-                      readOnly
+                      onChange={(e) => _changeFrom(e)}
                     />
                   </CCol>
-                  <CCol md="2">
+                  <CCol md="3">
                     <CFormGroup>
                       <CLabel>
                         คำนำหน้า{" "}
@@ -217,7 +226,12 @@ export default function Update() {
                       <Select
                         options={prefix}
                         value={user.user_prefix}
-                        onChange={(e) => _changeFrom(e)}
+                        onChange={(e) =>
+                          setUser({
+                            ...user,
+                            [`user_prefix`]: e,
+                          })
+                        }
                       />
                     </CFormGroup>
                   </CCol>
@@ -336,7 +350,6 @@ export default function Update() {
                       </CLabel>
                       <Select
                         options={license_options}
-                        name="license_code"
                         value={user.license_code}
                         onChange={(e) => _changeFrom(e)}
                       />

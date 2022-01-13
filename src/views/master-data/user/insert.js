@@ -22,12 +22,14 @@ import LicenseModel from "../../../models/LicenseModel";
 import UserModel from "../../../models/UserModel";
 import UserPositionModel from "../../../models/UserPositionModel";
 import { Uploadimage } from "../../../controller";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import PrefixModel from "../../../models/PrefixModel";
 
 const license_model = new LicenseModel();
 const user_model = new UserModel();
 const user_position_model = new UserPositionModel();
 const upload_contoller = new Uploadimage();
+const prefix_model = new PrefixModel();
 
 export default function Insert() {
   let history = useHistory();
@@ -84,18 +86,25 @@ export default function Insert() {
     }
     setLicense_options(selecter_li);
 
+    const prefix_data = await prefix_model.getPrefixBy({});
+    let prefix_info = prefix_data.data;
+    let select_pre = [];
+    for (let i = 0; i < prefix_info.length; i++) {
+      select_pre.push({
+        value: prefix_info[i].prefix_code,
+        label: prefix_info[i].prefix_name,
+      });
+    } 
+    setPrefix(select_pre);
+
     const user_status_options = [
-      { value: "Active", label: "ทำงาน" },
-      { value: "Inactive", label: "เลิกทำงาน" },
+      { value: "Active", label: "ใช้งาน" },
+      { value: "Deactive", label: "ไม่ได้ใช้งาน" },
     ];
     setUserstatus(user_status_options);
 
-    const user_prefix_options = [
-      { value: "นาย", label: "นาย" },
-      { value: "นาง", label: "นาง" },
-      { value: "นางสาว", label: "นางสาว" },
-    ];
-    setPrefix(user_prefix_options);
+ 
+    
   }
 
   const _changeFrom = (e) => {
@@ -144,6 +153,7 @@ export default function Insert() {
       let query_result = await user_model.insertUser({
         user_code: user.user_code,
         user_position_code: user.user_position_code,
+        user_uid: user.user_uid,
         license_code: user.license_code,
         user_prefix: user.user_prefix,
         user_firstname: user.user_firstname,
@@ -201,7 +211,7 @@ export default function Insert() {
                     </CLabel>
                     <CInput
                       type="text"
-                      name="user_code"
+                      name="user_uid"
                       value={user.user_uid}
                       onChange={(e) => _changeFrom(e)}
                     />
@@ -215,9 +225,14 @@ export default function Insert() {
                         </font>
                       </CLabel>
                       <Select
-                        options={prefix}
+                        options={prefix} 
                         value={user.user_prefix}
-                        onChange={(e) => _changeFrom(e)}
+                        onChange={(e) =>
+                          setUser({
+                            ...user,
+                            [`user_prefix`]: e,
+                          })
+                        }
                       />
                     </CFormGroup>
                   </CCol>
@@ -291,7 +306,7 @@ export default function Insert() {
                         id="user_username"
                         name="user_username"
                         value={user.user_username}
-                        onChange={(e) => _changeFrom(e)} 
+                        onChange={(e) => _changeFrom(e)}
                         required
                       />
                     </CFormGroup>
@@ -322,7 +337,12 @@ export default function Insert() {
                       <Select
                         options={postion}
                         value={user.user_position_code}
-                        onChange={(e) => _changeFrom(e)}
+                        onChange={(e) =>
+                          setUser({
+                            ...user,
+                            [`user_position_code`]: e,
+                          })
+                        }
                       />
                     </CFormGroup>
                   </CCol>
@@ -337,7 +357,12 @@ export default function Insert() {
                       <Select
                         options={license_options}
                         value={user.license_code}
-                        onChange={(e) => _changeFrom(e)}
+                        onChange={(e) =>
+                          setUser({
+                            ...user,
+                            [`license_code`]: e,
+                          })
+                        }
                       />
                       <p className="text-muted"></p>
                     </CFormGroup>
@@ -353,7 +378,12 @@ export default function Insert() {
                       <Select
                         options={userstatus}
                         value={user.user_status}
-                        onChange={(e) => _changeFrom(e)}
+                        onChange={(e) =>
+                          setUser({
+                            ...user,
+                            [`user_status`]: e,
+                          })
+                        }
                       />
                     </CFormGroup>
                   </CCol>

@@ -61,7 +61,7 @@ export default function View() {
         <CCardHeader className="header-t-red">
           รายวิชา / Course
           <Link
-            to={`/course/insert`}
+            to={`/subject/insert`}
             className="btn btn-success float-right"
           >
             <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มรายวิชา
@@ -100,10 +100,12 @@ export default function View() {
                 align: "center",
                 render: (cell) => {
                   const row_accessible = [];
+
+
                   row_accessible.push(
                     <Link
                       key="update"
-                      to={`/course/update/${cell.subject_code}`}
+                      to={`/subject/update/${cell.subject_code}`}
                       title="แก้ไขรายการ"
                     >
                       <button type="button" className="btn btn-warning">
