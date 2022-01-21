@@ -12,6 +12,7 @@ import {
   CInput,
   CButton,
   CImg,
+  CTextarea
 } from "@coreui/react";
 import Swal from "sweetalert2";
 import { useHistory, useRouteMatch } from "react-router-dom";
@@ -270,7 +271,7 @@ export default function Update() {
                     <CFormGroup>
                       <CLabel>เหตุผลการลา</CLabel>
                       <br />
-                      <textarea
+                      <CTextarea
                         style={{ padding: "1%" }}
                         name="leave_reason"
                         value={leave.leave_reason}

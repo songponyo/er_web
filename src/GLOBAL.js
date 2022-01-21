@@ -13,10 +13,10 @@ const GROBAL = {
   ACCESS_TOKEN: {
     'x-access-token': localStorage.getItem("x-access-token"),
   },
-  ACCESS_LINE_TOKEN: {
-    'client_id': 'IKNreceUxpACgWqkIwGHpz',
-    'client_secret': 'jacKgAODAs3ZbhdxKt861vG9OdpSytwFcVujlKA0Sun'
-  },
+  // ACCESS_LINE_TOKEN: {
+  //   'client_id': 'IKNreceUxpACgWqkIwGHpz',
+  //   'client_secret': 'jacKgAODAs3ZbhdxKt861vG9OdpSytwFcVujlKA0Sun'
+  // },
 }
 
 export default GROBAL

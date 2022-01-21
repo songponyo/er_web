@@ -48,11 +48,14 @@ export default function Detail() {
     mindate: time_controller.reformatToDate(new Date()),
   });
 
-  useEffect(() => {
-    async function fetchData() {
+  useEffect(() => { 
+    fetchData();
+  }, []);
+
+      async function fetchData() {
       const user_session = await JSON.parse(localStorage.getItem(`session-user`));
       setUser(user_session);
-  
+ 
       const leave_data = await leave_model.getLeaveByCode({
         leave_code: code.params.code,
       });
@@ -66,14 +69,14 @@ export default function Detail() {
   
       setLeave(leave_form);
     }
-    fetchData();
-  }, [code]);
 
  
   async function _handleSubmit() {
+    console.log("leave",leave);
     if (_checkSubmit()) { 
       let query_result = await leave_model.updateLeaveBy({ 
         leave_code: leave.leave_code,
+        leave_image: leave.leave_image.old,
         classgroup_code: leave.classgroup_code,
         owner_class: leave.owner_class,
         leave_start: time_controller.reformatToDate(leave.leave_start),
@@ -227,6 +230,7 @@ export default function Detail() {
               <CContainer>
                 <CCol md="12">
                   <br />
+                  <hr/>
                   <CLabel>ยืนยันสถานะ</CLabel>
                   <tbody>
                     <CCol>

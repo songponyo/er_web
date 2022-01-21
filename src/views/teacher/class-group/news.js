@@ -12,7 +12,8 @@ import {
   CFormText,
   CForm,
   CImg,
-} from "@coreui/react";
+  CBadge,
+} from "@coreui/react"; 
 import dayjs from "dayjs";
 import "dayjs/locale/th";
 import Swal from "sweetalert2";
@@ -215,40 +216,29 @@ export default function News() {
     setNews(data);
   };
 
-  function onPanelChange(value, mode) {
-    // console.log(value, mode);
-  }
-
-  function getListData(value) { 
-    let listData;  
-    switch (value.date()) { 
-      case 5:
-        listData = [
-          { type: "warning", content: "This is warning event." },
-          // { type: "success", content: "This is usual event." },
-          // { type: "error", content: "This is error event." },
-        ];
-        break;
-      default: 
-    }
+  function getDateData(value) {
+    let dateformat = dayjs(value._d).format("DD-MM-YYYY");
+    let appointment = feednews
+      .filter((appoint) => appoint.news_notice_day !== null)
+      .map((item) => {
+        return item.news_notice_day;
+      });
    
-    return listData || [];
+    let aptt = appointment.map((items) => { 
+      if (dateformat === items) {
+        return <Badge><font style={{color:"red"}}>*</font></Badge>;
+      }
+    });
+    return aptt || []
   }
 
   function dateCellRender(value) {
-    const listData = getListData(value);
-    return (
-      <ul className="events">
-        {listData.map((item) => (
-          <li key={item.content}>
-            <Badge
-              status={item.type}
-              // text={item.content}
-            />
-          </li>
-        ))}
-      </ul>
-    );
+    const num = getDateData(value);
+    return num ? (
+      <div className="notes-month">
+        <section>{num}</section>
+      </div>
+    ) : null;
   }
  
   return (
@@ -379,13 +369,22 @@ export default function News() {
                               </Dropdown>
                             </CCol>
                           </CRow>
-                          <CRow>
+                          {/* <CRow>
                             <CCol>{data.news_detail}</CCol>
-                          </CRow>
+                          </CRow> 
+                          <CRow>
+                            <CCol style={{fontSize : "15px"}}> <strong>วันที่นัดหมาย</strong> {data.news_notice_day}</CCol>
+                          </CRow> */}
+                          
                         </CCardHeader>
-                        {/* <CCardBody fontSize="15px" align="left">
-                      {data.news_detail}
-                    </CCardBody> */}
+                        <CCardBody fontSize="15px" align="left">
+                        <CRow>
+                            <CCol>{data.news_detail}</CCol>
+                          </CRow> 
+                          <CRow>
+                            <CCol style={{fontSize : "15px"}}> <strong>วันที่นัดหมาย</strong> {data.news_notice_day}</CCol>
+                          </CRow>
+                    </CCardBody>
                       </CCard>
                     );
                   })}
@@ -397,8 +396,8 @@ export default function News() {
               <div className="site-calendar-demo-card">
                 <Calendar
                   fullscreen={false}
-                  // onPanelChange={onPanelChange}
-                  dateCellRender={dateCellRender} 
+                  dateCellRender={dateCellRender}
+                  // monthCellRender={monthCellRender}
                 />
               </div>
             </CCol>

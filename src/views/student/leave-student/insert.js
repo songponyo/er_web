@@ -80,7 +80,7 @@ export default function Insert() {
     setLeave({ ...leave, [`leave_code`]: leave_data.data });
 
     const classgroup_data = await classgroup_model.getClassgroupByMycourse({
-      user_code: user_session.user_code,
+      user_uid: user_session.user_uid,
     });
     // setClassgroup(classgroup_data.data);
 
@@ -92,6 +92,7 @@ export default function Insert() {
         label: class_form[i].subject_fullname,
       });
     }
+    console.log("select_class", select_class);
     setClassselect(select_class);
   };
 
@@ -298,15 +299,16 @@ export default function Insert() {
                 </CRow>
               </CCol>
               <CCol md="5">
-                <CLabel>อัพโหลดภาพ </CLabel>
-                <br />
-                <CImg
-                  name="logo"
-                  style={{ width: "100%", alignSelf: "center" }}
-                  src={leave.leave_image.src}
-                  alt="Logo"
-                />
-                <br />
+                <CLabel>อัพโหลดภาพ </CLabel> 
+                  <br /> 
+                  <CImg
+                    name="logo"
+                    style={{ width: "100%", alignSelf: "center" }}
+                    src={leave.leave_image.src}
+                    alt="Logo"
+                  />
+                  <br /> 
+
                 <br />
                 <CInput
                   type="file"

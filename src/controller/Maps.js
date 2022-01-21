@@ -35,8 +35,8 @@ const Maps = (props) => {
     setLat(lat);
     setLot(lng);
   }
-console.log("Lat",Lat)
-console.log("Lot",Lot);
+// console.log("Lat",Lat)
+// console.log("Lot",Lot);
   return (
     <div>
       <Map
