@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import dayjs from "dayjs";
-import { Switch } from "antd";
+import dayjs from "dayjs"; 
 import {
   CCard,
   CCardHeader,
@@ -53,8 +52,7 @@ export default function Insert() {
   const [topics, setTopics] = useState([
     { id: 1, topic_name: "", max_score: 0, classgroup_code: "" },
   ]);
-  const [sum, setSum] = useState();
-  const [leaveswitch, setLeaveswitch] = useState(false);
+  const [sum, setSum] = useState(); 
 
   useEffect(() => {
     fetchData();
@@ -155,6 +153,8 @@ export default function Insert() {
         addby: classroom.addby,
         adddate: dayjs().format("YYYY-MM-DD H:mm:ss"),
         topics_row: topics,
+        leave_maxcount: classroom.leave_maxcount,
+        classsgroup_status: "Activate"
       });
       if (query_result.require) {
         Swal.fire("บันทึกเรียบร้อย", "", "success");
@@ -394,17 +394,7 @@ export default function Insert() {
 
           <CRow>
             <CCol md="3">
-              <CFormGroup>
-                {/* <Switch
-                  checked={leaveswitch}
-                  size="middle"
-                  checkedChildren="เปิด"
-                  unCheckedChildren="ปิด"
-                  onChange={() => {
-                    setLeaveswitch(!leaveswitch);
-                  }}
-                /> */}
-                {"   "}
+              <CFormGroup> 
                 <CLabel>
                   จำนวนครั้งที่สามารถขาดได้{" "}
                   <font color="#F00">

@@ -101,7 +101,7 @@ export default function View() {
                 title: "เมนูจัดการ",
                 dataIndex: "",
                 align: "center",
-                render: (cell) => {
+                render: (cell) => { 
                   const row_accessible = []; 
                   row_accessible.push(
                     <Link

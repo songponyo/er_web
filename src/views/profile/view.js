@@ -145,7 +145,7 @@ export default function View() {
       ) : (
         <CCard>
           <CCardHeader className="header-t-red">
-            ข้อมูลส่วนตัว / Profile
+            ข้อมูลส่วนตัว
           </CCardHeader>
           <CCardBody>
             <CRow>

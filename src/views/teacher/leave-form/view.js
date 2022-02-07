@@ -102,7 +102,7 @@ export default function View() {
                 width: 120,
               },
               {
-                title: "การจัดการ",
+                title: "เมนู",
                 dataIndex: "",
                 align: "center",
                 render: (cell) => {

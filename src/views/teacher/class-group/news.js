@@ -12,8 +12,7 @@ import {
   CFormText,
   CForm,
   CImg,
-  CBadge,
-} from "@coreui/react"; 
+} from "@coreui/react";
 import dayjs from "dayjs";
 import "dayjs/locale/th";
 import Swal from "sweetalert2";
@@ -27,6 +26,7 @@ import {
   Dropdown,
   Calendar,
   Badge,
+  Empty,
 } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 
@@ -223,13 +223,13 @@ export default function News() {
       .map((item) => {
         return item.news_notice_day;
       });
-   
-    let aptt = appointment.map((items) => { 
+
+    let aptt = appointment.map((items) => {
       if (dateformat === items) {
-        return <Badge><font style={{color:"red"}}>*</font></Badge>;
+        return <Badge status="warning"></Badge>;
       }
     });
-    return aptt || []
+    return aptt || [];
   }
 
   function dateCellRender(value) {
@@ -240,7 +240,7 @@ export default function News() {
       </div>
     ) : null;
   }
- 
+
   return (
     <div align="center">
       {!isLoading ? (
@@ -252,7 +252,10 @@ export default function News() {
           <CRow>
             <CCol xl="8">
               <CCard style={{ width: "100%" }}>
-                <CCardHeader style={{ fontSize: "20px" }}>
+                <CCardHeader
+                  className="header-t-red"
+                  style={{ fontSize: "20px" }}
+                >
                   กระดานข่าว
                 </CCardHeader>
                 <CCardBody align="left">
@@ -273,40 +276,38 @@ export default function News() {
                     </CCol>
                   </CRow>
                   <CRow>
-                    <CCol>
-                      <CForm className="row g-3">
-                        <CCol xs="auto">
-                          <Switch
-                            defaultUnChecked
-                            checkedChildren="นักหมาย"
-                            unCheckedChildren="ไม่นัดหมาย"
-                            onChange={() => {
-                              setCheckdate(!Checkdate);
-                            }}
-                          />{" "}
-                        </CCol>
-                        <CCol>
-                          {Checkdate ? (
-                            <>
-                              <Space direction="vertical">
-                                <DatePicker
-                                  format={"DD/MM/YYYY"}
-                                  onChange={(e) =>
-                                    setNews({
-                                      ...news,
-                                      news_notice_day: dayjs(e._d).format(
-                                        "DD-MM-YYYY"
-                                      ),
-                                      // news_time: dayjs(e._d)
-                                      //   .format("H:mm:ss"),
-                                    })
-                                  }
-                                />
-                              </Space>
-                            </>
-                          ) : null}
-                        </CCol>
-                      </CForm>
+                    <CCol sm="3">
+                      {/* <CForm className="row g-3"> */}
+                      <Switch
+                        defaultUnChecked
+                        checkedChildren="นัดหมาย"
+                        unCheckedChildren="ไม่นัดหมาย"
+                        onChange={() => {
+                          setCheckdate(!Checkdate);
+                        }}
+                      />
+                      <br />
+                      <br />
+                      {Checkdate ? (
+                        <>
+                          <Space direction="vertical">
+                            <DatePicker
+                              format={"DD/MM/YYYY"}
+                              onChange={(e) =>
+                                setNews({
+                                  ...news,
+                                  news_notice_day: dayjs(e._d).format(
+                                    "DD-MM-YYYY"
+                                  ),
+                                  // news_time: dayjs(e._d)
+                                  //   .format("H:mm:ss"),
+                                })
+                              }
+                            />
+                          </Space>
+                        </>
+                      ) : null}
+                      {/* </CForm> */}
                     </CCol>
                   </CRow>
                 </CCardBody>
@@ -331,64 +332,70 @@ export default function News() {
               </CCard>
 
               <CCard style={{ width: "100%", fontSize: "20px" }}>
-                <CCardHeader>ฟีดข่าว</CCardHeader>
-                <CCardBody>
-                  {/* inform */}
-                  {feednews.map((data) => {
-                    return (
-                      <CCard>
-                        <CCardHeader align="left">
-                          <CRow>
-                            <CCol>
-                              <CForm>
-                                <CFormGroup>
-                                  <CLabel style={{ fontSize: "15px" }}>
-                                    {data.owner_fullname}
-                                  </CLabel>
-                                  {/* <br /> */}
-                                  <CFormText style={{ fontSize: "10px" }}>
-                                    {dayjs(data.adddate)
-                                      .locale("th")
-                                      .format("DD MMMM YYYY")}
-                                  </CFormText>
-                                </CFormGroup>
-                              </CForm>
-                            </CCol>
-                            <CCol align="right" style={{ fontSize: "10px" }}>
-                              <Dropdown
-                                overlay={menu(data)}
-                                trigger={["click"]}
-                              >
-                                <a
-                                  className="ant-dropdown-link"
-                                  onClick={(e) => e.preventDefault()}
+                <CCardHeader className="header-t-red">ฟีดข่าว</CCardHeader>
+
+                {feednews.length == 0 ? (
+                  <CCardBody>
+                    {" "}
+                    <Empty />
+                  </CCardBody>
+                ) : (
+                  <CCardBody>
+                    {/* inform */}
+                    {feednews.map((data) => {
+                      return (
+                        <CCard>
+                          <CCardHeader align="left">
+                            <CRow>
+                              <CCol>
+                                <CForm>
+                                  <CFormGroup>
+                                    <CLabel style={{ fontSize: "15px" }}>
+                                      {data.owner_fullname}
+                                    </CLabel>
+                                    {/* <br /> */}
+                                    <CFormText style={{ fontSize: "10px" }}>
+                                      {dayjs(data.adddate)
+                                        .locale("th")
+                                        .format("DD MMMM YYYY")}
+                                    </CFormText>
+                                  </CFormGroup>
+                                </CForm>
+                              </CCol>
+                              <CCol align="right" style={{ fontSize: "10px" }}>
+                                <Dropdown
+                                  overlay={menu(data)}
+                                  trigger={["click"]}
                                 >
-                                  แก้ไข
-                                  <DownOutlined />
-                                </a>
-                              </Dropdown>
-                            </CCol>
-                          </CRow>
-                          {/* <CRow>
-                            <CCol>{data.news_detail}</CCol>
-                          </CRow> 
-                          <CRow>
-                            <CCol style={{fontSize : "15px"}}> <strong>วันที่นัดหมาย</strong> {data.news_notice_day}</CCol>
-                          </CRow> */}
-                          
-                        </CCardHeader>
-                        <CCardBody fontSize="15px" align="left">
-                        <CRow>
-                            <CCol>{data.news_detail}</CCol>
-                          </CRow> 
-                          <CRow>
-                            <CCol style={{fontSize : "15px"}}> <strong>วันที่นัดหมาย</strong> {data.news_notice_day}</CCol>
-                          </CRow>
-                    </CCardBody>
-                      </CCard>
-                    );
-                  })}
-                </CCardBody>
+                                  <a
+                                    className="ant-dropdown-link"
+                                    onClick={(e) => e.preventDefault()}
+                                  >
+                                    แก้ไข
+                                    <DownOutlined />
+                                  </a>
+                                </Dropdown>
+                              </CCol>
+                            </CRow>
+                          </CCardHeader>
+                          <CCardBody fontSize="15px" align="left">
+                            <CRow>
+                              <CCol>{data.news_detail}</CCol>
+                            </CRow>
+                            {data.news_notice_day !== null ? (
+                              <CRow>
+                                <CCol style={{ fontSize: "15px" }}>
+                                  <strong>วันที่นัดหมาย</strong>{" "}
+                                  {data.news_notice_day}
+                                </CCol>
+                              </CRow>
+                            ) : null}
+                          </CCardBody>
+                        </CCard>
+                      );
+                    })}
+                  </CCardBody>
+                )}
               </CCard>
             </CCol>
 

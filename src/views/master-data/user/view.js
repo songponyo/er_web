@@ -121,7 +121,7 @@ class View extends React.Component {
         <Loading showloading={this.state.showloading} />
         <Card>
           <CardHeader className="header-t-red">
-            จัดการผู้ใช้ / User
+            จัดการผู้ใช้  
             {permission_add ? (
               <Link to={`/user/insert`} className="btn btn-success float-right">
                 <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มผู้ใช้

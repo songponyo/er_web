@@ -59,7 +59,7 @@ export default function View() {
     <div>
       <CCard>
         <CCardHeader className="header-t-red">
-          รายวิชา / Course
+          รายวิชา
           <Link
             to={`/subject/insert`}
             className="btn btn-success float-right"
@@ -95,7 +95,7 @@ export default function View() {
                 ellipsis: true,
               },
               {
-                title: "#",
+                title: "เมนู",
                 dataIndex: "",
                 align: "center",
                 render: (cell) => {

@@ -4,6 +4,15 @@ import './scss/style.scss'
 
 import Auth from "./component/auth/Auth"
 
+import dayjs from "dayjs";
+
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+dayjs.extend(utc);
+dayjs.extend(timezone); 
+dayjs.tz.setDefault('Asia/Hong_Kong');
+
+
 const loading = (
   <div className="pt-3 text-center">
     <div className="sk-spinner sk-spinner-pulse"></div>

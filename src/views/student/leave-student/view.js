@@ -53,7 +53,7 @@ export default function View() {
     <div>
       <CCard>
         <CCardHeader className="header-t-red">
-          คำขอลา / Leave list
+          รายการคำร้องขอ
           <Link
             to={`/leave-student/insert`}
             className="btn btn-success float-right"
@@ -100,7 +100,7 @@ export default function View() {
                 },
                 filters: [
                   { text: "เสร็จสิ้น", value: "complete" },
-                  { text: "รออนุมัติ", value: "Waiting" },
+                  { text: "รออนุมัติ", value: "Waiting" }, 
                 ],
                 align: "center",
                 width: 120,

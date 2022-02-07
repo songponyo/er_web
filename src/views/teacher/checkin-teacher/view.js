@@ -2,8 +2,7 @@ import React, {  useEffect, useState } from "react";
 import { CCard, CCardHeader, CCardBody } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAddressBook, faQrcode } from "@fortawesome/free-solid-svg-icons";
-import Swal from "sweetalert2";
+import { faAddressBook, faQrcode } from "@fortawesome/free-solid-svg-icons"; 
 import { Table, } from "../../../component/revel-strap";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 const classgroup_model = new ClassgroupModel();
@@ -56,7 +55,7 @@ export default function View() {
     <div>
       <CCard>
         <CCardHeader className="header-t-red">
-          กลุ่มเรียน / Class group
+          รายการเช็คชื่อกลุ่มเรียน
           {/* <Link to={`/checkin-teacher/insert`} className="btn btn-success float-right">
             <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มกลุ่มเรียน
           </Link> */}

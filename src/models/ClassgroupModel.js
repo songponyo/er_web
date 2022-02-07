@@ -49,6 +49,14 @@ export default class ClassgroupModel extends BaseModel {
     })
   }
 
+  async updateClassgroupByAdmin(data) {
+    return this.authFetch({
+      url: 'classgroup/updateClassgroupByAdmin',
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   async insertClassgroup(data) { 
     return this.authFetch({
       url: 'classgroup/insertClassgroup',

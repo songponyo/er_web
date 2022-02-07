@@ -67,15 +67,13 @@ export default function Update() {
     });
 
     let user_info = {};
-    user_info = user_data.data[0];  
+    user_info = user_data.data[0];
     // user_info.prefix_label = select_pre.find( res => {return res.user_prefix === user_info.value})
     user_info.user_profile_image = {
       src: "default.png",
       file: null,
       old: user_data.data[0].user_profile_image,
-    }; 
- 
-
+    };
 
     setUser(user_info);
 
@@ -153,6 +151,7 @@ export default function Update() {
 
       let query_result = await user_model.updateUserBy({
         user_code: user.user_code,
+        user_uid: user.user_uid,
         user_position_code: user.user_position_code,
         license_code: user.license_code,
         user_prefix: user.user_prefix,
@@ -189,7 +188,7 @@ export default function Update() {
     } else {
       return true;
     }
-  }; 
+  };
   return (
     <>
       <div className="animated fadeIn">
@@ -336,7 +335,12 @@ export default function Update() {
                       <Select
                         options={postion}
                         value={user.user_position_code}
-                        onChange={(e) => _changeFrom(e)}
+                        onChange={(e) =>
+                          setUser({
+                            ...user,
+                            [`user_position_code`]: e,
+                          })
+                        }
                       />
                     </CFormGroup>
                   </CCol>
@@ -351,11 +355,13 @@ export default function Update() {
                       <Select
                         options={license_options}
                         value={user.license_code}
-                        onChange={(e) => _changeFrom(e)}
+                        onChange={(e) =>
+                          setUser({
+                            ...user,
+                            [`license_code`]: e,
+                          })
+                        }
                       />
-                      <p className="text-muted">
-                        Example : สิทธิ์การใช้งานที่ 1.
-                      </p>
                     </CFormGroup>
                   </CCol>
                   <CCol md="4">
@@ -369,9 +375,13 @@ export default function Update() {
                       <Select
                         options={userstatus}
                         value={user.user_status}
-                        onChange={(e) => _changeFrom(e)}
+                        onChange={(e) =>
+                          setUser({
+                            ...user,
+                            [`user_status`]: e,
+                          })
+                        }
                       />
-                      <p className="text-muted">Example : ทำงาน.</p>
                     </CFormGroup>
                   </CCol>
                 </CRow>

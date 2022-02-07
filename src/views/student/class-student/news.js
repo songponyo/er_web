@@ -3,12 +3,10 @@ import {
   CCard,
   CCardHeader,
   CCardBody,
-  CCardFooter,
   CCol,
   CRow,
   CFormGroup,
   CLabel,
-  CButton,
   CFormText,
   CForm,
   CImg,
@@ -16,18 +14,8 @@ import {
 import dayjs from "dayjs";
 import "dayjs/locale/th";
 import Swal from "sweetalert2";
-import { FloatingLabel, Form } from "react-bootstrap";
-import { Link, useRouteMatch } from "react-router-dom";
-import {
-  DatePicker,
-  Space,
-  Switch,
-  Menu,
-  Dropdown,
-  Calendar,
-  Badge,
-} from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import { useRouteMatch } from "react-router-dom";
+import { Menu, Calendar, Badge } from "antd";
 
 import NewsModel from "../../../models/NewsModel";
 import ClassgroupModel from "../../../models/ClassgroupModel";
@@ -39,227 +27,58 @@ const classgroup_model = new ClassgroupModel();
 
 export default function News() {
   let code = useRouteMatch("/class-student/news/:code");
-  const [news, setNews] = useState({
-    news_head: "",
-    news_code: "",
-    news_detail: "",
-    news_notice_day: "",
-    news_time: "",
-    news_image: "",
-    classgroup_code: "",
-    adddate: "",
-    addby: "",
-  });
-  const [classgroup, setClassgroup] = useState([]);
-  const [Checkdate, setCheckdate] = useState(false);
+  // const [news, setNews] = useState({
+  //   news_head: "",
+  //   news_code: "",
+  //   news_detail: "",
+  //   news_notice_day: "",
+  //   news_time: "",
+  //   news_image: "",
+  //   classgroup_code: "",
+  //   adddate: "",
+  //   addby: "",
+  // });
+
   const [feednews, setFeednews] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [checkupdate, setCheckupdate] = useState(false);
 
   useEffect(() => {
     fetchFeedData();
-    fetchData();
     setIsLoading(true);
   }, []);
   // console.log("news", news);
-  async function fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-
-    const last_code = await news_model.getNewsByLastCode({});
-    let news_obj = {};
-    news_obj.news_code = last_code.data;
-    news_obj.classgroup_code = code.params.code;
-    news_obj.news_detail = "";
-    news_obj.adddate = dayjs().format("YYYY-MM-DD H:mm:ss");
-    news_obj.addby = user_session.user_uid;
-    setNews(news_obj);
-  }
 
   async function fetchFeedData() {
     const news_feed = await news_model.getNewsByCode({
       classgroup_code: code.params.code,
     });
     setFeednews(news_feed.data);
-
-    const classgroup_data = await classgroup_model.getClassgroupByCode({
-      classgroup_code: code.params.code,
-    });
-    let class_obj = {};
-    class_obj.subject_name = classgroup_data.data[0].subject_fullname;
-    class_obj.class_own = classgroup_data.data[0].user_fullname;
-    setClassgroup(class_obj);
   }
 
-  const _changeFrom = (e) => {
-    const { value, name } = e.target;
-    setNews({ ...news, [name]: value });
-  };
-
-  async function _handleSubmit() {
-    if (_checkSubmit()) {
-      console.log("news", news);
-      let query_result = await news_model.insertNews({
-        news_code: news.news_code,
-        news_detail: news.news_detail,
-        news_notice_day: news.news_notice_day,
-        news_image: news.news_image,
-        classgroup_code: news.classgroup_code,
-        adddate: news.adddate,
-        addby: news.addby,
-        subject_name: classgroup.subject_name,
-        class_own: classgroup.class_own,
+  function getDateData(value) {
+    let dateformat = dayjs(value._d).format("DD-MM-YYYY");
+    let appointment = feednews
+      .filter((appoint) => appoint.news_notice_day !== null)
+      .map((item) => {
+        return item.news_notice_day;
       });
-      if (query_result.require) {
-        Swal.fire("บันทึกเรียบร้อย", "", "success");
-        window.location.reload();
-        // history.push("/leave-student");
-      } else {
-        Swal.fire("ขออภัย มีอย่างอย่างผิดพลาด!", "", "error");
-      }
-    }
-  }
 
-  function _onDelete(data) {
-    Swal.fire({
-      title: "คุณต้องการลบรายการนี้",
-      icon: "warning",
-      showCancelButton: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        news_model
-          .deleteNewsByCode({
-            news_code: data,
-          })
-          .then((res) => {
-            if (res.require) {
-              Swal.fire("ลบรายการ เรียบร้อย", "", "success");
-              window.location.reload();
-            } else {
-              Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
-            }
-          });
+    let aptt = appointment.map((items) => {
+      if (dateformat === items) {
+        return <Badge status="warning"></Badge>;
       }
     });
-  }
-
-  const _checkSubmit = () => {
-    if (news.news_detail === "") {
-      Swal.fire({
-        title: "แจ้งเตือน!",
-        text: "โปรดตรวจสอบ เนื้อหาที่ต้องการเผยแพร่",
-        icon: "warning",
-      });
-      return false;
-    } else {
-      return true;
-    }
-  };
-
-  const menu = (data) => (
-    <Menu style={{ fontSize: "10px" }}>
-      <Menu.Item key="0" onClick={() => editFeed(data)}>
-        <a>แก้ไขข้อความ</a>
-      </Menu.Item>
-      <Menu.Item key="1" onClick={() => _onDelete(data.news_code)}>
-        <a>ลบโพส</a>
-      </Menu.Item>
-    </Menu>
-  );
-
-  const _handleUpdate = async () => {
-    if (_checkSubmit()) {
-      let query_result = await news_model.updateNewsBy({
-        news_code: news.news_code,
-        news_detail: news.news_detail,
-        news_notify: news.news_notify,
-        news_image: news.news_image,
-        classgroup_code: news.classgroup_code,
-        adddate: dayjs(news.adddate).format("YYYY-MM-DD H:mm:ss"),
-        addby: news.addby,
-      });
-      if (query_result.require) {
-        Swal.fire("บันทึกเรียบร้อย", "", "success");
-        window.location.reload();
-      } else {
-        Swal.fire("ขออภัย มีอย่างอย่างผิดพลาด!", "", "error");
-      }
-    }
-  };
-
-  const editFeed = (data) => {
-    setCheckupdate(!checkupdate);
-    setNews(data);
-  };
-
-  function getListData(value) {
-    let listData;
-    switch (value.date()) {
-      case 8:
-        listData = [
-          { type: "warning", content: "This is warning event." },
-          { type: "success", content: "This is usual event." },
-        ];
-        break;
-      case 10:
-        listData = [
-          { type: "warning", content: "This is warning event." },
-          { type: "success", content: "This is usual event." },
-          { type: "error", content: "This is error event." },
-        ];
-        break;
-      case 15:
-        listData = [
-          { type: "warning", content: "This is warning event" },
-          { type: "success", content: "This is very long usual event。。...." },
-          { type: "error", content: "This is error event 1." },
-        ];
-        break;
-      default:
-    }
-    return listData || [];
+    return aptt || [];
   }
 
   function dateCellRender(value) {
-    const listData = getListData(value);
-    return (
-      <ul className="events">
-        {listData.map((item) => (
-          <li key={item.content}>
-            <Badge status={item.type} text={item.content} />
-          </li>
-        ))}
-      </ul>
-    );
-  }
-
-  function getMonthData(value) {
-    if (value.month() === 8) {
-      return 1394;
-    }
-  }
-
-  function monthCellRender(value) {
-    const num = getMonthData(value);
+    const num = getDateData(value);
     return num ? (
       <div className="notes-month">
         <section>{num}</section>
-        <span>Backlog number</span>
       </div>
     ) : null;
   }
-
-  // const _handleSubmitLine = async () => {
-  //   let query_result = await line_model.notifyredirect({
-  //     news_code: news.news_code,
-  //   });
-  //   if (query_result.require) {
-  //     Swal.fire("บันทึกเรียบร้อย", "", "success");
-  //     // window.location.reload();
-  //     // history.push("/leave-student");
-  //   } else {
-  //     Swal.fire("ขออภัย มีอย่างอย่างผิดพลาด!", "", "error");
-  //   }
-  // };
 
   return (
     <div align="center">
@@ -271,9 +90,11 @@ export default function News() {
         <>
           <CRow>
             <CCol xl="8">
-               
               <CCard style={{ width: "100%", fontSize: "20px" }}>
-                <CCardHeader>ฟีดข่าว</CCardHeader>
+              <CCardHeader
+                  className="header-t-red"
+                  style={{ fontSize: "20px" }}
+                >ฟีดข่าว</CCardHeader>
                 <CCardBody>
                   {/* inform */}
                   {feednews.map((data) => {
@@ -295,15 +116,27 @@ export default function News() {
                                   </CFormText>
                                 </CFormGroup>
                               </CForm>
-                            </CCol> 
+                            </CCol>
                           </CRow>
+                          {/* <CRow>
+                            <CCol>{data.news_detail}</CCol>
+                          </CRow> 
+                          <CRow>
+                            <CCol style={{fontSize : "15px"}}> <strong>วันที่นัดหมาย</strong> {data.news_notice_day}</CCol>
+                          </CRow> */}
+                        </CCardHeader>
+                        <CCardBody fontSize="15px" align="left">
                           <CRow>
                             <CCol>{data.news_detail}</CCol>
                           </CRow>
-                        </CCardHeader>
-                        {/* <CCardBody fontSize="15px" align="left">
-                      {data.news_detail}
-                    </CCardBody> */}
+                          <CRow>
+                            <CCol style={{ fontSize: "15px" }}>
+                              {" "}
+                              <strong>วันที่นัดหมาย</strong>{" "}
+                              {data.news_notice_day}
+                            </CCol>
+                          </CRow>
+                        </CCardBody>
                       </CCard>
                     );
                   })}
@@ -315,9 +148,9 @@ export default function News() {
                 <CCol>
                   <div className="site-calendar-demo-card">
                     <Calendar
-                      fullscreen={true}
+                      fullscreen={false}
                       dateCellRender={dateCellRender}
-                      monthCellRender={monthCellRender}
+                      // monthCellRender={monthCellRender}
                     />
                   </div>
                 </CCol>

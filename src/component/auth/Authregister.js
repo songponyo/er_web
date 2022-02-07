@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useContext } from "react";
-import { AuthProvider } from "../../role-accress/authContext";
+import React, { useEffect, useState } from "react";
+// import { AuthProvider } from "../../role-accress/authContext";
 import UserModel from "../../models/UserModel";
 import Swal from "sweetalert2";
-import Auth from "./Auth";
+// import Auth from "./Auth";
 import { Link, useHistory } from "react-router-dom";
-import { Button } from "reactstrap";
 import {
   CCard,
   CCardBody,
@@ -29,7 +28,7 @@ export default function Authrule() {
     user_uid: "",
   });
   useEffect(() => {
-    fetchData();
+    fetchData() 
   }, []);
 
   async function fetchData() {
@@ -39,6 +38,7 @@ export default function Authrule() {
       digit: 3,
     });
     let datainfo = {};
+    datainfo = user
     datainfo.user_code = last_code.data;
     setUser(datainfo);
   }
@@ -59,22 +59,44 @@ export default function Authrule() {
   // }
 
   const _checkSubmit = async () => {
-    if (user.user_password !== user.user_passwordre) {
+    let query_result = await user_model.checkUsernameBy({
+      user_username: user.user_username,
+    });
+    if (query_result.data.lenght !== 0) {
+      Swal.fire({
+        title: "ชื่อนี้มีผู้ใช้แล้ว",
+        icon: "error",
+      });
+      return false;
+    } else if (user.user_password == "") {
       Swal.fire({
         title: "โปรดตรวจสอบรหัสผ่านอีกครั้ง",
         icon: "error",
       });
+      return false
+    } else if (user.user_password !== user.user_passwordre) {
+      Swal.fire({
+        title: "โปรดตรวจสอบรหัสผ่านอีกครั้ง",
+        icon: "error",
+      });
+      return false
+    } else if (user.user_uid == "") {
+      Swal.fire({
+        title: "โปรดตรวจสอบรหัสนักศึกษา",
+        icon: "error",
+      });
       return false;
+    } else {
+      return true;
     }
-    return true;
   };
-
+   
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let query_result = await user_model.registertUser({
         user_code: user.user_code,
         user_username: user.user_username,
-        user_password: user.user_password, 
+        user_password: user.user_password,
         user_firstname: user.user_firstname,
         user_lastname: user.user_lastname,
         user_uid: user.user_uid,
@@ -110,6 +132,7 @@ export default function Authrule() {
                     <CFormGroup>
                       <CLabel>ชื่อผู้ใช้</CLabel>
                       <CInput
+                        autocomplete="off"
                         type="text"
                         name="user_username"
                         value={user.user_username}
@@ -194,7 +217,7 @@ export default function Authrule() {
                     <CFormGroup>
                       <CLabel>รหัสนักศึกษา</CLabel>
                       <CInput
-                        type="text"
+                        type="number"
                         name="user_uid"
                         value={user.user_uid}
                         onChange={(e) =>
@@ -203,9 +226,12 @@ export default function Authrule() {
                             user_uid: e.target.value,
                           })
                         }
+                        maxlength="12"
                         // required
                       />
-                      <p className="text-muted">ไม่ต้องใส่ ( - )</p>
+                      <p style={{ fontSize: "12px" }} lassName="text-muted">
+                        หมายเหตุ* เลข 12 หลัก ไม่ต้องใส่ ( - )
+                      </p>
                     </CFormGroup>
                   </CCol>
                 </CRow>
@@ -215,7 +241,7 @@ export default function Authrule() {
           <CCardFooter>
             <CRow>
               <CCol align="center">
-                <Button
+                <CButton
                   type="submit"
                   color="success"
                   className="registerbtn"
@@ -223,20 +249,20 @@ export default function Authrule() {
                   onClick={() => _handleSubmit()}
                 >
                   สมัครสมาชิก
-                </Button>
+                </CButton>
               </CCol>
             </CRow>
 
             <CRow>
               <CCol align="center">
                 <Link to="/Login">
-                  <Button
+                  <CButton
                     color="btn btn-danger"
                     style={{ backgroundColor: "#aa0404" }}
                     className="registerbtn"
                   >
                     ย้อนกลับ
-                  </Button>
+                  </CButton>
                 </Link>
               </CCol>
             </CRow>

@@ -12,15 +12,14 @@ import {
 } from "@coreui/react";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
-import { Link, useHistory, useRouteMatch } from "react-router-dom"; 
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import TopicModel from "../../../models/TopicModel";
 import ScoreModel from "../../../models/ScoreModel";
 
-
 const score_model = new ScoreModel();
 const topic_model = new TopicModel();
-const classgroup_model = new ClassgroupModel(); 
+const classgroup_model = new ClassgroupModel();
 
 export default function Register() {
   let history = useHistory();
@@ -33,22 +32,27 @@ export default function Register() {
   const [topics, setTopics] = useState({ topic: [], tablename: "" });
   const [score, setScore] = useState({});
   const [top_row, setTop_row] = useState([]);
+  const [isShow, setIsShow] = useState(false);
 
   useEffect(() => {
     const checkuser = async () => {
-      const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+      let classgroup_code_data = code.params.code;
+      const user_session = await JSON.parse(
+        localStorage.getItem(`session-user`)
+      );
       const check_member = await classgroup_model.getClassgroupByMycourse({
-        user_uid : user_session.user_uid
-      })
-      if(check_member.data.length !== 0){
+        user_uid: user_session.user_uid,
+        classgroup_code: classgroup_code_data,
+      });
+      if (check_member.data.length !== 0) {
         Swal.fire("ท่านเป็นสมาชิกอยู่แล้ว", "", "info");
-        history.push("/course-student"); 
-      }else{
-      fetchData();
-      } 
-    }
-    checkuser()
-    
+        history.push("/course-student");
+      } else {
+        fetchData();
+        setIsShow(true);
+      }
+    };
+    checkuser();
   }, []);
 
   useEffect(() => {
@@ -108,7 +112,7 @@ export default function Register() {
         score_code: max_code,
         user_uid: user.user_uid,
       });
-    }); 
+    });
     setTop_row(topic_arr);
     return true;
   };
@@ -196,65 +200,67 @@ export default function Register() {
 
   return (
     <>
-      <CContainer
-        // className="font-body"
-        style={{ width: "350px", paddingTop: "20px" }}
-      >
-        <CCard>
-          <CCardBody>
-            <CRow>
-              <CCol className="text-center">
-                <CLabel style={{ fontSize: "25px" }}>
-                  {classroom.subject_code}
-                </CLabel>
-                <br />
-                <CLabel style={{ fontSize: "20px" }}>
-                  {classroom.subject_name}
-                </CLabel>
-              </CCol>
-              <br />
-              <CCol lg="12" className="text-center">
-                <CLabel style={{ fontSize: "18" }}>อาจารย์ประจำวิชา</CLabel>
-                <br />
-                <CLabel style={{ fontSize: "16" }}>
-                  {classroom.user_fullname}
-                </CLabel>
-              </CCol>
-              <CCol lg="12">
-                <br />
-                <CInput
-                  type="text"
-                  value={classroom.class_password}
-                  className={class_validate.class}
-                  onChange={(e) => _changeFrom(e, "class_password")}
-                  onBlur={() => _checkPassword()}
-                  required
-                  placeholder="รหัสผ่าน"
-                />
-              </CCol>
-            </CRow>
-          </CCardBody>
-          <CCardFooter>
-            <CContainer>
+      {!isShow == false ? (
+        <CContainer
+          // className="font-body"
+          style={{ width: "350px", paddingTop: "20px" }}
+        >
+          <CCard>
+            <CCardBody>
               <CRow>
-                <CCol align="center">
-                  <CButton
-                    type="button"
-                    color="success"
-                    size="xs"
-                    onClick={() => _handleSubmit()}
-                  >
-                    สมัครสมาชิก
-                  </CButton>
-                  <Link to="/course-student">
-                    <CButton color="danger">ย้อนกลับ</CButton>
-                  </Link>
+                <CCol className="text-center">
+                  <CLabel style={{ fontSize: "25px" }}>
+                    {classroom.subject_code}
+                  </CLabel>
+                  <br />
+                  <CLabel style={{ fontSize: "20px" }}>
+                    {classroom.subject_name}
+                  </CLabel>
+                </CCol>
+                <br />
+                <CCol lg="12" className="text-center">
+                  <CLabel style={{ fontSize: "18" }}>อาจารย์ประจำวิชา</CLabel>
+                  <br />
+                  <CLabel style={{ fontSize: "16" }}>
+                    {classroom.user_fullname}
+                  </CLabel>
+                </CCol>
+                <CCol lg="12">
+                  <br />
+                  <CInput
+                    type="text"
+                    value={classroom.class_password}
+                    className={class_validate.class}
+                    onChange={(e) => _changeFrom(e, "class_password")}
+                    onBlur={() => _checkPassword()}
+                    required
+                    placeholder="รหัสผ่าน"
+                  />
                 </CCol>
               </CRow>
-            </CContainer>
-          </CCardFooter>
-        </CCard>
-      </CContainer>
+            </CCardBody>
+            <CCardFooter>
+              <CContainer>
+                <CRow>
+                  <CCol align="center">
+                    <CButton
+                      type="button"
+                      color="success"
+                      size="xs"
+                      onClick={() => _handleSubmit()}
+                    >
+                      สมัครสมาชิก
+                    </CButton>
+                    <Link to="/course-student">
+                      <CButton color="danger">ย้อนกลับ</CButton>
+                    </Link>
+                  </CCol>
+                </CRow>
+              </CContainer>
+            </CCardFooter>
+          </CCard>
+        </CContainer>
+      ) : null}
     </>
   );
 }

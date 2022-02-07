@@ -12,7 +12,7 @@ import {
   CInput,
   CButton,
   CImg,
-  CTextarea
+  CTextarea,
 } from "@coreui/react";
 import Swal from "sweetalert2";
 import { useHistory, useRouteMatch } from "react-router-dom";
@@ -75,7 +75,7 @@ export default function Detail() {
     setLeave(leave_form);
 
     const classgroup_data = await classgroup_model.getClassgroupByMycourse({
-      user_code: user_session.user_code,
+      user_uid: user_session.user_uid,
     });
     // setClassgroup(classgroup_data.data);
 
@@ -87,6 +87,7 @@ export default function Detail() {
         label: class_form[i].subject_fullname,
       });
     }
+    console.log("select_class",classgroup_data);
     setClassselect(select_class);
   };
 
@@ -115,6 +116,8 @@ export default function Detail() {
       }
     }
   };
+
+ 
 
   return (
     <div>
@@ -225,6 +228,23 @@ export default function Detail() {
                       />
                     </CFormGroup>
                   </CCol>
+                  {leave.leave_approve_reason !== null ? (
+                    <CCol md="12">
+                      <br />
+                      <CFormGroup>
+                        <CLabel>เหตุผลพิจารณา</CLabel>
+                        <br />
+                        <CTextarea
+                          style={{ padding: "1%" }}
+                          name="leave_approve_reason"
+                          value={leave.leave_approve_reason}
+                          rows="5"
+                          cols="70"
+                          disabled
+                        />
+                      </CFormGroup>
+                    </CCol>
+                  ) : null}
                 </CRow>
               </CCol>
               <CCol md="6">

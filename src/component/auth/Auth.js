@@ -50,6 +50,21 @@ class Auth extends Component {
                 });
               }
             );
+          } else if (login_result.data[0].user_status == "Deactive") { 
+            this.setState(
+              {
+                loading: false,
+                authcertifying: false,
+              },
+              () => {
+              
+                Swal.fire({
+                  title: "ไม่สามารถเข้าสู่ระบบได้",
+                  text: "บัญชีของท่านไม่พร้อมใช้งานเนื่องจากอาจถูกระงับบัญชี",
+                  icon: "warning",
+                });
+              }
+            );
           } else if (login_result.data.length === 0) {
             this.setState(
               {
@@ -64,7 +79,7 @@ class Auth extends Component {
                 });
               }
             );
-          } else {
+          } else { 
             this.setSession({
               x_access_token: login_result.x_access_token,
               permissions_token: login_result.permissions_token,
@@ -87,6 +102,7 @@ class Auth extends Component {
           user_username: login_token.user_username,
           user_password: login_token.user_password,
         });
+        
         this.setState(
           {
             loading: false,
@@ -136,7 +152,7 @@ class Auth extends Component {
   logout() {
     try {
       localStorage.clear();
-      window.location.replace('');
+      window.location.replace("");
     } catch (e) {
       console.log("logout ", e);
     }
@@ -149,7 +165,7 @@ class Auth extends Component {
       handleAuthentication: this.handleAuthentication,
       logout: this.logout,
     };
-
+    
     return (
       <AuthProvider value={authProviderValue}>
         {this.state.authcertifying ? <Authoring /> : this.props.children}

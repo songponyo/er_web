@@ -10,13 +10,15 @@ import {
 } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { 
-  faWindowClose, 
+import {
+  faWindowClose,
   faAddressCard,
 } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { Table, Loading } from "../../../component/revel-strap";
+import dayjs from "dayjs";
 import ClassgroupModel from "../../../models/ClassgroupModel";
+
 const classgroup_model = new ClassgroupModel();
 
 export default function View() {
@@ -34,12 +36,9 @@ export default function View() {
 
   function _onDelete(data) {
     Swal.fire({
-      title: "Are you sure ?",
+      title: "ยืนยันที่จะลบรายการนี้หรือไม่",
       text:
-        "Confirm to delete " +
-        data.classgroup_id +
-        "   " +
-        data.subject_fullname,
+        "กลุ่มเรียน " + data.classgroup_id + " วิชา " + data.subject_fullname,
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
@@ -64,18 +63,57 @@ export default function View() {
     });
   }
 
+  function _onInActive(data) {
+    Swal.fire({
+      title: " ปิดการใช้งานรายการนี้หรือไม่",
+      text: data.classgroup_id + "   " + data.subject_fullname,
+      icon: "warning",
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        classgroup_model
+          .updateClassgroupByAdmin({
+            classgroup_code: data.classgroup_code,
+            classgroup_id: data.classgroup_id,
+            classgroup_password: data.classgroup_password,
+            classgroup_number: data.classgroup_number,
+            classgroup_table_score: data.classgroup_table_score,
+            subject_code: data.subject_code,
+            user_code: data.user_code,
+            classgroup_time_start: dayjs(data.classgroup_time_start).format(
+              "YYYY-MM-DD H:mm:ss"
+            ),
+            classgroup_time_end: dayjs(data.classgroup_time_end).format(
+              "YYYY-MM-DD H:mm:ss"
+            ),
+            addby: data.addby,
+            adddate: data.adddate,
+            leave_maxcount: data.leave_maxcount,
+            classsgroup_status: "Deactivate",
+          })
+          .then((res) => {
+            if (res.require) {
+              Swal.fire("ปิดการใช้งานเรียบร้อย", "", "success");
+              window.location.reload();
+            } else {
+              Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
+            }
+          });
+      }
+    });
+  }
+
   return (
     <div>
       <CCard>
         <CCardHeader className="header-t-red">
-          กลุ่มเรียน / Class group
+          กลุ่มเรียน
         </CCardHeader>
         <CCardBody>
           <Table
             showRowNo={true}
             dataSource={classgroup}
             dataTotal={classgroup}
-            rowKey=""
             columns={[
               {
                 title: "กลุ่มเรียน",
@@ -102,8 +140,29 @@ export default function View() {
                 align: "center",
               },
               {
-                title: "#",
-                dataIndex: "",
+                title: "สถานะ",
+                dataIndex: "classsgroup_status",
+                render: (cell) => {
+                  if (cell === "Waiting") {
+                    return <p>รออนุมัติ</p>;
+                  } else {
+                    return cell !== "Deactivate" ? (
+                      <span className="text-success">ใช้งาน</span>
+                    ) : (
+                      <span className="text-danger">ปิดใช้งาน</span>
+                    );
+                  }
+                },
+                filters: [
+                  { text: "ใช้งาน", value: "Activate" },
+                  { text: "ปิดใช้งาน", value: "Deactivate" },
+                ],
+                ellipsis: true,
+                width: 150,
+                align: "center",
+              },
+              {
+                title: "เมนู",
                 align: "center",
                 render: (cell) => {
                   const row_accessible = [];
@@ -118,9 +177,25 @@ export default function View() {
                           icon={faAddressCard}
                           size="5s"
                           color="white"
-                        /> แก้ไข
+                        />{" "}
+                        แก้ไข
                       </button>
                     </Link>
+                  );
+
+                  row_accessible.push(
+                    <button
+                      type="button"
+                      className={"btn btn-danger"}
+                      onClick={() => _onInActive(cell)}
+                    >
+                      <FontAwesomeIcon
+                        icon={faWindowClose}
+                        size="5s"
+                        color="white"
+                      />{" "}
+                      ปิดการใช้งาน
+                    </button>
                   );
 
                   row_accessible.push(
@@ -133,7 +208,8 @@ export default function View() {
                         icon={faWindowClose}
                         size="5s"
                         color="white"
-                      /> ลบ
+                      />{" "}
+                      ลบ
                     </button>
                   );
 

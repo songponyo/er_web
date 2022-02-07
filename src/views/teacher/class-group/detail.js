@@ -34,7 +34,7 @@ export default function Detail() {
   useEffect(() => {
     fetchData();
   }, []);
-
+ 
   useEffect(() => {
     if (classgroup.length !== 0) {
       let arr_score = [];
@@ -44,6 +44,7 @@ export default function Detail() {
         arr_score.push({
           user_uid: data.user_uid,
           user_full_name: data.user_full_name,
+          leave_maxcount: data.leave_maxcount
         });
 
         let sc = score
@@ -82,6 +83,7 @@ export default function Detail() {
     let score_info = {};
     score_info = score_group.data;
     score_info.table_name = class_group.data[0].classgroup_table_score;
+    score_info.leave_maxcount = class_group.data[0].leave_maxcount
     setClassgroup(score_info);
 
     const score_user = await score_model.getScoreByGroup({
@@ -104,7 +106,7 @@ export default function Detail() {
   }
 
   const exportToCSV = () => {
-    let Heading = [["รหัสประจำตัว", "ชื่อ-นามสกุล"]];
+    let Heading = [["รหัสประจำตัว", "ชื่อ-นามสกุล", "จำนวนครั้งที่ขาด "+"("+ classgroup.leave_maxcount + ")"]];
     topics.map((data) => {
       Heading[0].push(data.topic_name + "(" + data.max_score + ")");
     });
@@ -121,29 +123,14 @@ export default function Detail() {
     });
 
     XLSX.utils.sheet_add_json(ws, files.score_user, {
-      origin: "C2",
+      origin: "D2",
       skipHeader: true,
     });
 
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
 
-    XLSX.writeFile(wb, "filename.xlsx");
+    XLSX.writeFile(wb, "รายชื่อนักศึกษา.xlsx");
   };
-  // console.log("let i in tc", files.data);
-  const CustomerRow = (data) => {
-    return (
-      <tr>
-        <td>{data.user_uid}</td>
-        <td>{data.user_full_name}</td>
-        {score
-          .filter((scores) => scores.user_uid === data.user_uid)
-          .map((topic_score) => {
-            return <td>{topic_score.score_value}</td>;
-          })}
-      </tr>
-    );
-  };
-  const CustomerTable = files.data.map((us) => CustomerRow(us));
 
   function _onDelete(data) {
     Swal.fire({
@@ -172,11 +159,11 @@ export default function Detail() {
   }
 
   return (
-    <div align="center">
+    <>
       {!isLoading ? (
-        <>
+        <div align="center">
           <CImg src="https://cdn.dribbble.com/users/108183/screenshots/4543219/loader_backinout.gif" />
-        </>
+        </div>
       ) : (
         <CCard>
           <CCardHeader className="header-t-red">
@@ -195,76 +182,79 @@ export default function Detail() {
             <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มรายชื่อ
           </Link> */}
           </CCardHeader>
-          <CCardBody>
-            <Table striped bordered hover responsive>
-              <thead>
-                <tr>
-                  <th class=" tp-first-col">รหัสประจำตัว</th>
-                  <th class=" tp-second-col">ชื่อ - นามสกุล</th>
-                  {topics.map((data) => {
+          {score.length !== 0 ? (
+            <CCardBody>
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th class=" tp-first-col">รหัสประจำตัว</th>
+                    <th class=" tp-second-col">ชื่อ - นามสกุล</th>
+                    <th class=" tp-second-col">จำนวนครั้งที่ลา</th>
+                    {topics.map((data) => {
+                      return (
+                        <>
+                          <th style={{ textAlign: "center" }}>
+                            {data.topic_name} ({data.max_score})
+                          </th>
+                        </>
+                      );
+                    })}
+                    <th style={{ width: "220px" }}>
+                      <center>จัดการ </center>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {classgroup.map((data) => {
                     return (
-                      <>
-                        <th style={{ textAlign: "center" }}> 
-                          {data.topic_name} ({data.max_score})
-                        </th>
-                      </>
-                    );
-                  })}
-                  <th style={{ width: "220px" }}>
-                    <center>จัดการ </center>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {classgroup.map((data, index) => {
-                  return (
-                    <tr>
-                      <td>{data.user_uid}</td>
-                      <td>{data.user_full_name}</td>
-                      {score
-                        .filter((scores) => scores.user_uid === data.user_uid)
-                        .map((topic_score) => {
-                          return <td>{topic_score.score_value}</td>;
-                        })}
-                      <td style={{ textAlign: "center" }}>
-                        <Link
-                          key="score"
-                          to={`/class-group/score/${data.user_uid}-${classgroup.table_name}`}
-                          title="แก้ไขรายการ"
-                        >
-                          <button type="button" className="btn btn-primary">
+                      <tr>
+                        <td>{data.user_uid}</td>
+                        <td>{data.user_full_name}</td>
+                        <td>{data.leave_maxcount}</td>
+                        {score
+                          .filter((scores) => scores.user_uid === data.user_uid)
+                          .map((topic_score) => {
+                            return <td>{topic_score.score_value}</td>;
+                          })}
+                        <td style={{ textAlign: "center" }}>
+                          <Link
+                            key="score"
+                            to={`/class-group/score/${data.user_uid}-${classgroup.table_name}`}
+                            title="แก้ไขรายการ"
+                          >
+                            <button type="button" className="btn btn-primary">
+                              <FontAwesomeIcon
+                                icon={faEdit}
+                                size="5s"
+                                color="white"
+                              />
+                              แก้ไข
+                            </button>
+                          </Link>
+                          <CButton
+                            type="button"
+                            className="btn btn-danger"
+                            onClick={() => _onDelete(data.user_uid)}
+                          >
                             <FontAwesomeIcon
-                              icon={faEdit}
+                              icon={faTrash}
                               size="5s"
                               color="white"
                             />
-                            แก้ไข
-                          </button>
-                        </Link>
-                        <CButton
-                          type="button"
-                          className="btn btn-danger"
-                          onClick={() => _onDelete(data.user_uid)}
-                        >
-                          <FontAwesomeIcon
-                            icon={faTrash}
-                            size="5s"
-                            color="white"
-                          />
-                          {"  "}ลบรายการ
-                        </CButton>
-                        {/* <button type="button" className="btn btn-danger">
+                            {"  "}ลบรายการ
+                          </CButton>
+                          {/* <button type="button" className="btn btn-danger">
                         <FontAwesomeIcon
                           icon={faTrash}
                           size="5s"
                           color="white"
                         />  ลบ
                       </button> */}
-                      </td>
-                    </tr>
-                  );
-                })}
-                {/* {classgroup.map((data, index) => {
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {/* {classgroup.map((data, index) => {
                 return (
                   <tr>
                     <td>{data.user_uid}</td>
@@ -272,14 +262,20 @@ export default function Detail() {
                   </tr>
                 );
               })} */}
-              </tbody>
-            </Table>
-            {/* <Table
+                </tbody>
+              </Table>
+              {/* <Table
             dataSource={classgroup}
             scroll={{ x: 1500, y: 450 }}
             columns={columns}
           /> */}
-          </CCardBody>
+            </CCardBody>
+          ) : (
+            <CCardBody>
+              <Empty></Empty>
+            </CCardBody>
+          )}
+
           <CCardFooter>
             <CButton color="success" onClick={() => exportToCSV()}>
               Export .CSV
@@ -293,6 +289,6 @@ export default function Detail() {
           </CCardFooter>
         </CCard>
       )}
-    </div>
+    </>
   );
 }

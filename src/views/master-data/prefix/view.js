@@ -69,7 +69,7 @@ export default function View() {
                 ellipsis: true,
               },
               {
-                title: "จัดการ",
+                title: "เมนู",
                 dataIndex: "",
                 align: "center",
                 render: (cell) => {

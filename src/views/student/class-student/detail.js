@@ -187,6 +187,16 @@ export default function Detail() {
             </CCol>
           </CRow>
           <CRow>
+          <CCol md="2">
+                จำนวนครั้งที่ลา <br />
+                <CInput 
+                  min="0"
+                  placeholder="0"
+                  value={user_score.leave_maxcount}
+                  name="leave_maxcount" 
+                  readOnly
+                />
+                </CCol>
             {topics.map((data, index) => {
               return (
                 <>

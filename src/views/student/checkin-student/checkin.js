@@ -15,6 +15,7 @@ import QrcodeModel from "../../../models/QrcodeModel";
 import CheckinModel from "../../../models/CheckinModel";
 import { TimeController } from "../../../controller";
 import ScoreModel from "../../../models/ScoreModel";
+import dayjs from "dayjs";
 
 const score_model = new ScoreModel();
 const qrcode_model = new QrcodeModel();
@@ -24,12 +25,15 @@ const time_controller = new TimeController();
 export default function Checkin() {
   let history = useHistory();
   let code = useRouteMatch("/checkin-student/checkin/:code");
+  const [showdetail, setShowdetail] = useState(false);
   const [user, setUser] = useState([]);
   const [qrcode, setQrcode] = useState({});
   const [checkin, setCheckin] = useState({});
   const [Lat, setLat] = useState(0);
   const [Lot, setLot] = useState(0);
-
+  const [checkinstamp, setCheckinstamp] = useState({
+    checkin_time: "",
+  });
   useEffect(() => {
     fetchData();
     getLocation();
@@ -42,6 +46,7 @@ export default function Checkin() {
       alert("Geolocation is not supported by this browser.");
     }
   }
+
   function showPosition(position) {
     var lat = position.coords.latitude;
     var lng = position.coords.longitude;
@@ -75,7 +80,6 @@ export default function Checkin() {
     let day = {};
     day.check_code = qrcode_data.data;
     day.date = new Date();
-    day.time_out = time_controller.reformatToTime(room.qr_timeout);
     day.time_stamp = time_controller.reformatToTime(day.date);
     setCheckin(day);
 
@@ -83,7 +87,7 @@ export default function Checkin() {
     url.qr = room.qr_code;
     url.classID = room.classgroup_code;
     _checkSubmit(user_session.user_code, url);
-  }
+  } 
   async function _handleSubmit() {
     let status_in = "";
     checkin.time_stamp < checkin.time_out
@@ -92,6 +96,7 @@ export default function Checkin() {
 
     let query_result = await checkin_model.insertCheckin({
       checkin_code: checkin.check_code,
+      classgroup_code: qrcode.classgroup_code,
       checkin_time: time_controller.reformatToDateTime(checkin.date),
       checkin_status: status_in,
       user_code: user.user_code,
@@ -127,20 +132,23 @@ export default function Checkin() {
       Swal.fire("บันทึกไม่สำเร็จ", "", "error");
     }
   }
-  console.log("check", checkin);
+
   const _checkSubmit = async (user, qr) => {
     const query_result = await checkin_model.getCheckinBy({
       keyword: user,
       owner: qr.qr,
     });
     if (query_result.data.length !== 0) {
-      Swal.fire({
-        title: "แจ้งเตือน!",
-        text: "ไม่สามารถลงชื่อซ้ำได้",
-        icon: "warning",
-      });
-      let histy = "/checkin-student/history/" + qr.classID;
-      history.push(histy);
+      // console.log("query_result", query_result.data[0]);
+      setCheckinstamp(query_result.data[0]);
+      setShowdetail(true);
+      // Swal.fire({
+      //   title: "แจ้งเตือน!",
+      //   text: "ไม่สามารถลงชื่อซ้ำได้",
+      //   icon: "warning",
+      // });
+      // let histy = "/checkin-student/history/" + qr.classID;
+      // history.push(histy);
       return false;
     } else {
       return true;
@@ -154,11 +162,6 @@ export default function Checkin() {
           <CCardBody>
             <CRow>
               <CCol className="text-center">
-                <CLabel style={{ fontSize: "25px" }}>
-                  {checkin.time_stamp}
-                </CLabel>
-
-                <br />
                 <CLabel style={{ fontSize: "20px" }}>
                   {qrcode.subject_code}
                 </CLabel>
@@ -175,27 +178,40 @@ export default function Checkin() {
                   {qrcode.owner_fullname}
                 </CLabel>
               </CCol>
-              <CCol lg="12">
-                <br />
-              </CCol>
             </CRow>
           </CCardBody>
-          <CCardFooter>
-            <CContainer>
-              <CRow>
-                <CCol align="center">
-                  <CButton
-                    type="button"
-                    color="success"
-                    size="xs"
-                    onClick={() => _handleSubmit()}
-                  >
-                    เช็คชื่อ
-                  </CButton>
-                </CCol>
-              </CRow>
-            </CContainer>
-          </CCardFooter>
+          {showdetail !== true ? (
+            <CCardFooter>
+              <CContainer>
+                <CRow>
+                  <CCol align="center">
+                    <CButton
+                      type="button"
+                      color="success"
+                      size="xs"
+                      onClick={() => _handleSubmit()}
+                    >
+                      เช็คชื่อ
+                    </CButton>
+                  </CCol>
+                </CRow>
+              </CContainer>
+            </CCardFooter>
+          ) : (
+            <CCardFooter>
+              <CContainer>
+                <CRow>
+                  <CCol className="text-center">
+                    <CLabel style={{ fontSize: "20px" }}>เวลาที่ลงชื่อ</CLabel>
+                    <br />
+                    <CLabel style={{ fontSize: "20px" }}>
+                      {dayjs(checkinstamp.checkin_time).format("HH:mm")}
+                    </CLabel>
+                  </CCol>
+                </CRow>
+              </CContainer>
+            </CCardFooter>
+          )}
         </CCard>
       </CContainer>
     </>

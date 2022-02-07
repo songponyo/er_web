@@ -1,52 +1,48 @@
 import React, { useState, useEffect } from "react";
 import { CCard, CCardHeader, CCardBody } from "@coreui/react";
 import { faAddressBook } from "@fortawesome/free-solid-svg-icons";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Table } from "../../../component/revel-strap";
-
+import dayjs from "dayjs"; 
 import QrcodeModel from "../../../models/QrcodeModel";
-import { TimeController } from "../../../controller";
 
-const qrcode_model = new QrcodeModel();
-const time_controller = new TimeController();
+const qrcode_model = new QrcodeModel(); 
 
+
+ 
 export default function History() { 
   let code = useRouteMatch("/checkin-teacher/history/:code");
   const [classgroup, setClassgroup] = useState([]);
+
 
   useEffect(() => {
     fetchData();
   }, []);
   async function fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    // const user_session = await JSON.parse(localStorage.getItem(`session-user`));
 
     const qrcode_data = await qrcode_model.getQrcodeBy({
       keyword: code.params.code,
       // owner: user_session.user_code,
-    });
-    setClassgroup(qrcode_data.data);
-  }
-
-  async function _handleSubmit() {}
-
-  // const _changeFrom = (e) => {
-  //   const { value, name } = e.target;
-  //   setClassgroup({ ...classgroup, [name]: value });
-  // };
-
+    }); 
+    let classArr = {}
+    classArr.classname = qrcode_data.data[0].subject_fullname
+    classArr.Arr = qrcode_data.data 
+    setClassgroup(classArr);
+  } 
+ 
   return (
     <>
       <CCard>
         <CCardHeader className="header-t-red">
-          รายชื่อเข้าเรียน / Name list
+          รายชื่อเข้าเรียน วิชา {classgroup.classname}
         </CCardHeader>
         <CCardBody>
           <Table
             showRowNo={false}
-            dataSource={classgroup}
-            dataTotal={classgroup}
-            rowKey=""
+            dataSource={classgroup.Arr}
+            dataTotal={classgroup.Arr} 
             columns={[
               {
                 title: "ครั้งที่",
@@ -64,19 +60,19 @@ export default function History() {
                 width: 120,
                 align: "center",
               },
-              {
-                title: "รหัสวิชา",
-                dataIndex: "subject_fullname",
-                filterAble: true,
-                ellipsis: true,
-                width: 150,
-                align: "center",
-              },
+              // {
+              //   title: "รหัสวิชา",
+              //   dataIndex: "subject_fullname",
+              //   filterAble: true,
+              //   ellipsis: true,
+              //   width: 150,
+              //   align: "center",
+              // },
               {
                 title: "วันที่",
                 dataIndex: "qr_timeout",
                 render: (cell) => {
-                  let time = time_controller.reformatToDate(cell);
+                  let time = dayjs(cell).format('DD/MM/YYYY')  
                   return time;
                 },
                 filterAble: true,
@@ -87,7 +83,7 @@ export default function History() {
                 title: "เวลาเข้าเช็คชื่อ",
                 dataIndex: "qr_timeout",
                 render: (cell) => {
-                  let time = time_controller.reformatToTime(cell);
+                  let time = dayjs.tz(cell).format("HH:mm"); 
                   return time;
                 },
                 filterAble: true,
@@ -99,8 +95,7 @@ export default function History() {
                 dataIndex: "",
                 align: "center",
                 render: (cell) => {
-                  const row_accessible = []; 
-                  console.log(cell);
+                  const row_accessible = [];  
                   row_accessible.push(
                     <Link
                       key="detail"

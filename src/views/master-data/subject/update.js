@@ -47,7 +47,7 @@ export default function Insert() {
 
       if (query_result.require) {
         Swal.fire("บันทึกเรียบร้อย", "", "success");
-        history.push("/course");
+        history.push("/subject");
       } else {
         Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
       }
@@ -141,7 +141,7 @@ export default function Insert() {
             >
               บันทึก
             </CButton>
-            <Link to="/course">
+            <Link to="/subject">
               <CButton color="btn btn-danger">ย้อนกลับ</CButton>
             </Link>
           </CCardFooter>

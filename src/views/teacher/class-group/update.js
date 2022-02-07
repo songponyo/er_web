@@ -123,6 +123,17 @@ export default function Update() {
     setTopics(topic_data.data);
   }
 
+  useEffect(() => {
+    let timer_start =
+      dayjs().format("YYYY-MM-DD ") + classroom.classgroup_time_start;
+    let timer_end =
+      dayjs().format("YYYY-MM-DD ") + classroom.classgroup_time_end;
+    let classrooma = {};
+    classrooma.time_start = timer_start;
+    classrooma.time_end = timer_end;
+    setTime(classrooma);
+  }, [classroom.classgroup_time_start, classroom.classgroup_time_end]);
+
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let query_result = await classgroup_model.updateClassgroupBy({
@@ -136,8 +147,10 @@ export default function Update() {
         classgroup_time_start: time.time_start,
         classgroup_time_end: time.time_end,
         addby: classroom.addby,
-        adddate: dayjs().format("YYYY-MM-DD H:mm:ss"),
+        adddate: classroom.adddate,
         topics_row: topics,
+        leave_maxcount: classroom.leave_maxcount,
+        classsgroup_status: classroom.classsgroup_status,
       });
       if (query_result.require) {
         Swal.fire("บันทึกเรียบร้อย", "", "success");
@@ -147,17 +160,6 @@ export default function Update() {
       }
     }
   }
-
-  useEffect(() => {
-    let timer_start =
-      dayjs().format("YYYY-MM-DD ") + classroom.classgroup_time_start;
-    let timer_end =
-      dayjs().format("YYYY-MM-DD ") + classroom.classgroup_time_end;
-    let classrooma = {};
-    classrooma.time_start = timer_start;
-    classrooma.time_end = timer_end;
-    setTime(classrooma);
-  }, [classroom.classgroup_time_start, classroom.classgroup_time_end]);
 
   const _checkSubmit = () => {
     if (classroom.subject_code === "") {
@@ -331,7 +333,6 @@ export default function Update() {
               </CFormGroup>
             </CCol>
           </CRow>
-
           <CRow>
             <CCol md="3">
               <CFormGroup>
@@ -385,16 +386,10 @@ export default function Update() {
               </CFormGroup>
             </CCol>
           </CRow>
-
-          {/* <CRow>
+          <CRow>
             <CCol md="3">
               <CFormGroup>
-                <CLabel>
-                  จำนวนครั้งที่สามารถขาดได้{" "}
-                  <font color="#F00">
-                    <b>*</b>
-                  </font>
-                </CLabel>
+                <CLabel>จำนวนครั้งที่สามารถขาดได้</CLabel>
                 <CInput
                   type="number"
                   name="leave_maxcount"
@@ -404,10 +399,9 @@ export default function Update() {
                 />
               </CFormGroup>
             </CCol>
-          </CRow> */}
-
+          </CRow>
           {/* ตารางคะแนน */}
-          <CRow>
+          {/* <CRow>
             <CCol sm="12">
               <CButton
                 color="primary"
@@ -425,8 +419,16 @@ export default function Update() {
               </CButton>
             </CCol>
           </CRow>
-          <br />
+          <br /> */}
 
+          <p className="text-muted">
+            <font color="#F00">
+              <b>*</b>
+            </font>{" "}
+            หมายเหตุ : สามารถเปลี่ยนชื่อหัวตารางและคะแนนได้
+            แต่ไม่สามารถเพิ่มช่องคะแนนในภายหลังจากทำการยืน
+            โปรดตรวจสอบช่องคะแนนที่ต้องการใช้ก่อนทำการยืนยัน
+          </p>
           <Table striped bordered hover>
             <thead>
               <tr>

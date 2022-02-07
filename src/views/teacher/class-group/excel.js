@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import { ExcelRenderer } from "react-excel-renderer";
 import "antd/dist/antd.css";
 import { Table, Upload, Button } from "antd";
@@ -11,6 +11,7 @@ import {
   CButton,
   CRow,
   CCol,
+  CImg,
 } from "@coreui/react";
 import Swal from "sweetalert2";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
@@ -25,6 +26,7 @@ const topic_model = new TopicModel();
 export default function Update() {
   let history = useHistory();
   let code = useRouteMatch("/class-group/excel/:code");
+  const [isLoading, setisLoading] = useState(false);
   const [score, setScore] = useState({});
   const [row, setRow] = useState({ rows: [] });
   const [top_row, setTop_row] = useState([]);
@@ -48,44 +50,45 @@ export default function Update() {
   ]);
 
   useEffect(() => {
-    async function fetchData() {
-      const topic_data = await topic_model.getTopicByClassCode({
-        classgroup_code: code.params.code,
-      });
-  
-      const class_group = await classgroup_model.getClassgroupByCode({
-        classgroup_code: code.params.code,
-      });
-  
-      if (class_group.require === false) {
-        Swal.fire("ข้อผิดพลาดไม่สามารถโหลดข้อมูล !", "", "error");
-        history.push("/class-group");
-      } else if (class_group.data.length === 0) {
-        Swal.fire("ไม่พบรายการนี้ในระบบ !", "", "warning");
-        history.push("/class-group");
-      } else {
-        let topics_info = {};
-        topics_info.topic = topic_data.data;
-        topics_info.tablename = class_group.data[0].classgroup_table_score;
-        setTopics(topics_info);
-      }
-  
-      const score_last = await score_model.getScoreLastCode({});
-      let score_info = {};
-      score_info.code = score_last.data;
-      score_info.last_code = 0;
-      setScore(score_info);
-    }
     fetchData();
-  }, [code,history]);
+    setisLoading(true);
+  }, []);
+
+  async function fetchData() {
+    const topic_data = await topic_model.getTopicByClassCode({
+      classgroup_code: code.params.code,
+    });
+
+    const class_group = await classgroup_model.getClassgroupByCode({
+      classgroup_code: code.params.code,
+    });
+
+    if (class_group.require === false) {
+      Swal.fire("ข้อผิดพลาดไม่สามารถโหลดข้อมูล !", "", "error");
+      history.push("/class-group");
+    } else if (class_group.data.length === 0) {
+      Swal.fire("ไม่พบรายการนี้ในระบบ !", "", "warning");
+      history.push("/class-group");
+    } else {
+      let topics_info = {};
+      topics_info.topic = topic_data.data;
+      topics_info.tablename = class_group.data[0].classgroup_table_score;
+      setTopics(topics_info);
+    }
+
+    const score_last = await score_model.getScoreLastCode({});
+    let score_info = {};
+    score_info.code = score_last.data;
+    score_info.last_code = 0;
+    setScore(score_info);
+    setisLoading(true);
+  }
 
   useEffect(() => {
     if (row.rows.length !== 0) {
       AddTopics();
     }
   }, [row]);
-
-  
 
   const fileHandler = (fileList) => {
     let newRows = [];
@@ -121,6 +124,7 @@ export default function Update() {
                 user_uid: rowone.replace("-", ""),
                 user_firstname: row[1],
                 user_lastname: row[2],
+                user_leave_maxcount: 0,
               });
             } catch {
               // console.log("row",row);
@@ -147,7 +151,7 @@ export default function Update() {
     let last = score.code.replace("SC", "");
     let last_score = parseInt(last) - 1;
     row.rows.map((data, index) => {
-      topics.topic.map((topic, idx) => { 
+      topics.topic.map((topic, idx) => {
         sum = sum + 1;
         let result = sum + last_score;
         let max_code = "SC" + result.toString().padStart(3, "0");
@@ -161,12 +165,13 @@ export default function Update() {
           user_uid: data.user_uid,
         });
       });
-    }); 
+    });
     setTop_row(topic_arr);
     return true;
   };
 
   const handleSubmit = async () => {
+    setisLoading(false);
     const query_result = await score_model.insertScore({
       table_name: topics.tablename,
       excel_row: row.rows,
@@ -174,65 +179,79 @@ export default function Update() {
       user_status: "Not active",
       classgroup_code: code.params.code,
     });
+
     if (query_result.require) {
       Swal.fire({ title: "บันทึกข้อมูลสำเร็จ !", icon: "success" });
       history.push("/class-group");
+      setisLoading(true);
+      window.location.reload();
     } else {
       Swal.fire({ title: "เกิดข้อผิดพลาด !", icon: "error" });
     }
   };
 
   return (
-    <div className="animated fadeIn">
-      <CCard>
-        <CCardHeader className="header-t-red">
-          รายชื่อนำเข้าจากเอกสาร Excel
-        </CCardHeader>
-        <CCardBody>
-          {/* <ExcelPage data={classroom} /> */}
-          <CRow>
-            <CCol md="12">
-              <Upload
-                name="file"
-                beforeUpload={fileHandler}
-                onRemove={() => setRow({ rows: [] })}
-                multiple={false}
-              >
-                {/* <CButton>
-                  <Icon type="UploadOutlined" /> อัปโหลดไฟล์
-                </CButton>
-                <p className="text-muted">นามสกุลไฟล์ .xlms</p> */}
-                <Button icon={<UploadOutlined />}>อัปโหลดไฟล์</Button>
-                <p className="text-muted">นามสกุลไฟล์ .xlms</p>
-              </Upload>
-            </CCol>
-            <CCol md="12">
-              <div style={{ marginTop: 20 }}>
-                {row.rows.length !== 0 ? (
-                  <Table dataSource={row.rows} columns={columns} />
-                ) : (
-                  <></>
-                )}
-              </div>
-            </CCol>
-          </CRow>
-        </CCardBody>
-        <CCardFooter>
-          {row.rows.length !== 0 ? (
-            <>
-              <CButton color="btn btn-primary" onClick={() => handleSubmit()}>
-                บันทึกข้อมูล
-              </CButton>
-            </>
-          ) : (
-            <></>
-          )}
+    <div align="center">
+      {!isLoading ? (
+        <div>
+          <CImg src="https://cdn.dribbble.com/users/108183/screenshots/4543219/loader_backinout.gif" />
+        </div>
+      ) : (
+        <div className="animated fadeIn">
+          <CCard>
+            <CCardHeader className="header-t-red">
+              รายชื่อนำเข้าจากเอกสาร Excel
+            </CCardHeader>
+            <CCardBody>
+              {/* <ExcelPage data={classroom} /> */}
+              <CRow>
+                <CCol md="12">
+                  <Upload
+                    name="file"
+                    beforeUpload={fileHandler}
+                    onRemove={() => setRow({ rows: [] })}
+                    multiple={false}
+                  >
+                    {/* <CButton>
+                    <Icon type="UploadOutlined" /> อัปโหลดไฟล์
+                  </CButton>
+                  <p className="text-muted">นามสกุลไฟล์ .xlms</p> */}
+                    <Button icon={<UploadOutlined />}>อัปโหลดไฟล์</Button>
+                    <p className="text-muted">นามสกุลไฟล์ .xlms</p>
+                  </Upload>
+                </CCol>
+                <CCol md="12">
+                  <div style={{ marginTop: 20 }}>
+                    {row.rows.length !== 0 ? (
+                      <Table dataSource={row.rows} columns={columns} />
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                </CCol>
+              </CRow>
+            </CCardBody>
+            <CCardFooter>
+              {row.rows.length !== 0 ? (
+                <>
+                  <CButton
+                    color="btn btn-primary"
+                    onClick={() => handleSubmit()}
+                  >
+                    บันทึกข้อมูล
+                  </CButton>
+                </>
+              ) : (
+                <></>
+              )}
 
-          <Link to="/class-group">
-            <CButton color="btn btn-danger">ย้อนกลับ</CButton>
-          </Link>
-        </CCardFooter>
-      </CCard>
+              <Link to="/class-group">
+                <CButton color="btn btn-danger">ย้อนกลับ</CButton>
+              </Link>
+            </CCardFooter>
+          </CCard>
+        </div>
+      )}
     </div>
   );
 }

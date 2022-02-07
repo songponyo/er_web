@@ -12,6 +12,13 @@ import dayjs from "dayjs";
 
 const checkin_model = new CheckinModel();
 
+// const utc = require('dayjs/plugin/utc');
+// const timezone = require('dayjs/plugin/timezone');
+// dayjs.extend(utc);
+// dayjs.extend(timezone); 
+// dayjs.tz.setDefault('Asia/Hong_Kong');
+
+
 export default function Detail() {
   let code = useRouteMatch("/checkin-teacher/detail/:code");
   const [classgroup, setClassgroup] = useState([]);
@@ -69,7 +76,7 @@ export default function Detail() {
                 title: "เวลาเข้าเรียน",
                 dataIndex: "checkin_time",
                 render: (cell) => {
-                  let time = dayjs(cell).format("HH:mm");
+                  let time = dayjs(cell).format("HH:mm"); 
                   return time;
                 },
                 filterAble: true,
@@ -83,17 +90,17 @@ export default function Detail() {
                   if (cell === "Active") {
                     return <span className="text-success">เข้าเรียน</span>;
                   } else {
-                    return cell !== "Deactive" ? (
-                      <span className="text-danger">ล่าช้า</span>
+                    return cell == "Inactive" ? (
+                      <span className="text-danger">สาย</span>
                     ) : (
                       <span className="text-danger">ลา</span>
                     );
                   }
                 },
-                // filters: [
-                //   { text: "เ", value: "Activate" },
-                //   { text: "เข้าสาย", value: "Waiting" },
-                // ],
+                filters: [
+                  { text: "เข้าเรียน", value: "Active" },
+                  { text: "สาย", value: "Inactive" },
+                ],
                 align: "center",
                 width: 120,
               },

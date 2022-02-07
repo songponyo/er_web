@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import GLOBAL from "../../../GLOBAL";
+import React, { useState, useEffect } from "react"; 
 import ExcelPage from "../../../component/excelPage";
 
 import {
@@ -14,17 +13,9 @@ import {
   CInput,
   CButton,
 } from "@coreui/react";
-import Swal from "sweetalert2";
-import { Modal } from "react-bootstrap";
+import Swal from "sweetalert2"; 
 import { Select } from "../../../component/revel-strap";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit,
-  faCheck,
-  faWindowClose,
-} from "@fortawesome/free-solid-svg-icons";
-import { Table, Loading } from "../../../component/revel-strap";
+import { Link, useHistory, useRouteMatch } from "react-router-dom";  
 import { TimeController } from "../../../controller";
 import SubjectModel from "../../../models/SubjectModel"
 import ClassgroupModel from "../../../models/ClassgroupModel"
@@ -37,12 +28,10 @@ const time_controller = new TimeController();
 
 
 export default function Update() {
-  let history = useHistory();
-  const [showloading, setShowLoading] = useState(true);
+  let history = useHistory(); 
   let code = useRouteMatch("/class-student/update/:code");
   const [user, setUser] = useState([]);
-  const [subject, setSubject] = useState([]);
-  const [classgroup, setClassgroup] = useState([])
+  const [subject, setSubject] = useState([]); 
   const [classroom, setClassroom] = useState({
     classgroup_code: "",
     classgroup_id: "",
@@ -57,7 +46,7 @@ export default function Update() {
   }, []);
   //  console.log("classroom",classroom);
   async function fetchData() {
-    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    // const user_session = await JSON.parse(localStorage.getItem(`session-user`));
 
     const class_group = await classgroup_model.getClassgroupByCode({
       classgroup_code: code.params.code,

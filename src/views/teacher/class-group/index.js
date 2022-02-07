@@ -13,7 +13,7 @@ const News = React.lazy(() => import('./news'))
 
 
 class Classgroup extends Component {
-  render() {
+  render() { 
     return (
       <HashRouter>
         <React.Suspense>

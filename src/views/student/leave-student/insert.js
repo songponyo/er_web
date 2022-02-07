@@ -92,7 +92,7 @@ export default function Insert() {
         label: class_form[i].subject_fullname,
       });
     }
-    console.log("select_class", select_class);
+   
     setClassselect(select_class);
   };
 

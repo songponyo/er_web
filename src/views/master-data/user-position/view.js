@@ -107,8 +107,8 @@ class View extends React.Component {
                   ellipsis: true,
                 },
                 {
-                  title: "",
-                  dataIndex: "",
+                  title: "เมนู", 
+                  align: "center",
                   render: (cell) => {
                     const row_accessible = []
 

@@ -17,6 +17,7 @@ import { TimeController } from "../../../controller";
 import ClassgroupModel from "../../../models/ClassgroupModel";
 import QrcodeModel from "../../../models/QrcodeModel";
 import dayjs from "dayjs";
+import GROBAL from "../../../GLOBAL";
 
 const qrcode_model = new QrcodeModel();
 const time_controller = new TimeController();
@@ -99,7 +100,7 @@ export default function Qrcode() {
       });
       if (query_result.require) {
         Swal.fire("บันทึกเรียบร้อย!!", "", "success");
-        // history.push("/checkin-teacher");
+        
       } else {
         Swal.fire("บันทึกไม่สำเร็จ", "", "error");
       }
@@ -109,7 +110,8 @@ export default function Qrcode() {
   function seturl(e) {
     return new Promise((resolve, reject) => {
       let url =
-        "https://elearnning-323808.web.app/#/" +
+        // "https://elearnning-b40d1.web.app/#/"
+        GROBAL.Main_url.URL +
         "checkin-student/checkin/" +
         checkin.qr_code;
       setCheckin({ ...checkin, qr_url: url });
@@ -135,6 +137,7 @@ export default function Qrcode() {
     }
   };
 
+  
   const _checkSubmit = () => {
     if (checkin.qr_timeout === "" || checkin.qr_timeout > 60) {
       Swal.fire({
@@ -232,7 +235,7 @@ export default function Qrcode() {
                       <br />
                       {qrcode.show ? (
                         <div>
-                          <img src={encoded} />
+                          <img src={encoded} style={{width : "300px"}} />
                           <p>{decoded}</p>
                         </div>
                       ) : null}

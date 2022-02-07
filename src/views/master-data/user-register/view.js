@@ -26,6 +26,7 @@ export default function View() {
   }
 
   function _onDelete(data) {
+    console.log(data);
     Swal.fire({
       title: "คุณแน่ใจใช่ไหม",
       text: "ยืนยันที่จะลบรายการนี้",
@@ -34,7 +35,7 @@ export default function View() {
     }).then((result) => {
       if (result.isConfirmed) {
         // setShowLoading(true);
-        user_model.deleteUserByCode({ user_code: data.user }).then((res) => {
+        user_model.deleteUserByCode({ user_code: data.user_code }).then((res) => {
           if (res.require) {
             // setShowLoading(false);
             Swal.fire("ลบเรียบร้อย", "", "success");
@@ -52,7 +53,7 @@ export default function View() {
     <div>
       <CCard>
         <CCardHeader className="header-t-red">
-          กลุ่มเรียน / Class group
+          รายชื่อผู้ลงทะเบียนเข้าใช้งาน
           {/* <Link
             to={`/user-register/insert`}
             className="btn btn-success float-right"
@@ -84,7 +85,7 @@ export default function View() {
                 align: "center",
               },
               {
-                title: "เมนูจัดการ",
+                title: "เมนู",
                 dataIndex: "",
                 align: "center",
                 render: (cell) => {
