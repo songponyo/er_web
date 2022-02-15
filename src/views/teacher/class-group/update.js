@@ -79,10 +79,10 @@ export default function Update() {
     } else {
       let room = {};
       room = class_group.data[0];
-      room.classgroup_time_start = dayjs(room.classgroup_time_start).format(
+      room.classgroup_time_start = dayjs.tz(room.classgroup_time_start).format(
         "HH:mm"
       );
-      room.classgroup_time_end = dayjs(room.classgroup_time_end).format(
+      room.classgroup_time_end = dayjs.tz(room.classgroup_time_end).format(
         "HH:mm"
       );
       await setClassroom(room);
@@ -220,38 +220,38 @@ export default function Update() {
     }
   };
 
-  const AddArray = () => {
-    let topic = { ...topics };
-    let index_arr = topics[parseInt(topics.length - 1)];
+  // const AddArray = () => {
+  //   let topic = { ...topics };
+  //   let index_arr = topics[parseInt(topics.length - 1)];
 
-    let last_code = index_arr.topic_code;
-    let column = (parseInt(index_arr.topic_column) + 1).toString();
+  //   let last_code = index_arr.topic_code;
+  //   let column = (parseInt(index_arr.topic_column) + 1).toString();
 
-    let str = last_code.substr(2, 5);
-    let max_id = parseInt(str) + 1;
-    let max_str = max_id.toString().padStart(3, "0");
-    let res = "TP".concat(max_str);
+  //   let str = last_code.substr(2, 5);
+  //   let max_id = parseInt(str) + 1;
+  //   let max_str = max_id.toString().padStart(3, "0");
+  //   let res = "TP".concat(max_str);
 
-    let newArr = {
-      topic_code: res,
-      topic_column: column,
-      topic_name: "",
-      max_score: 0,
-      classgroup_code: classroom.classgroup_code,
-    };
-    topic[topics.length] = newArr;
+  //   let newArr = {
+  //     topic_code: res,
+  //     topic_column: column,
+  //     topic_name: "",
+  //     max_score: 0,
+  //     classgroup_code: classroom.classgroup_code,
+  //   };
+  //   topic[topics.length] = newArr;
 
-    setTopics((topics) => [...topics, newArr]);
-  };
+  //   setTopics((topics) => [...topics, newArr]);
+  // };
 
-  const handleRemoveItem = () => {
-    if (topics.length === 1) {
-      alert("ไม่อนุญาติให้ทำการลบรายการทั้งหมด");
-    } else {
-      let topic_code = topics[parseInt(topics.length - 1)].topic_code;
-      setTopics(topics.filter((item) => item.topic_code !== topic_code));
-    }
-  };
+  // const handleRemoveItem = () => {
+  //   if (topics.length === 1) {
+  //     alert("ไม่อนุญาติให้ทำการลบรายการทั้งหมด");
+  //   } else {
+  //     let topic_code = topics[parseInt(topics.length - 1)].topic_code;
+  //     setTopics(topics.filter((item) => item.topic_code !== topic_code));
+  //   }
+  // };
 
   return (
     <>

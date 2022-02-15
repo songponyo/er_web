@@ -72,13 +72,9 @@ export default function Qrcode() {
       checkin = class_group.data[0];
       checkin.qr_code = qrcode_data.data;
       checkin.qr_No = qr_No.data;
-      checkin.classgroup_time_start = time_controller.reformatToTime(
-        checkin.classgroup_time_start
-      );
-      checkin.time_start = checkin.classgroup_time_start;
-      checkin.classgroup_time_end = time_controller.reformatToTime(
-        checkin.classgroup_time_end
-      );
+      checkin.classgroup_time_start =  dayjs.tz(checkin.classgroup_time_start).format('HH:mm')
+      checkin.time_start = checkin.classgroup_time_start
+      checkin.classgroup_time_end =  dayjs.tz(checkin.classgroup_time_end).format('HH:mm')
       checkin.qr_timeout = "";
       checkin.qr_url = "";
       setCheckin(checkin);

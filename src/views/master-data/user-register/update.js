@@ -69,11 +69,12 @@ export default function View() {
     }
     setPosition(select_ps);
   }
-
+ 
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let query_result = await user_model.updateUserBy({
         user_code: user.user_code,
+        user_uid: user.user_uid,
         user_position_code: user.user_position_code,
         license_code: user.license_code,
         user_prefix: user.user_prefix,

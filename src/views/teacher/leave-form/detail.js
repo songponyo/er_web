@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   CCard,
@@ -12,12 +12,15 @@ import {
   CInput,
   CButton,
   CImg,
-} from "@coreui/react";  
+  CFormGroup,
+} from "@coreui/react";
 import Swal from "sweetalert2";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { TimeController } from "../../../controller";
-
+import { DatePicker } from "../../../component/revel-strap";
 import LeaveModel from "../../../models/LeaveModel";
+import dayjs from "dayjs";
+import "dayjs/locale/th";
 
 const leave_model = new LeaveModel();
 const time_controller = new TimeController();
@@ -48,33 +51,32 @@ export default function Detail() {
     mindate: time_controller.reformatToDate(new Date()),
   });
 
-  useEffect(() => { 
+  useEffect(() => {
     fetchData();
   }, []);
 
-      async function fetchData() {
-      const user_session = await JSON.parse(localStorage.getItem(`session-user`));
-      setUser(user_session);
- 
-      const leave_data = await leave_model.getLeaveByCode({
-        leave_code: code.params.code,
-      });
-      let leave_form = {};
-      leave_form = leave_data.data[0];
-      leave_form.leave_image = {
-        src: "default.png",
-        file: null,
-        old: leave_data.data[0].leave_image,
-      };
-  
-      setLeave(leave_form);
-    }
+  async function fetchData() {
+    const user_session = await JSON.parse(localStorage.getItem(`session-user`));
+    setUser(user_session);
 
- 
+    const leave_data = await leave_model.getLeaveByCode({
+      leave_code: code.params.code,
+    });
+    let leave_form = {};
+    leave_form = leave_data.data[0];
+    leave_form.leave_image = {
+      src: "default.png",
+      file: null,
+      old: leave_data.data[0].leave_image,
+    };
+
+    setLeave(leave_form);
+  }
+
   async function _handleSubmit() {
-    console.log("leave",leave);
-    if (_checkSubmit()) { 
-      let query_result = await leave_model.updateLeaveBy({ 
+    console.log("leave", leave);
+    if (_checkSubmit()) {
+      let query_result = await leave_model.updateLeaveBy({
         leave_code: leave.leave_code,
         leave_image: leave.leave_image.old,
         classgroup_code: leave.classgroup_code,
@@ -186,6 +188,30 @@ export default function Detail() {
                       />
                     </CCol>
 
+                    {/* กำหนดการ */}
+                    <CCol md="6">
+                      <br />
+                      <CFormGroup>
+                        <CLabel>วันที่ลา</CLabel>
+                        <CInput
+                          value={dayjs(leave.leave_start).locale("th").format("DD MMMM YYYY")}
+                          name="leave_start"
+                          readOnly
+                        />
+                      </CFormGroup>
+                    </CCol>
+                    <CCol md="6">
+                      <br />
+                      <CFormGroup>
+                        <CLabel>วันที่สิ้นสุดลา</CLabel>
+                        <CInput
+                          value={dayjs(leave.leave_end).locale("th").format("DD MMMM YYYY")}
+                          name="leave_end"
+                          readOnly
+                        />
+                      </CFormGroup>
+                    </CCol>
+
                     <CCol md="12">
                       <br />
                       <CLabel>เหตุผลการลา</CLabel>
@@ -230,7 +256,7 @@ export default function Detail() {
               <CContainer>
                 <CCol md="12">
                   <br />
-                  <hr/>
+                  <hr />
                   <CLabel>ยืนยันสถานะ</CLabel>
                   <tbody>
                     <CCol>

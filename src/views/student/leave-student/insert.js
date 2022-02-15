@@ -137,14 +137,14 @@ export default function Insert() {
     if (leave.leave_type === "") {
       Swal.fire({
         title: "แจ้งเตือน!",
-        text: "Please Check Your leave type ",
+        text: "โปรดเช็ค ประเภทการลา ",
         icon: "warning",
       });
       return false;
     } else if (leave.leave_reason === "") {
       Swal.fire({
         title: "แจ้งเตือน!",
-        text: "Please Check Your reason",
+        text: "โปรดใส่เหตุผลในการยื่นเอกสาร",
         icon: "warning",
       });
       return false;

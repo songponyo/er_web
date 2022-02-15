@@ -15,11 +15,7 @@ const classgroup_model = new ClassgroupModel();
 
 export default function View() {
   const [classgroup, setClassgroup] = useState([]);
-  const [time, setTime] = useState({
-    time_start: "",
-    time_end: "",
-  });
-
+ 
   useEffect(() => {
     async function _fetchData() {
       const user_session = await JSON.parse(
@@ -30,7 +26,7 @@ export default function View() {
       });
 
       let classgroup_arr = classgroup_data.data.filter(
-        (data) => data.classsgroup_status == "Activate"
+        (data) => data.classsgroup_status === "Activate"
       );
       setClassgroup(classgroup_arr);
     }

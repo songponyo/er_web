@@ -195,6 +195,7 @@ export default function Score() {
                 );
               })}
             </CRow>
+            
             <CRow>
               <CCol md="2">
                 คะแนนรวมทั้งหมด <br />

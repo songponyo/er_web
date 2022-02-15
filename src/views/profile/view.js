@@ -32,6 +32,7 @@ export default function View() {
 
   useEffect(() => {
     _fetchData();
+ 
   }, []);
 
   async function _fetchData() {
@@ -74,8 +75,7 @@ export default function View() {
 
   async function _handleSubmit() {
     if (_checkSubmit()) {
-      let img = "";
-
+      let img = ""; 
       if (user.user_profile_image.file !== null) {
         const res_upload = await upload_contoller.uploadFile({
           src: user.user_profile_image,
@@ -92,6 +92,7 @@ export default function View() {
 
       let query_result = await user_model.updateUserBy({
         user_code: user.user_code,
+        user_uid: user.user_uid,
         user_position_code: user.user_position_code,
         license_code: user.license_code,
         user_prefix: user.user_prefix,
@@ -106,6 +107,7 @@ export default function View() {
         user_status: user.user_status,
         user_zipcode: user.user_zipcode,
         user_profile_image: img,
+        uppdateby: user.user_uid
       });
 
       if (query_result.require) {
@@ -144,9 +146,7 @@ export default function View() {
         </div>
       ) : (
         <CCard>
-          <CCardHeader className="header-t-red">
-            ข้อมูลส่วนตัว
-          </CCardHeader>
+          <CCardHeader className="header-t-red">ข้อมูลส่วนตัว</CCardHeader>
           <CCardBody>
             <CRow>
               <CCol md="6">
@@ -194,7 +194,7 @@ export default function View() {
                 <br />
                 <CRow>
                   <CCol md="3">
-                    <CLabel>อีเมลล์</CLabel>
+                    <CLabel>อีเมล</CLabel>
                   </CCol>
                   <CCol md="7">
                     <CInput

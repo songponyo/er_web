@@ -232,6 +232,13 @@ export default function Update() {
               </CRow>
             </CCardBody>
             <CCardFooter>
+              <a
+                href="example.xlsx"
+                download
+                className="btn btn-success float-left"
+              >
+                ไฟล์ตัวอย่าง
+              </a>
               {row.rows.length !== 0 ? (
                 <>
                   <CButton

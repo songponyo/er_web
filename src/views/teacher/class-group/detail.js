@@ -34,7 +34,7 @@ export default function Detail() {
   useEffect(() => {
     fetchData();
   }, []);
- 
+
   useEffect(() => {
     if (classgroup.length !== 0) {
       let arr_score = [];
@@ -44,7 +44,7 @@ export default function Detail() {
         arr_score.push({
           user_uid: data.user_uid,
           user_full_name: data.user_full_name,
-          leave_maxcount: data.leave_maxcount
+          leave_maxcount: data.leave_maxcount,
         });
 
         let sc = score
@@ -83,7 +83,7 @@ export default function Detail() {
     let score_info = {};
     score_info = score_group.data;
     score_info.table_name = class_group.data[0].classgroup_table_score;
-    score_info.leave_maxcount = class_group.data[0].leave_maxcount
+    score_info.leave_maxcount = class_group.data[0].leave_maxcount;
     setClassgroup(score_info);
 
     const score_user = await score_model.getScoreByGroup({
@@ -106,7 +106,13 @@ export default function Detail() {
   }
 
   const exportToCSV = () => {
-    let Heading = [["รหัสประจำตัว", "ชื่อ-นามสกุล", "จำนวนครั้งที่ขาด "+"("+ classgroup.leave_maxcount + ")"]];
+    let Heading = [
+      [
+        "รหัสประจำตัว",
+        "ชื่อ-นามสกุล",
+        "จำนวนครั้งที่ขาด " + "(" + classgroup.leave_maxcount + ")",
+      ],
+    ];
     topics.map((data) => {
       Heading[0].push(data.topic_name + "(" + data.max_score + ")");
     });
@@ -168,6 +174,7 @@ export default function Detail() {
         <CCard>
           <CCardHeader className="header-t-red">
             รายชื่อ
+         
             <Link
               to={`/class-group/excel/${code.params.code}`}
               className="btn btn-success float-right"

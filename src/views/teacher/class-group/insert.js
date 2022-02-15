@@ -436,7 +436,14 @@ export default function Insert() {
             </CCol>
           </CRow>
           <br />
-
+          <p className="text-muted">
+            <font color="#F00">
+              <b>*</b>
+            </font>{" "}
+            หมายเหตุ : สามารถเปลี่ยนชื่อหัวตารางและคะแนนได้
+            แต่ไม่สามารถเพิ่มช่องคะแนนในภายหลังจากทำการยืน
+            โปรดตรวจสอบช่องคะแนนที่ต้องการใช้ก่อนทำการยืนยัน
+          </p>
           <Table striped bordered hover>
             <thead>
               <tr>

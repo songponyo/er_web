@@ -76,7 +76,7 @@ export default function Detail() {
                 title: "เวลาเข้าเรียน",
                 dataIndex: "checkin_time",
                 render: (cell) => {
-                  let time = dayjs(cell).format("HH:mm"); 
+                  let time = dayjs.tz(cell).format("HH:mm"); 
                   return time;
                 },
                 filterAble: true,

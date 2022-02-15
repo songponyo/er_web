@@ -9,21 +9,20 @@ import {
   CButton,
   CCardFooter,
 } from "@coreui/react";
-import { useHistory, useRouteMatch, Link } from "react-router-dom";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import Swal from "sweetalert2";
 import QrcodeModel from "../../../models/QrcodeModel";
 import CheckinModel from "../../../models/CheckinModel";
-import { TimeController } from "../../../controller";
 import ScoreModel from "../../../models/ScoreModel";
 import dayjs from "dayjs";
 
 const score_model = new ScoreModel();
 const qrcode_model = new QrcodeModel();
 const checkin_model = new CheckinModel();
-const time_controller = new TimeController();
 
 export default function Checkin() {
   let history = useHistory();
+  const t = dayjs();
   let code = useRouteMatch("/checkin-student/checkin/:code");
   const [showdetail, setShowdetail] = useState(false);
   const [user, setUser] = useState([]);
@@ -34,6 +33,7 @@ export default function Checkin() {
   const [checkinstamp, setCheckinstamp] = useState({
     checkin_time: "",
   });
+
   useEffect(() => {
     fetchData();
     getLocation();
@@ -59,9 +59,6 @@ export default function Checkin() {
     setUser(user_session);
     let coded = code.params.code;
 
-    const qrcode = await qrcode_model.getQrcodeByCode({
-      qr_code: coded,
-    });
     const date = new Date();
     let lastcode =
       "CK" +
@@ -72,32 +69,39 @@ export default function Checkin() {
       digit: 4,
     });
 
+    const qrcode = await qrcode_model.getQrcodeByCode({
+      qr_code: coded,
+    });
+
     let room = {};
     room = qrcode.data[0];
     room.qr_code = coded;
     setQrcode(room);
 
+    // เซ็ทเวลาเช็คอิน
     let day = {};
     day.check_code = qrcode_data.data;
-    day.date = new Date();
-    day.time_stamp = time_controller.reformatToTime(day.date);
+    day.time_stamp = dayjs().$d;
+    day.time_out = dayjs.tz(qrcode.data[0].qr_timeout).$d; 
     setCheckin(day);
 
     let url = {};
     url.qr = room.qr_code;
     url.classID = room.classgroup_code;
     _checkSubmit(user_session.user_code, url);
-  } 
+  }
+
   async function _handleSubmit() {
     let status_in = "";
-    checkin.time_stamp < checkin.time_out
-      ? (status_in = "Active")
-      : (status_in = "Inactive");
+    let time_stamp = checkin.time_stamp;
+    let time_outs = checkin.time_out;
 
+    time_stamp <= time_outs ? (status_in = "Active") : (status_in = "Inactive"); 
+ 
     let query_result = await checkin_model.insertCheckin({
       checkin_code: checkin.check_code,
       classgroup_code: qrcode.classgroup_code,
-      checkin_time: time_controller.reformatToDateTime(checkin.date),
+      checkin_time: dayjs(time_stamp).format("YYYY-MM-DD H:mm:ss"),
       checkin_status: status_in,
       user_code: user.user_code,
       qr_code: qrcode.qr_code,
@@ -105,7 +109,7 @@ export default function Checkin() {
       latitude: Lat,
     });
     if (query_result.require) {
-      if (checkin.time_stamp < checkin.time_out) {
+      if (status_in == "Active") {
         Swal.fire("ทันเวลา ", "", "success");
       } else {
         Swal.fire("ไม่ทันเวลา ", "", "error").then((result) => {
@@ -139,16 +143,8 @@ export default function Checkin() {
       owner: qr.qr,
     });
     if (query_result.data.length !== 0) {
-      // console.log("query_result", query_result.data[0]);
       setCheckinstamp(query_result.data[0]);
       setShowdetail(true);
-      // Swal.fire({
-      //   title: "แจ้งเตือน!",
-      //   text: "ไม่สามารถลงชื่อซ้ำได้",
-      //   icon: "warning",
-      // });
-      // let histy = "/checkin-student/history/" + qr.classID;
-      // history.push(histy);
       return false;
     } else {
       return true;
@@ -205,7 +201,7 @@ export default function Checkin() {
                     <CLabel style={{ fontSize: "20px" }}>เวลาที่ลงชื่อ</CLabel>
                     <br />
                     <CLabel style={{ fontSize: "20px" }}>
-                      {dayjs(checkinstamp.checkin_time).format("HH:mm")}
+                      {dayjs.tz(checkinstamp.checkin_time).format("HH:mm")}
                     </CLabel>
                   </CCol>
                 </CRow>

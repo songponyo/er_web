@@ -90,7 +90,7 @@ export default function Authrule() {
       return true;
     }
   };
-   
+  
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let query_result = await user_model.registertUser({
@@ -108,7 +108,7 @@ export default function Authrule() {
           text: "ผู้แลตรวจจะตรวจสอบข้อมูลอีกครั้ง",
           icon: "success",
         });
-        history.push("/login");
+        // history.push("/login");
       } else {
         Swal.fire("บันทึกไม่สำเร็จ", "", "error");
       }
@@ -215,7 +215,7 @@ export default function Authrule() {
                   </CCol>
                   <CCol md="12">
                     <CFormGroup>
-                      <CLabel>รหัสนักศึกษา</CLabel>
+                      <CLabel>รหัสนักศึกษา / รหัสอาจารย์</CLabel>
                       <CInput
                         type="number"
                         name="user_uid"

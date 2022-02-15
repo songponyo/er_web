@@ -13,9 +13,9 @@ import {
 } from "@coreui/react";
 import dayjs from "dayjs";
 import "dayjs/locale/th";
-import Swal from "sweetalert2";
+import { Empty } from "antd";
 import { useRouteMatch } from "react-router-dom";
-import { Menu, Calendar, Badge } from "antd";
+import { Calendar, Badge } from "antd";
 
 import NewsModel from "../../../models/NewsModel";
 import ClassgroupModel from "../../../models/ClassgroupModel";
@@ -91,56 +91,65 @@ export default function News() {
           <CRow>
             <CCol xl="8">
               <CCard style={{ width: "100%", fontSize: "20px" }}>
-              <CCardHeader
+                <CCardHeader
                   className="header-t-red"
                   style={{ fontSize: "20px" }}
-                >ฟีดข่าว</CCardHeader>
-                <CCardBody>
-                  {/* inform */}
-                  {feednews.map((data) => {
-                    return (
-                      <CCard>
-                        <CCardHeader align="left">
-                          <CRow>
-                            <CCol>
-                              <CForm>
-                                <CFormGroup>
-                                  <CLabel style={{ fontSize: "15px" }}>
-                                    {data.owner_fullname}
-                                  </CLabel>
-                                  {/* <br /> */}
-                                  <CFormText style={{ fontSize: "10px" }}>
-                                    {dayjs(data.adddate)
-                                      .locale("th")
-                                      .format("DD MMMM YYYY")}
-                                  </CFormText>
-                                </CFormGroup>
-                              </CForm>
-                            </CCol>
-                          </CRow>
-                          {/* <CRow>
+                >
+                  ฟีดข่าว
+                </CCardHeader>
+                {feednews.length == 0 ? (
+                  <CCardBody>
+                    {" "}
+                    <Empty />
+                  </CCardBody>
+                ) : (
+                  <CCardBody>
+                    {/* inform */}
+                    {feednews.map((data) => {
+                      return (
+                        <CCard>
+                          <CCardHeader align="left">
+                            <CRow>
+                              <CCol>
+                                <CForm>
+                                  <CFormGroup>
+                                    <CLabel style={{ fontSize: "15px" }}>
+                                      {data.owner_fullname}
+                                    </CLabel>
+                                    {/* <br /> */}
+                                    <CFormText style={{ fontSize: "10px" }}>
+                                      {dayjs(data.adddate)
+                                        .locale("th")
+                                        .format("DD MMMM YYYY")}
+                                    </CFormText>
+                                  </CFormGroup>
+                                </CForm>
+                              </CCol>
+                            </CRow>
+                            {/* <CRow>
                             <CCol>{data.news_detail}</CCol>
                           </CRow> 
                           <CRow>
                             <CCol style={{fontSize : "15px"}}> <strong>วันที่นัดหมาย</strong> {data.news_notice_day}</CCol>
                           </CRow> */}
-                        </CCardHeader>
-                        <CCardBody fontSize="15px" align="left">
-                          <CRow>
-                            <CCol>{data.news_detail}</CCol>
-                          </CRow>
-                          <CRow>
-                            <CCol style={{ fontSize: "15px" }}>
-                              {" "}
-                              <strong>วันที่นัดหมาย</strong>{" "}
-                              {data.news_notice_day}
-                            </CCol>
-                          </CRow>
-                        </CCardBody>
-                      </CCard>
-                    );
-                  })}
-                </CCardBody>
+                          </CCardHeader>
+                          <CCardBody fontSize="15px" align="left">
+                            <CRow>
+                              <CCol>{data.news_detail}</CCol>
+                            </CRow>
+                            <CRow>
+                              <CCol style={{ fontSize: "15px" }}>
+                                {" "}
+                                <strong>วันที่นัดหมาย</strong>{" "}
+                                {data.news_notice_day}
+                              </CCol>
+                            </CRow>
+                          </CCardBody>
+                        </CCard>
+                      );
+                    })}
+                  </CCardBody>
+                )}
               </CCard>
             </CCol>
             <CCol>

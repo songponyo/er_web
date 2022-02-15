@@ -66,7 +66,7 @@ export default function History() {
                 dataIndex: "qr_timeout",
                 render: (cell) => {
                   if (cell != null) {
-                    let time = dayjs(cell).format("DD/MM/YYYY HH:mm");
+                    let time = dayjs.tz(cell).format("DD/MM/YYYY HH:mm");
                     return time;
                   } else {
                     return (

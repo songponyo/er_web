@@ -4,17 +4,14 @@ import { faAddressBook } from "@fortawesome/free-solid-svg-icons";
 import { Link, useRouteMatch } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Table } from "../../../component/revel-strap";
-import dayjs from "dayjs"; 
+import dayjs from "dayjs";
 import QrcodeModel from "../../../models/QrcodeModel";
 
-const qrcode_model = new QrcodeModel(); 
+const qrcode_model = new QrcodeModel();
 
-
- 
-export default function History() { 
+export default function History() {
   let code = useRouteMatch("/checkin-teacher/history/:code");
   const [classgroup, setClassgroup] = useState([]);
-
 
   useEffect(() => {
     fetchData();
@@ -25,13 +22,16 @@ export default function History() {
     const qrcode_data = await qrcode_model.getQrcodeBy({
       keyword: code.params.code,
       // owner: user_session.user_code,
-    }); 
-    let classArr = {}
-    classArr.classname = qrcode_data.data[0].subject_fullname
-    classArr.Arr = qrcode_data.data 
+    });
+    let classArr = {};
+
+    if (qrcode_data.data.length !== 0) {
+      classArr.classname = qrcode_data.data[0].subject_fullname;
+    } 
+    classArr.Arr = qrcode_data.data;
     setClassgroup(classArr);
-  } 
- 
+  }
+
   return (
     <>
       <CCard>
@@ -42,7 +42,7 @@ export default function History() {
           <Table
             showRowNo={false}
             dataSource={classgroup.Arr}
-            dataTotal={classgroup.Arr} 
+            dataTotal={classgroup.Arr}
             columns={[
               {
                 title: "ครั้งที่",
@@ -72,7 +72,7 @@ export default function History() {
                 title: "วันที่",
                 dataIndex: "qr_timeout",
                 render: (cell) => {
-                  let time = dayjs(cell).format('DD/MM/YYYY')  
+                  let time = dayjs(cell).format("DD/MM/YYYY");
                   return time;
                 },
                 filterAble: true,
@@ -83,7 +83,7 @@ export default function History() {
                 title: "เวลาเข้าเช็คชื่อ",
                 dataIndex: "qr_timeout",
                 render: (cell) => {
-                  let time = dayjs.tz(cell).format("HH:mm"); 
+                  let time = dayjs.tz(cell).format("HH:mm");
                   return time;
                 },
                 filterAble: true,
@@ -95,7 +95,7 @@ export default function History() {
                 dataIndex: "",
                 align: "center",
                 render: (cell) => {
-                  const row_accessible = [];  
+                  const row_accessible = [];
                   row_accessible.push(
                     <Link
                       key="detail"

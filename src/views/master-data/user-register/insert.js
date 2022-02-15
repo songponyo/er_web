@@ -38,9 +38,7 @@ export default function Insert() {
     const res_upload = await upload_contoller.uploadFile({
       src: image.img_name,
       upload_path: "leave/",
-    });
-    console.log("res_upload", res_upload);
- 
+    }); 
   }
 
   const _handleImageChange = (img_name, e) => {
