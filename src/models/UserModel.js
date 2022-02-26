@@ -9,7 +9,7 @@ export default class UserModel extends BaseModel {
     })
   }
 
-  async checkUser(data) {
+  async checkUser(data) { 
     return this.directFetch({
       url: 'user/checkUser',
       method: 'POST',

@@ -7,7 +7,7 @@ import Auth from "./component/auth/Auth"
 import dayjs from "dayjs";
 
 const utc = require('dayjs/plugin/utc');
-const timezone = require('dayjs/plugin/timezone');
+const timezone = require('dayjs/plugin/timezone.js');
 dayjs.extend(utc);
 dayjs.extend(timezone); 
 dayjs.tz.setDefault('Asia/Hong_Kong');
@@ -21,7 +21,7 @@ const loading = (
 
 const HomePage = React.lazy(() => import('./containers/HomePage'))
 
-const Register = React.lazy(() => import('./views/pages/register/Register'))
+const Register = React.lazy(() => import('./views/pages/register/Registers'))
 const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
 

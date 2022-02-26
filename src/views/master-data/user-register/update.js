@@ -8,8 +8,7 @@ import {
   CRow,
   CLabel,
   CInput,
-  CButton,
-  CImg,
+  CButton, 
 } from "@coreui/react";
 import { useHistory, useRouteMatch, Link } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -69,7 +68,7 @@ export default function View() {
     }
     setPosition(select_ps);
   }
- 
+
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let query_result = await user_model.updateUserBy({
@@ -111,18 +110,11 @@ export default function View() {
     }
   };
 
-  const _changeFrom = (e) => {
-    const { value, name } = e.target;
-    setUser({ ...user, [name]: value });
-  };
-
   return (
     <>
       <div>
         <CCard>
-          <CCardHeader className="header-t-red">
-            ข้อมูลส่วนตัว / Profile
-          </CCardHeader>
+          <CCardHeader className="header-t-red">ข้อมูลส่วนตัว</CCardHeader>
           <CCardBody>
             <CRow>
               <CCol md="6">

@@ -7,15 +7,15 @@ import {
   CCol,
   CRow,
   CLabel,
-  CInput,
   CButton,
   CImg,
+  CForm,
 } from "@coreui/react";
 import { Link, useHistory } from "react-router-dom";
 import Swal from "sweetalert2";
 import UserModel from "../../models/UserModel";
 import { Uploadimage } from "../../controller";
-
+import { Input } from "antd";
 const upload_contoller = new Uploadimage();
 const user_model = new UserModel();
 
@@ -32,7 +32,6 @@ export default function View() {
 
   useEffect(() => {
     _fetchData();
- 
   }, []);
 
   async function _fetchData() {
@@ -75,7 +74,7 @@ export default function View() {
 
   async function _handleSubmit() {
     if (_checkSubmit()) {
-      let img = ""; 
+      let img = "";
       if (user.user_profile_image.file !== null) {
         const res_upload = await upload_contoller.uploadFile({
           src: user.user_profile_image,
@@ -89,7 +88,6 @@ export default function View() {
       } else {
         img = user.user_profile_image.old;
       }
-
       let query_result = await user_model.updateUserBy({
         user_code: user.user_code,
         user_uid: user.user_uid,
@@ -107,9 +105,8 @@ export default function View() {
         user_status: user.user_status,
         user_zipcode: user.user_zipcode,
         user_profile_image: img,
-        uppdateby: user.user_uid
+        uppdateby: user.user_uid,
       });
-
       if (query_result.require) {
         Swal.fire("บันทึกเรียบร้อย", "", "success");
         history.push("/profile");
@@ -146,133 +143,139 @@ export default function View() {
         </div>
       ) : (
         <CCard>
-          <CCardHeader className="header-t-red">ข้อมูลส่วนตัว</CCardHeader>
-          <CCardBody>
-            <CRow>
-              <CCol md="6">
-                <CRow>
-                  <CCol md="3">
-                    <CLabel>รหัสประจำตัว</CLabel>
-                  </CCol>
-                  <CCol md="7">
-                    <CInput
-                      type="text"
-                      name="user_uid "
-                      value={user.user_uid}
-                      disabled
-                    />
-                  </CCol>
-                </CRow>
-                <br />
-                <CRow>
-                  <CCol md="3">
-                    <CLabel>ชื่อ</CLabel>
-                  </CCol>
-                  <CCol md="7">
-                    <CInput
-                      type="text"
-                      name="user_firstname"
-                      value={user.user_firstname}
-                      disabled
-                    />
-                  </CCol>
-                </CRow>
-                <br />
-                <CRow>
-                  <CCol md="3">
-                    <CLabel>นามสกุล</CLabel>
-                  </CCol>
-                  <CCol md="7">
-                    <CInput
-                      type="text"
-                      name="user_lastname"
-                      value={user.user_lastname}
-                      disabled
-                    />
-                  </CCol>
-                </CRow>
-                <br />
-                <CRow>
-                  <CCol md="3">
-                    <CLabel>อีเมล</CLabel>
-                  </CCol>
-                  <CCol md="7">
-                    <CInput
-                      type="text"
-                      name="user_email"
-                      value={user.user_email}
-                      onChange={(e) => _changeFrom(e)}
-                    />
-                  </CCol>
-                </CRow>
-                <br />
-                <CRow>
-                  <CCol md="3">
-                    <CLabel>เบอร์โทรศัพท์</CLabel>
-                  </CCol>
-                  <CCol md="7">
-                    <CInput
-                      type="text"
-                      name="user_tel"
-                      value={user.user_tel}
-                      onChange={(e) => _changeFrom(e)}
-                    />
-                  </CCol>
-                </CRow>
-                <br />
-                <CRow>
-                  <CCol md="3">
-                    <CLabel>ไอดีไลน์</CLabel>
-                  </CCol>
-                  <CCol md="7">
-                    <CInput
-                      type="text"
-                      name="user_lineId"
-                      value={user.user_lineId}
-                      onChange={(e) => _changeFrom(e)}
-                    />
-                  </CCol>
-                </CRow>
-                <br />
-              </CCol>
-              <CCol md="6" align="center">
-                <CLabel>อัพโหลดภาพ </CLabel>
-                <br />
-                <CImg
-                  className="imag-circle"
-                  name="logo"
-                  src={
-                    user.user_profile_image.file !== null
-                      ? user.user_profile_image.src
-                      : user.user_profile_image.old !== ""
-                      ? user.user_profile_image.old
-                      : user.user_profile_image.src
-                  }
-                />
-                <br />
-                <br />
-                <CInput
-                  type="file"
-                  name="user_profile_image"
-                  style={{ border: "none" }}
-                  accept="image/png, image/jpeg"
-                  onChange={(e) => _handleImageChange("user_profile_image", e)}
-                />
-              </CCol>
-            </CRow>
-          </CCardBody>
-          <CCardFooter>
-            <CButton
-              type="submit"
-              color="success"
-              onClick={() => _handleSubmit()}
-            >
-              บันทึก
-            </CButton>
-            <Link to="/">
-              <CButton color="danger">ย้อนกลับ</CButton>
-            </Link>
-          </CCardFooter>
+          <CForm>
+            <CCardHeader className="header-t-red">ข้อมูลส่วนตัว</CCardHeader>
+
+            <CCardBody>
+              <CRow>
+                <CCol md="6">
+                  <CRow>
+                    <CCol md="3">
+                      <CLabel>รหัสประจำตัว</CLabel>
+                    </CCol>
+                    <CCol md="7">
+                      <Input
+                        type="text"
+                        name="user_uid "
+                        value={user.user_uid}
+                        disabled
+                      />
+                    </CCol>
+                  </CRow>
+                  <br />
+                  <CRow>
+                    <CCol md="3">
+                      <CLabel>ชื่อ</CLabel>
+                    </CCol>
+                    <CCol md="7">
+                      <Input
+                        type="text"
+                        name="user_firstname"
+                        value={user.user_firstname}
+                        disabled
+                      />
+                    </CCol>
+                  </CRow>
+                  <br />
+                  <CRow>
+                    <CCol md="3">
+                      <CLabel>นามสกุล</CLabel>
+                    </CCol>
+                    <CCol md="7">
+                      <Input
+                        type="text"
+                        name="user_lastname"
+                        value={user.user_lastname}
+                        disabled
+                      />
+                    </CCol>
+                  </CRow>
+                  <br />
+                  <CRow>
+                    <CCol md="3">
+                      <CLabel>อีเมล</CLabel>
+                    </CCol>
+                    <CCol md="7">
+                      <Input
+                        type="email"
+                        name="user_email"
+                        value={user.user_email}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CCol>
+                  </CRow>
+                  <br />
+                  <CRow>
+                    <CCol md="3">
+                      <CLabel>เบอร์โทรศัพท์</CLabel>
+                    </CCol>
+                    <CCol md="7">
+                      <Input
+                        type="tel"
+                        name="user_tel"
+                        value={user.user_tel}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CCol>
+                  </CRow>
+                  <br />
+                  <CRow>
+                    <CCol md="3">
+                      <CLabel>ไอดีไลน์</CLabel>
+                    </CCol>
+                    <CCol md="7">
+                      <Input
+                        type="text"
+                        name="user_lineId"
+                        value={user.user_lineId}
+                        onChange={(e) => _changeFrom(e)}
+                      />
+                    </CCol>
+                  </CRow>
+                  <br />
+                </CCol>
+                <CCol md="6" align="center">
+                  <CLabel>อัพโหลดภาพ </CLabel>
+                  <br />
+                  <CImg
+                    className="imag-circle"
+                    name="logo"
+                    src={
+                      user.user_profile_image.file !== null
+                        ? user.user_profile_image.src
+                        : user.user_profile_image.old !== ""
+                        ? user.user_profile_image.old
+                        : user.user_profile_image.src
+                    }
+                  />
+                  <br />
+                  <br />
+                  <Input
+                    type="file"
+                    name="user_profile_image"
+                    style={{ border: "none" }}
+                    accept="image/png, image/jpeg"
+                    onChange={(e) =>
+                      _handleImageChange("user_profile_image", e)
+                    }
+                  />
+                </CCol>
+              </CRow>
+            </CCardBody>
+
+            <CCardFooter>
+              <CButton
+                type="submit"
+                color="success"
+                onClick={() => _handleSubmit()}
+              >
+                บันทึก
+              </CButton>
+              <Link to="/">
+                <CButton color="danger">ย้อนกลับ</CButton>
+              </Link>
+            </CCardFooter>
+          </CForm>
         </CCard>
       )}
     </div>

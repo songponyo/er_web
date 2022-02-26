@@ -1,17 +1,10 @@
 import React, { Component, useEffect, useState } from "react";
-import { 
-  CCard,
-  CCardHeader,
-  CCardBody,
-} from "@coreui/react";
-import { Link } from "react-router-dom"; 
+import { CCard, CCardHeader, CCardBody } from "@coreui/react";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEdit, 
-  faWindowClose,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faWindowClose } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
-import { Table, Loading } from "../../../component/revel-strap"; 
+import { Table, Loading } from "../../../component/revel-strap";
 import SubjectModel from "../../../models/SubjectModel";
 
 const subject_model = new SubjectModel();
@@ -24,11 +17,11 @@ export default function View() {
   }, []);
 
   async function _fetchData() {
-    const subject_data = await subject_model.getSubjectBy({}); 
+    const subject_data = await subject_model.getSubjectBy({});
     setSubject(subject_data.data);
   }
 
-  function _onDelete(data) { 
+  function _onDelete(data) {
     Swal.fire({
       title: "ลบรายวิชา?",
       text: "ยืนยันที่จะลบวิชา " + data.subject_name_th + " หรือไม่",
@@ -60,10 +53,7 @@ export default function View() {
       <CCard>
         <CCardHeader className="header-t-red">
           รายวิชา
-          <Link
-            to={`/subject/insert`}
-            className="btn btn-success float-right"
-          >
+          <Link to={`/subject/insert`} className="btn btn-success float-right">
             <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มรายวิชา
           </Link>
         </CCardHeader>
@@ -79,7 +69,7 @@ export default function View() {
                 dataIndex: "subject_code",
                 filterAble: true,
                 ellipsis: true,
-                width: 120,
+                width: 200,
                 align: "center",
               },
               {
@@ -101,7 +91,6 @@ export default function View() {
                 render: (cell) => {
                   const row_accessible = [];
 
-
                   row_accessible.push(
                     <Link
                       key="update"
@@ -114,6 +103,7 @@ export default function View() {
                           size="5s"
                           color="white"
                         />
+                        แก้ไขข้อมูล
                       </button>
                     </Link>
                   );
@@ -127,13 +117,13 @@ export default function View() {
                         icon={faWindowClose}
                         size="5s"
                         color="white"
-                      />
+                      />  ลบรายการ
                     </button>
                   );
 
                   return row_accessible;
                 },
-                width: 120,
+                width: 300,
               },
             ]}
           />

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { CCard, CCardHeader, CCardBody } from "@coreui/react";
+import { CCard, CCardHeader, CCardBody, CRow, CCol } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faWindowClose } from "@fortawesome/free-solid-svg-icons";
+import { faWindowClose } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { Table } from "../../../component/revel-strap";
 import PrefixModel from "../../../models/PrefixModel";
@@ -17,8 +17,7 @@ export default function View() {
   }, []);
 
   async function _fetchData() {
-    const prefix_data = await prefix_model.getPrefixBy({});
-    console.log("prefix_data", prefix_data);
+    const prefix_data = await prefix_model.getPrefixBy({}); 
     setPrefix(prefix_data.data);
   }
 
@@ -92,7 +91,7 @@ export default function View() {
 
                   return row_accessible;
                 },
-                width: 100,
+                width: 300,
               },
             ]}
           />

@@ -19,10 +19,10 @@ export default function View() {
     const classgroup_data = await classgroup_model.getClassgroupBy({
       owner: user_session.user_code,
     });
-    let classgroup_arr = classgroup_data.data.filter(
-      (data) => data.classsgroup_status == "Activate"
-    );
-    setClassgroup(classgroup_arr);
+    // let classgroup_arr = classgroup_data.data.filter(
+    //   (data) => data.classsgroup_status == "Activate"
+    // );
+    setClassgroup(classgroup_data.data);
   }
 
   // function _onDelete(data) {

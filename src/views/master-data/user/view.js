@@ -67,7 +67,7 @@ class View extends React.Component {
     });
   }
 
-  _onUnregister(code) { 
+  _onUnregister(code) {
     Swal.fire({
       title: "ระงับบัญชีนี้?",
       text: "ยืนยันที่จะทำรายการหรือไม่",
@@ -121,7 +121,7 @@ class View extends React.Component {
         <Loading showloading={this.state.showloading} />
         <Card>
           <CardHeader className="header-t-red">
-            จัดการผู้ใช้  
+            จัดการผู้ใช้
             {permission_add ? (
               <Link to={`/user/insert`} className="btn btn-success float-right">
                 <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มผู้ใช้
@@ -142,17 +142,17 @@ class View extends React.Component {
               rowKey="user_code"
               columns={[
                 {
+                  title: "หมายเลขประจำตัว",
+                  dataIndex: "user_uid",
+                  filterAble: true,
+                  ellipsis: true,
+                }, 
+                {
                   title: "ชื่อ",
                   dataIndex: "user_full_name",
                   filterAble: true,
                   ellipsis: true,
-                },
-                // {
-                //   title: "ตำแหน่ง ",
-                //   dataIndex: "user_position_name",
-                //   filterAble: true,
-                //   ellipsis: true,
-                // },
+                }, 
                 {
                   title: "สิทธิ์การใช้งาน",
                   dataIndex: "license_name",
@@ -163,22 +163,23 @@ class View extends React.Component {
                   title: "สถานะ",
                   dataIndex: "user_status",
                   render: (cell) => {
-                    if (cell === "Active") {
-                      return <span className="text-success">ใช้งาน</span>;
+                    if (cell === "Waiting") {
+                      return <p>รออนุมัติ</p>;
                     } else {
-                      return cell !== "Deactive" ? (
-                        <span className="text-danger">รอการอนุมัติ</span>
+                      return cell !== "Inactive" ? (
+                        <span className="text-success">ใช้งาน</span>
                       ) : (
-                        <span className="text-danger">ไม่ได้ใช้งาน</span>
+                        <span className="text-danger">ปิดใช้งาน</span>
                       );
                     }
                   },
-                  // filters: [
-                  //   { text: "เ", value: "Activate" },
-                  //   { text: "เข้าสาย", value: "Waiting" },
-                  // ],
+                  filters: [
+                    { text: "ใช้งาน", value: "Active" },
+                    { text: "ปิดใช้งาน", value: "Deactivate" },
+                  ],
+                  ellipsis: true,
+                  width: 100,
                   align: "center",
-                  width: 120,
                 },
                 {
                   title: "เมนู",
@@ -213,7 +214,7 @@ class View extends React.Component {
                         <button
                           key="delete"
                           type="button"
-                          className="btn btn-danger btn-row-sm"
+                          className="btn btn-secondary btn-row-sm"
                           onClick={() => this._onUnregister(cell)}
                         >
                           <i className="fa fa-remove" aria-hidden="true"></i>{" "}
@@ -231,14 +232,14 @@ class View extends React.Component {
                           onClick={() => this._onDelete(cell.user_code)}
                         >
                           <i className="fa fa-remove" aria-hidden="true"></i>{" "}
-                          ลบบัญชี้
+                          ลบบัญชี
                         </button>
                       );
                     }
 
                     return row_accessible;
                   },
-                  width: 150,
+                  width: 500,
                 },
               ]}
             />

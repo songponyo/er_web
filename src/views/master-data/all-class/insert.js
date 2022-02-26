@@ -143,7 +143,7 @@ export default function Insert() {
       <div className="animated fadeIn">
         <CCard>
           <CCardHeader className="header-t-red">
-            กลุ่มเรียน / Class group
+            เพิ่ม ข้อมูลกลุ่มเรียน
           </CCardHeader>
           <CCardBody>
             <CRow>

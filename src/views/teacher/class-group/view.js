@@ -15,7 +15,7 @@ const classgroup_model = new ClassgroupModel();
 
 export default function View() {
   const [classgroup, setClassgroup] = useState([]);
- 
+
   useEffect(() => {
     async function _fetchData() {
       const user_session = await JSON.parse(
@@ -25,22 +25,18 @@ export default function View() {
         owner: user_session.user_code,
       });
 
-      let classgroup_arr = classgroup_data.data.filter(
-        (data) => data.classsgroup_status === "Activate"
-      );
-      setClassgroup(classgroup_arr);
+      // let classgroup_arr = classgroup_data.data.filter(
+      //   (data) => data.classsgroup_status === "Activate"
+      // );
+      setClassgroup(classgroup_data.data);
     }
     _fetchData();
   }, []);
 
-  function _onDelete(data) {
+  function _onDelete(data) { 
     Swal.fire({
       title: "คุณต้องการลบรายการนี้",
-      text:
-        "โปรดยืนยันการกระทำ" +
-        data.classgroup_id +
-        "   " +
-        data.subject_fullname,
+      html: data.classgroup_id + "<br/> " + data.subject_fullname,
       icon: "warning",
       showCancelButton: true,
     }).then((result) => {
@@ -67,7 +63,7 @@ export default function View() {
       title: " ปิดการใช้งานรายการนี้หรือไม่",
       text: data.classgroup_id + "   " + data.subject_fullname,
       icon: "warning",
-      showCancelButton: true,
+      // showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
         classgroup_model
@@ -88,7 +84,7 @@ export default function View() {
             addby: data.addby,
             adddate: data.adddate,
             leave_maxcount: data.leave_maxcount,
-            classsgroup_status: "Deactivate",
+            classgroup_status: "Deactivate",
           })
           .then((res) => {
             if (res.require) {
@@ -126,13 +122,14 @@ export default function View() {
             showRowNo={true}
             dataSource={classgroup}
             dataTotal={classgroup}
+            
             columns={[
               {
                 title: "รหัสกลุ่มเรียน",
                 dataIndex: "classgroup_id",
                 filterAble: true,
                 ellipsis: true,
-                width: 120,
+                width: 100,
                 align: "center",
               },
               {
@@ -140,7 +137,7 @@ export default function View() {
                 dataIndex: "subject_fullname",
                 filterAble: true,
                 ellipsis: true,
-                width: 150,
+                width: 250,
                 align: "center",
               },
               {
@@ -151,18 +148,40 @@ export default function View() {
                 width: 150,
                 align: "center",
               },
+              // {
+              //   title: "ห้อง",
+              //   dataIndex: "classgroup_number",
+              //   filterAble: true,
+              //   ellipsis: true,
+              //   width: 150,
+              //   align: "center",
+              // },
               {
-                title: "ห้อง",
-                dataIndex: "classgroup_number",
-                filterAble: true,
+                title: "สถานะ",
+                dataIndex: "classgroup_status",
+                render: (cell) => { 
+                  if (cell === "Waiting") {
+                    return <p>รออนุมัติ</p>;
+                  } else {
+                    return cell === "Activate" ? (
+                      <span className="text-success">ใช้งาน</span>
+                    ) : (
+                      <span className="text-danger">ปิดใช้งาน</span>
+                    );
+                  }
+                },
+                filters: [
+                  { text: "ใช้งาน", value: "Activate" },
+                  { text: "ปิดใช้งาน", value: "Deactivate" },
+                ],
                 ellipsis: true,
-                width: 150,
+                width: 100,
                 align: "center",
               },
               {
-                title: "เมนู",
+                title: <div align="center">เมนู</div>,
                 dataIndex: "",
-                align: "center",
+                align: "right",
                 render: (cell) => {
                   const row_accessible = [];
 
@@ -217,20 +236,20 @@ export default function View() {
                     </Link>
                   );
 
-                  row_accessible.push(
-                    <button
-                      type="button"
-                      className={"btn btn-danger"}
-                      onClick={() => _onInActive(cell)}
-                    >
-                      <FontAwesomeIcon
-                        icon={faWindowClose}
-                        size="5s"
-                        color="white"
-                      />{" "}
-                      ปิดการใช้งาน
-                    </button>
-                  );
+                  // row_accessible.push(
+                  //   <button
+                  //     type="button"
+                  //     className={"btn btn-secondary"}
+                  //     onClick={() => _onInActive(cell)}
+                  //   >
+                  //     <FontAwesomeIcon
+                  //       icon={faWindowClose}
+                  //       size="5s"
+                  //       color="white"
+                  //     />{" "}
+                  //     ปิดการใช้งาน
+                  //   </button>
+                  // );
 
                   row_accessible.push(
                     <button
@@ -249,7 +268,7 @@ export default function View() {
 
                   return row_accessible;
                 },
-                width: 120,
+                width: 300,
               },
             ]}
           />

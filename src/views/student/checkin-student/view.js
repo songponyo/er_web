@@ -29,7 +29,10 @@ export default function View() {
     const classgroup_data = await classgroup_model.getClassgroupByMycourse({
       user_uid: user_session.user_uid
     });
-    setClassgroup(classgroup_data.data);
+    let classgroup_arr = classgroup_data.data.filter(
+      (data) => data.classgroup_status === "Activate"
+    );
+    setClassgroup(classgroup_arr);
   }
 
   function _onDelete(data) {
@@ -61,7 +64,7 @@ export default function View() {
     <div>
       <CCard>
         <CCardHeader className="header-t-red">
-          กลุ่มเรียน / Class group
+          กลุ่มเรียน
           {/* <Link to={`/class-group/insert`} className="btn btn-success float-right">
             <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มกลุ่มเรียน
           </Link> */}

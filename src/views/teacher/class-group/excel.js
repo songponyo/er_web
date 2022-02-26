@@ -31,6 +31,7 @@ export default function Update() {
   const [row, setRow] = useState({ rows: [] });
   const [top_row, setTop_row] = useState([]);
   const [topics, setTopics] = useState({ topic: [], tablename: "" });
+  const [namelist, setnamelist] = useState([]);
   const [columns] = useState([
     {
       title: "รหัสนักศึกษา",
@@ -59,22 +60,24 @@ export default function Update() {
       classgroup_code: code.params.code,
     });
 
-    const class_group = await classgroup_model.getClassgroupByCode({
-      classgroup_code: code.params.code,
-    });
+    await classgroup_model
+      .getClassgroupByCode({
+        classgroup_code: code.params.code,
+      })
+      .then(async (data) => {
+        let score_form = await score_model.getScoreBy({
+          table_name: data.data[0].classgroup_table_score,
+        });
+        setnamelist(score_form.data);
 
-    if (class_group.require === false) {
-      Swal.fire("ข้อผิดพลาดไม่สามารถโหลดข้อมูล !", "", "error");
-      history.push("/class-group");
-    } else if (class_group.data.length === 0) {
-      Swal.fire("ไม่พบรายการนี้ในระบบ !", "", "warning");
-      history.push("/class-group");
-    } else {
-      let topics_info = {};
-      topics_info.topic = topic_data.data;
-      topics_info.tablename = class_group.data[0].classgroup_table_score;
-      setTopics(topics_info);
-    }
+        let topics_info = {};
+        topics_info.topic = topic_data.data;
+        topics_info.tablename = data.data[0].classgroup_table_score;
+        setTopics(topics_info);
+      })
+      .catch(() => {
+        console.log("warning");
+      });
 
     const score_last = await score_model.getScoreLastCode({});
     let score_info = {};
@@ -106,13 +109,13 @@ export default function Update() {
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       )
     ) {
-      alert("Unknown file format. Only Excel files are uploaded!");
+      alert("ไม่รู้จักไฟล์นามสกุลนี้ โปรดอัปโหลดไฟล์นามสกุล .xlsx เท่านั้น");
       return false;
     }
     //just pass the fileObj as parameter
     ExcelRenderer(fileObj, (err, resp) => {
       if (err) {
-        // console.log(err);
+        console.log(err);
       } else {
         let rowone = "";
         resp.rows.slice(1).map((row, index) => {
@@ -136,15 +139,40 @@ export default function Update() {
           alert("ไม่พบข้อมูลในไฟล์");
           return false;
         } else {
-          setRow({
-            cols: resp.cols,
-            rows: newRows,
-          });
+          if (namelist.length !== 0) {
+            let arr_newrows = [];
+
+            newRows.map((item, idx) => {
+              let check = true;
+              namelist
+                .filter((id) => id.user_uid === item.user_uid)
+                .map(() => {
+                  check = false;
+                });
+              if (check) {
+                arr_newrows.push(item);
+              }
+            });
+            if (arr_newrows.length == 0) {
+              Swal.fire({ title: "รายชื่อทั้งหมดมีอยู่แล้ว ", icon: "info" });
+            } else {
+              setRow({
+                cols: resp.cols,
+                rows: arr_newrows,
+              });
+            }
+          } else {
+            setRow({
+              cols: resp.cols,
+              rows: newRows,
+            });
+          }
         }
       }
     });
     return false;
   };
+
   const AddTopics = async () => {
     let topic_arr = [];
     let sum = 0;

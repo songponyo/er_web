@@ -47,7 +47,7 @@ export default function Detail() {
     <>
       <CCard>
         <CCardHeader className="header-t-red">
-          รายชื่อเข้าเรียน / Name list
+          รายชื่อเข้าเรียน
         </CCardHeader>
         <CCardBody>
           <Table

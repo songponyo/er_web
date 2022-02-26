@@ -315,7 +315,7 @@ class Insert extends React.Component {
     return (
       <div className="animated fadeIn">
         <Card>
-          <CardHeader className="header-t-red">เพิ่มพนักงาน / Add Employee</CardHeader>
+          <CardHeader className="header-t-red"></CardHeader>
           <Form onSubmit={this._handleSubmit.bind(this)}>
             <CardBody>
               <Row>

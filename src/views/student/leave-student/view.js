@@ -21,7 +21,10 @@ export default function View() {
     const leave_data = await leave_model.getLeaveBy({
       addby: user_session.user_code,
     });
-    setLeave(leave_data.data);
+    let leave_arr = leave_data.data.filter(
+      (data) => data.classgroup_status === "Activate"
+    );
+    setLeave(leave_arr);
   }
 
   function _onDelete(data) {
@@ -89,7 +92,7 @@ export default function View() {
                 dataIndex: "leave_approve",
                 render: (cell) => {
                   if (cell === "Waiting") {
-                    return <p>รออนุมัติ</p>
+                    return <p>รออนุมัติ</p>;
                   } else {
                     return cell !== "NotAccept" ? (
                       <span className="text-success">อนุมัติ</span>
@@ -100,7 +103,7 @@ export default function View() {
                 },
                 filters: [
                   { text: "เสร็จสิ้น", value: "complete" },
-                  { text: "รออนุมัติ", value: "Waiting" }, 
+                  { text: "รออนุมัติ", value: "Waiting" },
                 ],
                 align: "center",
                 width: 120,
@@ -110,7 +113,7 @@ export default function View() {
                 dataIndex: "",
                 align: "center",
                 render: (cell) => {
-                  const row_accessible = []; 
+                  const row_accessible = [];
                   if (cell.leave_approve !== "Waiting") {
                     row_accessible.push(
                       <Link

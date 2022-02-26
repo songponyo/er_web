@@ -36,10 +36,7 @@ class Insert extends React.Component {
     };
   }
 
-  async componentDidMount() {
-    console.log("this.props._USER = ");
-
-    console.log(this.props);
+  async componentDidMount() { 
     const max_code = await user_position_model.getUserPositionMaxCode({
       code: "UP",
       digit: 3,
@@ -130,7 +127,7 @@ class Insert extends React.Component {
         <Card>
           <Form onSubmit={this._handleSubmit.bind(this)}>
             <CardHeader className="header-t-red">
-              เพิ่มตำแหน่งพนักงาน / Add Employee Position
+              เพิ่มตำแหน่งผู้ใช้งาน
             </CardHeader>
             <CardBody>
               <Row>

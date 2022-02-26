@@ -25,7 +25,7 @@ class Auth extends Component {
   }
 
   initiateLogin = (data) => {
-    if (this.state.loading === false) {
+    if (this.state.loading == false) {
       this.setState(
         {
           loading: true,
@@ -36,7 +36,7 @@ class Auth extends Component {
             user_password: data.user_password,
           });
 
-          if (login_result.require === false) {
+          if (login_result.require == false) {
             this.setState(
               {
                 loading: false,
@@ -50,22 +50,7 @@ class Auth extends Component {
                 });
               }
             );
-          } else if (login_result.data[0].user_status == "Deactive") { 
-            this.setState(
-              {
-                loading: false,
-                authcertifying: false,
-              },
-              () => {
-              
-                Swal.fire({
-                  title: "ไม่สามารถเข้าสู่ระบบได้",
-                  text: "บัญชีของท่านไม่พร้อมใช้งานเนื่องจากอาจถูกระงับบัญชี",
-                  icon: "warning",
-                });
-              }
-            );
-          } else if (login_result.data.length === 0) {
+          } else if (login_result.data.length == 0) {
             this.setState(
               {
                 loading: false,
@@ -79,13 +64,61 @@ class Auth extends Component {
                 });
               }
             );
-          } else { 
+          } else if (login_result.data[0].user_status == "Deactive") {
+            this.setState(
+              {
+                loading: false,
+                authcertifying: false,
+              },
+              () => {
+                Swal.fire({
+                  title: "ไม่สามารถเข้าสู่ระบบได้",
+                  text: "บัญชีของท่านไม่พร้อมใช้งานเนื่องจากอาจถูกระงับบัญชี",
+                  icon: "warning",
+                });
+              }
+            );
+          } else {
             this.setSession({
               x_access_token: login_result.x_access_token,
               permissions_token: login_result.permissions_token,
               user: login_result.data[0],
             });
           }
+        }
+      );
+    }
+  };
+
+  initiateRegister = (data) => {
+    if (this.state.loading == false) {
+      this.setState(
+        {
+          loading: true,
+        },
+        async () => {
+           await user_model
+            .registertUser({
+              user_code: data.user_code,
+              user_username: data.user_username,
+              user_password: data.user_password,
+              user_firstname: data.user_firstname,
+              user_lastname: data.user_lastname,
+              user_uid: data.user_uid,
+              user_status: "Waiting",
+            })
+            .then((res) => {
+              if (res.require) {
+                Swal.fire({
+                  title: "บันทึกสำเร็จ",
+                  text: "ผู้แลตรวจจะตรวจสอบข้อมูลอีกครั้ง",
+                  icon: "success",
+                });
+                // history.push("/login");
+              } else {
+                Swal.fire("บันทึกไม่สำเร็จ", "", "error");
+              }
+            });
         }
       );
     }
@@ -102,14 +135,14 @@ class Auth extends Component {
           user_username: login_token.user_username,
           user_password: login_token.user_password,
         });
-        
+
         this.setState(
           {
             loading: false,
             authcertifying: false,
           },
           () => {
-            if (login_result.require === true && login_result.data.length) {
+            if (login_result.require == true && login_result.data.length) {
               this.setSession({
                 x_access_token: login_result.x_access_token,
                 permissions_token: login_result.permissions_token,
@@ -162,10 +195,11 @@ class Auth extends Component {
     const authProviderValue = {
       ...this.state,
       initiateLogin: this.initiateLogin,
+      initiateRegister: this.initiateRegister,
       handleAuthentication: this.handleAuthentication,
       logout: this.logout,
     };
-    
+
     return (
       <AuthProvider value={authProviderValue}>
         {this.state.authcertifying ? <Authoring /> : this.props.children}

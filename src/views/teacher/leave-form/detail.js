@@ -74,7 +74,6 @@ export default function Detail() {
   }
 
   async function _handleSubmit() {
-    console.log("leave", leave);
     if (_checkSubmit()) {
       let query_result = await leave_model.updateLeaveBy({
         leave_code: leave.leave_code,

@@ -52,7 +52,7 @@ export default function View() {
     <div>
       <CCard>
         <CCardHeader className="header-t-red">
-          กลุ่มเรียน / Class group 
+          กลุ่มเรียน
         </CCardHeader>
         <CCardBody>
           <Table

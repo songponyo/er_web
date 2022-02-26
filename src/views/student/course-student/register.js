@@ -196,8 +196,7 @@ export default function Register() {
     let new_data = { ...classroom };
     new_data[name] = value;
     setClassroom(new_data);
-  };
-
+  }; 
   return (
     <>
       {!isShow == false ? (

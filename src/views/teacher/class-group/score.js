@@ -99,7 +99,7 @@ export default function Score() {
             setTopics(newArr);
           }
         });
-      } else {
+      } else { 
         newArr[index][proper] = sum || "";
         setTopics(newArr);
       }
@@ -183,7 +183,7 @@ export default function Score() {
                     <CCol md="2">
                       {data.topic_name} <br />
                       <CInput
-                        type="number"
+                        type="tel"
                         min="0"
                         placeholder="0"
                         value={data.score_value}

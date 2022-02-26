@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CCard, CCardHeader, CCardBody } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,36 +19,18 @@ export default function View() {
     const classgroup_data = await classgroup_model.getClassgroupByMycourse({
       user_uid: user_session.user_uid,
     });
-    setClassgroup(classgroup_data.data);
-  }
 
-  function _onDelete(data) {
-    Swal.fire({
-      title: "Are you sure ?",
-      text: "ยืนยันที่จะลบรายการนี้" + data.classgroup_code,
-      icon: "warning",
-      showCancelButton: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        classgroup_model
-          .deleteClassgroupByCode({ classgroup_code: data.classgroup_code })
-          .then((res) => {
-            if (res.require) {
-              Swal.fire("ลบรายการ เรียบร้อย", "", "success");
-              window.location.reload();
-            } else {
-              Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
-            }
-          });
-      }
-    });
+    let classgroup_arr = classgroup_data.data.filter(
+      (data) => data.classgroup_status === "Activate"
+    );
+    setClassgroup(classgroup_arr);
   }
 
   return (
     <div>
       <CCard>
         <CCardHeader className="header-t-red">
-          กลุ่มเรียน / Class group
+          กลุ่มเรียน
           {/* <Link to={`/class-group/insert`} className="btn btn-success float-right">
             <i className="fa fa-plus" aria-hidden="true"></i> เพิ่มกลุ่มเรียน
           </Link> */}
@@ -124,7 +106,6 @@ export default function View() {
                       </button>
                     </Link>
                   );
-          
 
                   return row_accessible;
                 },

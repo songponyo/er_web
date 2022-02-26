@@ -28,7 +28,7 @@ export default function History() {
   async function _fetchData() {
     // const user_session = await JSON.parse(localStorage.getItem(`session-user`));
     
-    const qrcode_data = await qrcode_model.getQrcodeBy({
+    const qrcode_data = await qrcode_model.getQrcodeByowner({
       keyword: code.params.code,
       // owner: user_session.user_code
     }); 

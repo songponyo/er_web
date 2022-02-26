@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import dayjs from "dayjs"; 
+import dayjs from "dayjs";
 import {
   CCard,
   CCardHeader,
@@ -12,8 +12,10 @@ import {
   CLabel,
   CInput,
   CButton,
+  CForm,
 } from "@coreui/react";
 import { Table } from "react-bootstrap";
+import { Input } from "antd";
 import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
 import { Select } from "../../../component/revel-strap";
@@ -31,10 +33,7 @@ export default function Insert() {
   let history = useHistory();
   const [userselect, setUserselect] = useState([]);
   const [subject, setSubject] = useState([]);
-  const [time, setTime] = useState({
-    time_start: "",
-    time_end: "",
-  });
+  const [timepost, setTimepost] = useState({ time_start: "", time_end: "" });
   const [classroom, setClassroom] = useState({
     classgroup_code: "",
     classgroup_id: "",
@@ -48,41 +47,33 @@ export default function Insert() {
     leave_maxcount: "",
     max_score: "",
     addby: "",
+    classgroup_days: "",
   });
   const [topics, setTopics] = useState([
     { id: 1, topic_name: "", max_score: 0, classgroup_code: "" },
   ]);
-  const [sum, setSum] = useState(); 
-
+  const [sum, setSum] = useState();
+  const [allsubject, setAllsubject] = useState([]);
+  const [dayofweek, setDayofweek] = useState([]);
+  const [allclass, setAllclass] = useState([]);
   useEffect(() => {
     fetchData();
   }, []);
 
   useEffect(() => {
-    let timer_start =
-      dayjs().format("YYYY-MM-DD ") + classroom.classgroup_time_start;
-    let timer_end =
-      dayjs().format("YYYY-MM-DD ") + classroom.classgroup_time_end;
-
-    let classrooma = {};
-    classrooma.time_start = timer_start;
-    classrooma.time_end = timer_end;
-    setTime(classrooma);
-  }, [classroom.classgroup_time_start, classroom.classgroup_time_end]);
-
-  useEffect(() => {
     const score_result = topics
       .map((item) => item.max_score)
       .reduce((prev, curr) => prev + (curr || 0), 0);
-
     setSum(score_result);
   }, [topics]);
 
   async function fetchData() {
     const user_session = await JSON.parse(localStorage.getItem(`session-user`));
 
-    const topic_data = await topic_model.getTopicByLastCode({});
+    const classgroup_data = await classgroup_model.getClassgroupBy({});
+    setAllclass(classgroup_data.data);
 
+    const topic_data = await topic_model.getTopicByLastCode({});
     const date = new Date();
     var code = "";
     code =
@@ -96,7 +87,13 @@ export default function Insert() {
     });
     let classform = {};
     classform.classgroup_code = class_data.data;
+    classform.subject_code = "";
     classform.addby = user_session.user_code;
+    classform.user_code = "";
+    classform.classgroup_days = "";
+    classform.classgroup_id = "";
+    classform.classgroup_password = "";
+    classform.leave_maxcount = 0;
     setClassroom(classform);
     let arr_form = [
       {
@@ -125,6 +122,7 @@ export default function Insert() {
 
     const subject_data = await subject_model.getSubjectBy({});
     let subject_form = subject_data.data;
+    setAllsubject(subject_form);
     let select_subject = [];
     for (let i = 0; i < subject_form.length; i++) {
       select_subject.push({
@@ -137,32 +135,17 @@ export default function Insert() {
       });
     }
     setSubject(select_subject);
-  }
 
-  async function _handleSubmit() {
-    if (_checkSubmit()) {
-      let query_result = await classgroup_model.insertClassgroup({
-        classgroup_code: classroom.classgroup_code,
-        classgroup_id: classroom.classgroup_id,
-        classgroup_password: classroom.classgroup_password,
-        classgroup_number: classroom.classgroup_number,
-        subject_code: classroom.subject_code,
-        user_code: classroom.user_code,
-        classgroup_time_start: time.time_start,
-        classgroup_time_end: time.time_end,
-        addby: classroom.addby,
-        adddate: dayjs().format("YYYY-MM-DD H:mm:ss"),
-        topics_row: topics,
-        leave_maxcount: classroom.leave_maxcount,
-        classsgroup_status: "Activate"
-      });
-      if (query_result.require) {
-        Swal.fire("บันทึกเรียบร้อย", "", "success");
-        history.push("/class-group");
-      } else {
-        Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
-      }
-    }
+    const day_of_week = [
+      { value: 1, label: "อาทิตย์" },
+      { value: 2, label: "จันทร์" },
+      { value: 3, label: "อังคาร" },
+      { value: 4, label: "พุธ" },
+      { value: 5, label: "พฤหัสบดี" },
+      { value: 6, label: "ศุกร์" },
+      { value: 7, label: "เสาร์" },
+    ];
+    setDayofweek(day_of_week);
   }
 
   const _checkSubmit = () => {
@@ -187,10 +170,10 @@ export default function Insert() {
         icon: "warning",
       });
       return false;
-    } else if (time.time_start >= time.time_end) {
+    } else if (classroom.classgroup_number === "") {
       Swal.fire({
         title: "แจ้งเตือน!",
-        text: "โปรดตรวจสอบ เวลาการสอน",
+        text: "โปรดตรวจสอบ เลขห้อง",
         icon: "warning",
       });
       return false;
@@ -201,24 +184,89 @@ export default function Insert() {
         icon: "warning",
       });
       return false;
+    } else if (timepost.time_end === "") {
+      Swal.fire({
+        title: "แจ้งเตือน!",
+        text: "โปรดใส่ข้อมูล เวลาเข้าเรียนใหม่อีกครั้ง",
+        icon: "warning",
+      });
+      return false;
+    } else if (classroom.classgroup_days === "") {
+      Swal.fire({
+        title: "แจ้งเตือน!",
+        text: "โปรดตรวจสอบ วันที่สอน",
+        icon: "warning",
+      });
+      return false;
+    } else if (topics[0].topic_name === "") {
+      Swal.fire({
+        title: "แจ้งเตือน!",
+        text: "โปรดตรวจสอบตารางคะแนน",
+        icon: "warning",
+      });
+      return false;
     } else {
+      _setTimeoutclass();
       return true;
     }
   };
 
+  async function _handleSubmit() {
+    if (_checkSubmit()) {
+      // console.log("class", classroom);
+      let query_result = await classgroup_model.insertClassgroup({
+        classgroup_code: classroom.classgroup_code,
+        classgroup_id: "CPE." + classroom.classgroup_id,
+        classgroup_password: classroom.classgroup_password,
+        classgroup_number: classroom.classgroup_number,
+        subject_code: classroom.subject_code,
+        user_code: classroom.user_code,
+        classgroup_time_start: dayjs(timepost.time_start).format(
+          "YYYY-MM-DD H:mm:ss"
+        ),
+        classgroup_time_end: dayjs(timepost.time_end).format(
+          "YYYY-MM-DD H:mm:ss"
+        ),
+        addby: classroom.addby,
+        adddate: dayjs().format("YYYY-MM-DD H:mm:ss"),
+        topics_row: topics,
+        leave_maxcount: classroom.leave_maxcount,
+        classgroup_status: "Activate",
+        classgroup_days: classroom.classgroup_days,
+      });
+      if (query_result.require) {
+        Swal.fire("บันทึกเรียบร้อย", "", "success");
+        history.push("/class-group");
+      } else {
+        Swal.fire("ขออภัย มีบางอย่างผิดพลาด", "", "error");
+      }
+    }
+  }
+
   const _changeFrom = (e) => {
     const { value, name } = e.target;
-    setClassroom({ ...classroom, [name]: value });
+    value.replace(" ", "");
+    if (name === "classgroup_id") {
+      let eng = value.replace(/[^0-9]/gi, "");
+      setClassroom({ ...classroom, [name]: eng.replace(" ", "") });
+    } else {
+      setClassroom({ ...classroom, [name]: value });
+    }
   };
 
   const ChangeArray = (e, index) => {
     const proper = e.target.name;
     let newArr = [...topics];
     if (proper === "max_score") {
-      let sum = parseInt(e.target.value);
+      let sum = parseInt(e.target.value.replace("-", ""));
       newArr[index][proper] = sum || "";
       setTopics(newArr);
-    } else {
+    }
+    // else if (proper === "topic_name") {
+    //   newArr[index][proper] = e.target.value.replace(/[A-Za-z]/gi, "");
+    //   setTopics(newArr);
+    // }
+    else {
       newArr[index][proper] = e.target.value;
       setTopics(newArr);
     }
@@ -257,12 +305,86 @@ export default function Insert() {
     }
   };
 
+  const _setTimeoutclass = () => {
+    // เพิ่มเวลาตามหน่วยเรียนของรายวิชา
+
+    if (
+      classroom.classgroup_time_start !== undefined &&
+      classroom.classgroup_id !== "" &&
+      classroom.classgroup_days !== ""
+    ) {
+      let timer_start_str =
+        dayjs().format("YYYY-MM-DD ") + classroom.classgroup_time_start;
+
+      if (classroom.subject_code !== "") {
+        let subj = allsubject.filter((item) => {
+          return item.subject_code === classroom.subject_code;
+        });
+        let time_end = dayjs
+          .tz(timer_start_str)
+          .add(subj[0].subject_hour, "hour").$d;
+        let time_end_str = dayjs(time_end).format("HH:mm");
+
+        let time_start = dayjs.tz(timer_start_str);
+
+        // เทียบเวลา คาบเช้า และ บ่าย
+        let mid_time = dayjs().hour(12).$H;
+        let time_registered = "";
+        let class_id = "CPE." + classroom.classgroup_id;
+        allclass
+          .filter(
+            (item) =>
+              item.classgroup_days === classroom.classgroup_days &&
+              item.classgroup_id === class_id
+          )
+          .map((data) => {
+            if (
+              dayjs.tz(data.classgroup_time_start).$H >= mid_time &&
+              time_start.$H >= mid_time
+            ) {
+              time_registered = data;
+            } else if (
+              dayjs.tz(data.classgroup_time_start).$H <= mid_time &&
+              time_start.$H <= mid_time
+            ) {
+              time_registered = data;
+            }
+          });
+        if (time_registered !== "") {
+          Swal.fire({
+            title: "แจ้งเตือน!",
+            html:
+              "ช่วงเวลานี้ ได้มีการลงทะเบียนไว้แล้ว" +
+              "<br/> โดยวิชา " +
+              time_registered.subject_fullname,
+            icon: "warning",
+          });
+        } else {
+          setClassroom({ ...classroom, classgroup_time_end: time_end_str });
+          setTimepost({
+            ...timepost,
+            time_start: time_start.$d,
+            time_end: time_end,
+          });
+        }
+      } else {
+        Swal.fire("โปรดเลือกรายวิชา", "", "info");
+      }
+    } else {
+      if (classroom.classgroup_id === "") {
+        Swal.fire("โปรดใส่ข้อมูลในช่องกลุ่มเรียน", "", "warning");
+      } else if (classroom.classgroup_days === "") {
+        Swal.fire("โปรดใส่ข้อมูลวันที่", "", "warning");
+      } else { 
+        Swal.fire("โปรดใส่เวลาให้ถูกต้อง", "", "warning");
+      }
+    }
+  };
+
   return (
     <>
       <CCard>
-        <CCardHeader className="header-t-red">
-          กลุ่มเรียน / Class group
-        </CCardHeader>
+        <CCardHeader className="header-t-red">กลุ่มเรียน</CCardHeader>
         <CCardBody>
           {/* แบบฟอร์ม */}
           <CRow>
@@ -292,11 +414,13 @@ export default function Insert() {
                     <b>*</b>
                   </font>
                 </CLabel>
-                <CInput
-                  type="text"
+                <Input
+                  type="tel"
                   name="classgroup_id"
+                  addonBefore="CPE."
                   value={classroom.classgroup_id}
                   onChange={(e) => _changeFrom(e)}
+                  maxLength={5}
                 />
               </CFormGroup>
             </CCol>
@@ -308,12 +432,16 @@ export default function Insert() {
                     <b>*</b>
                   </font>
                 </CLabel>
-                <CInput
+                <Input.Password
                   type="text"
                   name="classgroup_password"
                   value={classroom.classgroup_password}
                   onChange={(e) => _changeFrom(e)}
+                  maxLength={8}
                 />
+                <p className="text-muted" style={{ fontSize: "13px" }}>
+                  รหัสผ่านไม่เกิน 8 หลัก
+                </p>
               </CFormGroup>
             </CCol>
             <CCol md="3">
@@ -359,6 +487,26 @@ export default function Insert() {
             </CCol>
 
             <CCol md="3">
+              <CLabel>
+                วัน{" "}
+                <font color="#F00">
+                  <b>*</b>
+                </font>
+              </CLabel>
+              <Select
+                options={dayofweek}
+                value={classroom.classgroup_days}
+                onChange={(e) =>
+                  setClassroom({
+                    ...classroom,
+                    [`classgroup_days`]: e,
+                  })
+                }
+                require
+              />
+            </CCol>
+
+            <CCol md="3">
               <CFormGroup>
                 <CLabel>
                   เวลาเข้าเรียน{" "}
@@ -371,22 +519,19 @@ export default function Insert() {
                   name="classgroup_time_start"
                   value={classroom.classgroup_time_start}
                   onChange={(e) => _changeFrom(e)}
+                  onBlur={_setTimeoutclass}
                 />
               </CFormGroup>
             </CCol>
             <CCol md="3">
               <CFormGroup>
-                <CLabel>
-                  เวลาสิ้นสุด{" "}
-                  <font color="#F00">
-                    <b>*</b>
-                  </font>
-                </CLabel>
-                <CInput
+                <CLabel>เวลาสิ้นสุด</CLabel>
+                <Input
                   type="time"
                   name="classgroup_time_end"
                   value={classroom.classgroup_time_end}
                   onChange={(e) => _changeFrom(e)}
+                  disabled
                 />
               </CFormGroup>
             </CCol>
@@ -394,9 +539,9 @@ export default function Insert() {
 
           <CRow>
             <CCol md="3">
-              <CFormGroup> 
+              <CFormGroup>
                 <CLabel>
-                  จำนวนครั้งที่สามารถขาดได้{" "}
+                  จำนวนครั้งที่สามารถลาได้{" "}
                   <font color="#F00">
                     <b>*</b>
                   </font>
@@ -468,7 +613,7 @@ export default function Insert() {
                       <td>
                         <CInput
                           type="number"
-                          min="0"
+                          maxlength="4"
                           placeholder="0"
                           value={data.max_score}
                           name="max_score"

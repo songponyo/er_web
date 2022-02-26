@@ -26,6 +26,15 @@ export default class QrcodeModel extends BaseModel {
     })
   }
 
+  async getQrcodeByowner(data) {
+    return this.authFetch({
+      url: 'qrcode/getQrcodeByowner',
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+
   async getQrcodeByCode(data) {
     return this.authFetch({
       url: 'qrcode/getQrcodeByCode',

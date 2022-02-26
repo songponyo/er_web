@@ -108,7 +108,17 @@ export default function Update() {
 
   const _changeFrom = (e) => {
     const { value, name } = e.target;
-    setUser({ ...user, [name]: value });
+    value.replace(" ", "");
+    if (name === "user_firstname" || name === "user_lastname") {
+      let th = value.replace(/[0-9]/gi, "");
+      // value.replace(/[A-Za-z]/gi, "");
+      setUser({ ...user, [name]: th.replace(" ", "") });
+    } else if (name === "user_uid") {
+      let code = value.replace(/[^0-9-+]/gi, "");
+      setUser({ ...user, [name]: code.replace(" ", "") });
+    } else {
+      setUser({ ...user, [name]: value });
+    }
   };
 
   const _handleImageChange = (img_name, e) => {
@@ -131,6 +141,8 @@ export default function Update() {
       }
     }
   };
+
+
   async function _handleSubmit() {
     if (_checkSubmit()) {
       let img = "";
@@ -212,6 +224,7 @@ export default function Update() {
                       name="user_uid"
                       value={user.user_uid}
                       onChange={(e) => _changeFrom(e)}
+                      disabled
                     />
                   </CCol>
                   <CCol md="3">

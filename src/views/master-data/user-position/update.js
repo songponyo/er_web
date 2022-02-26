@@ -91,7 +91,7 @@ class Update extends React.Component {
       <div className="animated fadeIn">
         <Card>
         <CardHeader className="header-t-red">
-            แก้ไขตำแหน่งพนักงาน / Update Employee Position
+            แก้ไขตำแหน่งผู้ใช้งาน
           </CardHeader>
           <Form onSubmit={this._handleSubmit.bind(this)}>
             <CardBody>

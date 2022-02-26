@@ -10,7 +10,9 @@ import {
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons"; 
 import { Table} from "../../../component/revel-strap";
+// import { Table } from "antd";
 import LeaveModel from "../../../models/LeaveModel";
+
 const leave_model = new LeaveModel();
 
 export default function View() { 
@@ -57,7 +59,7 @@ export default function View() {
     <div>
       <CCard>
         <CCardHeader className="header-t-red">
-          คำขอลา / Leave list 
+          คำขอลา
         </CCardHeader>
         <CCardBody>
           <Table
@@ -130,6 +132,7 @@ export default function View() {
               },
             ]}
           />
+          {/* <Table/> */}
         </CCardBody>
       </CCard>
     </div>

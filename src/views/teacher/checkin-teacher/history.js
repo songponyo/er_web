@@ -19,10 +19,10 @@ export default function History() {
   async function fetchData() {
     // const user_session = await JSON.parse(localStorage.getItem(`session-user`));
 
-    const qrcode_data = await qrcode_model.getQrcodeBy({
+    const qrcode_data = await qrcode_model.getQrcodeByowner({
       keyword: code.params.code,
       // owner: user_session.user_code,
-    });
+    }); 
     let classArr = {};
 
     if (qrcode_data.data.length !== 0) {
@@ -36,7 +36,7 @@ export default function History() {
     <>
       <CCard>
         <CCardHeader className="header-t-red">
-          รายชื่อเข้าเรียน วิชา {classgroup.classname}
+          รายชื่อเข้าเรียน
         </CCardHeader>
         <CCardBody>
           <Table
